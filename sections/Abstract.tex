@@ -1,0 +1,14 @@
+Linear correlations between the spiking activity of pairs of neurons are among the most familiar and useful descriptive statistics of neural activity.
+Correlation matrices from multineuronal recordings contain richer information than available from an equivalent number of isolated pairs:
+The basic structure of population activity can manifest in various low-dimensional representations of the covariance matrix.  The optimal choice of such reduced representation  depends profoundly on how well it can capture regularities in the underlying data generating process. 
+For example, presumed diffuse correlated input onto all neurons implies a low-rank parameterization such as used in  factor analysis whereas presumed strong pairwise linear associations imply sparse partial correlations.  
+Composite  `sparse+low-rank partial correlation' parameterizations allow combining common correlated input with strong pairwise associations.  
+
+To infer the optimal low-dimensional representation of neural correlations in a specitifc neural microcircuit, we compared the performance of several estimators of the covariance matrix on the activity of 100--300 neurons in mouse visual cortex: sample covariance, covariance shrinkage, factor analysis, sparse partial correlations, and sparse+low-rank partial correlations. 
+The instantaneous firing rates, binned at 200 ms, were inferred from the somatic calcium signals acquired with fast 3D random-access two-photon microscopy.   
+As expected, covariance shrinkage reliably outperformed the sample covariance estimate.
+Factor analysis-based estimates significantly outperformed covariance shrinkage.
+Yet sparsified partial correlations with or without an additional low-rank component significantly outperformed both factor analysis and shrinkage-based  estimators.
+The superior performance of sparse partial correlation-based estimates suggests the relative importance of detailed network interactions over common input in this circuit.
+The resulting sparse partial correlation matrix, we argue, serves as a better substrate for functional network analysis. 
+In addition, the overall estimation improvement will propagate to any existing analyses that rely on the covariance matrix. 

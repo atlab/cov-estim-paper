@@ -1,0 +1,66 @@
+\documentclass[aip,author-year,notitlepage,superscriptaddress,10pt,twocolumn]{revtex4-1}
+
+\usepackage{amsmath}
+\usepackage{commath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{color,soul}
+%\usepackage{dcolumn}
+\usepackage{hyperref}
+\setlength{\parskip}{3pt plus12pt}
+\setlength{\parindent}{0.0cm}
+\DeclareMathOperator{\Tr}{tr}
+
+\newcommand{\mcond}{\,\middle\vert\,}
+\newcommand{\cond}{\,\vert\,}
+\newcommand{\T}{\intercal}
+\newcommand{\bnu}{\boldsymbol\nu}
+
+%% change the section numbering scheme
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+\makeatletter
+\renewcommand{\p@section}{}
+\renewcommand{\p@subsection}{}
+\renewcommand{\p@subsubsection}{}
+\makeatother
+
+\begin{document}
+\title{Improved estimation of neural correlations suggests detailed interactions in visual cortex}
+\author{Dimitri Yatsenko}
+\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
+\author{Alexander Ecker}
+\affiliation{Max Planck Institute of Biological Cybernetics, T\"ubingen, Germany}
+\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
+\author{Emmanouil Froudarakis}
+\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
+\author{R. James Cotton}
+\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
+\email{yatsenko@cns.bcm.edu}
+\author{Kre\v{s}imir Josi\'{c}}
+\affiliation{Dept.~of Mathematics and Dept.~of Biology and Biochemistry, Univ.~of Houston, Houston, TX, USA}
+\author{Andreas S. Tolias}
+\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
+\date{\today} 
+
+\begin{abstract}
+\input{sections/Abstract.tex}
+\end{abstract}
+
+\maketitle
+\section*{Introduction}
+\input{sections/Introduction.tex}
+
+\section*{Theory and simulation results}
+\input{sections/Theory.tex}
+
+\section*{Methods}
+\section*{Results}
+\section*{Discussion}
+%\input{sections/Discussion.tex}
+
+
+\bibliographystyle{kluwer}
+\newpage\bibliography{references.bib}
+\end{document}
