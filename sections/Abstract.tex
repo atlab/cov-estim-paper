@@ -1,14 +1,17 @@
 Linear correlations between the spiking activity of pairs of neurons are among the most familiar and useful descriptive statistics of neural activity.
-Correlation matrices from multineuronal recordings contain richer information than available from an equivalent number of isolated pairs:
-The basic structure of population activity can manifest in various low-dimensional representations of the covariance matrix.  The optimal choice of such reduced representation  depends profoundly on how well it can capture regularities in the underlying data generating process. 
-For example, presumed diffuse correlated input onto all neurons implies a low-rank parameterization such as used in  factor analysis whereas presumed strong pairwise linear associations imply sparse partial correlations.  
-Composite  `sparse+low-rank partial correlation' parameterizations allow combining common correlated input with strong pairwise associations.  
+Multineuronal recordings provide far richer information than the equivalent number of neuron pairs considered in isolation.
+For example, the full covariance matrix reveals the partial correlations between pairs of neurons or the common correlated activity involving the entire population.
+Usual estimates of covariance matrix parameters require large samples for convergence.
+Convergence can be improved by regularization, i.e.~by imposing some kind of structure.  
+The optimal choice of the regularization approach is largely an empirical question as it depends profoundly on how well the imposed structure can still capture the dominant underlying physiogical interactions.
+For example, presumed diffuse correlated input onto many neurons motivate low-rank parameterizations such as in factor analysis.  
+Conversely, presumed strong pairwise linear associations between neurons motivate regularization by sparsifying the inverse covariance matrix.
+Finally, `sparse+low-rank' inverse covariance parameterizations allow combining diffuse correlations and strong pairwise associations.  
 
-To infer the optimal low-dimensional representation of neural correlations in a specitifc neural microcircuit, we compared the performance of several estimators of the covariance matrix on the activity of 100--300 neurons in mouse visual cortex: sample covariance, covariance shrinkage, factor analysis, sparse partial correlations, and sparse+low-rank partial correlations. 
+To infer the optimal structure of neural correlations in a specitifc neural microcircuit, we compared the performance of several covariance estimators on the activity of 100--300 neurons in mouse visual cortex: sample covariance, Ledoit-Wolf covariance shrinkage, factor analysis, sparse inverse covariance, and sparse+low-rank inverse covariance.
 The instantaneous firing rates, binned at 200 ms, were inferred from the somatic calcium signals acquired with fast 3D random-access two-photon microscopy.   
-As expected, covariance shrinkage reliably outperformed the sample covariance estimate.
-Factor analysis-based estimates significantly outperformed covariance shrinkage.
-Yet sparsified partial correlations with or without an additional low-rank component significantly outperformed both factor analysis and shrinkage-based  estimators.
-The superior performance of sparse partial correlation-based estimates suggests the relative importance of detailed network interactions over common input in this circuit.
-The resulting sparse partial correlation matrix, we argue, serves as a better substrate for functional network analysis. 
-In addition, the overall estimation improvement will propagate to any existing analyses that rely on the covariance matrix. 
+Each covariance estimator was optimized and evaluated by cross-validation.
+Unsurprisingly, covariance shrinkage reliably outperformed the sample covariance estimate.
+In turn, factor analysis-based estimates significantly outperformed covariance shrinkage.
+Yet sparse inverse covariance with or without an additional low-rank component significantly outperformed both factor analysis and shrinkage  estimators.
+The superior performance of the sparse inverse covariance estimator suggests the relative importance of detailed network interactions over common diffuse input in this circuit, although these results may vary in other circuits or in other brain states.

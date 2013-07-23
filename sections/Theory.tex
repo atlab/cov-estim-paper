@@ -1,8 +1,8 @@
-\subsection*{Problem setup}
+\subsection{Problem setup}
 Let $x_1,\ldots,x_n \in \mathbb R^{p\times 1}$ denote a sample of $n$ observations of instantaneous activity (e.g.~spiking) rates of $p$ neurons averaged in time bins $i=1,\ldots,n$.  
 
 For simplicity, we assume that observations are sampled from a shared true distribution $x_1,\ldots,x_n \sim f$. 
-\hl{\tiny explain: the derivations remain valid even without such a strong assumption.  We account for overdispersion due to temporal dependence and shuffle chunks of data to account for nonstationarities.} 
+\hl{\tiny explain: the derivations remain valid even without such a strong assumption.} 
 
 For simplicity, we assume that the data have zero means.
 We seek to estimate the true covariance matrix 
@@ -13,17 +13,29 @@ We seek to estimate the true covariance matrix
 The purpose of the estimation procedure is to use the sample $x_1,\ldots,x_n$ to compute a covariance estimate $S$ that is as close as possible to $\Sigma$. 
 The quality of the covariance estimate $S$ will be defined using a \emph{loss function} $\mathcal L\left(S, \Sigma\right)$, which is minimized when $S=\Sigma$. 
 
-In particular, we consider the mean-squared loss
+In particular, we consider the sum of squared-error loss
 \begin{equation}
 \mathcal L_e( S, \Sigma) =  \| S - \Sigma\|^2_F 
 \end{equation}
 where $\| \cdot \|_F$ denotes the Frobenius norm;
 
-and the multivariate normal log likelihood loss
-\begin{equation}
-\mathcal L_g(S,\Sigma) = \ln |S| +  \Tr(S^{-1} \Sigma)
-\end{equation}
+Another useful loss denoted here as $\mathcal L_g$ is based  on the log likelihood of the multivarate normal distribution 
+$$\ln L(\Sigma \cond S) = - \tfrac 1 2 k\ln(2\pi) - \tfrac 1 2 \ln |S| - \tfrac 1 2 \Tr(S^{-1}\Sigma)$$ 
 where $|S|$ denotes the determinant of matrix $S$.
+
+The loss function is shifted so that $\mathcal L_g(\Sigma,\Sigma) = 0$:
+\begin{equation}
+\begin{split}
+\mathcal L_g(S,\Sigma) =&  -2 \left[\ln L(\Sigma\cond S) - \ln L(\Sigma\cond \Sigma)\right]
+\\=& \Tr(S^{-1}\Sigma) -\ln |S^{-1}\Sigma| - p
+\end{split}
+\end{equation}
+
+Stein's loss can also be interpreted as the Kullback-Leibler divergence between the multivarate normal with covariance $\Sigma$ and another with $S$:
+\begin{equation}
+\mathcal L_{s} = 2 D_{KL} (\mathcal N(0,\Sigma) \| S)
+\end{equation}
+
 
 \hl{\tiny list other possible loss functions and justify the choice of these two. Consider Stein's entropy loss and qudratic loss.   James:1961 showed failures of the MSE loss, but it continued to be widely used. Fan:2008 provides other arguments.}
 

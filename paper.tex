@@ -1,66 +1,108 @@
-\documentclass[aip,author-year,notitlepage,superscriptaddress,10pt,twocolumn]{revtex4-1}
+\documentclass{frontiersSCNS} % for Science articles
 
-\usepackage{amsmath}
-\usepackage{commath}
-\usepackage{amssymb}
-\usepackage{graphicx}
+\usepackage{url,lineno}
 \usepackage{color,soul}
-%\usepackage{dcolumn}
-\usepackage{hyperref}
-\setlength{\parskip}{3pt plus12pt}
-\setlength{\parindent}{0.0cm}
-\DeclareMathOperator{\Tr}{tr}
+\linenumbers
+%\usepackage{amsmath}
+%\usepackage{commath}
+%\usepackage{amssymb}
 
+%%  Our commands
+\DeclareMathOperator{\Tr}{tr}
 \newcommand{\mcond}{\,\middle\vert\,}
 \newcommand{\cond}{\,\vert\,}
 \newcommand{\T}{\intercal}
-\newcommand{\bnu}{\boldsymbol\nu}
 
-%% change the section numbering scheme
-\renewcommand{\thesection}{\arabic{section}}
-\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
-\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
-\makeatletter
-\renewcommand{\p@section}{}
-\renewcommand{\p@subsection}{}
-\renewcommand{\p@subsubsection}{}
-\makeatother
+
+
+% Leave a blank line between paragraphs instead of using \\
+
+\copyrightyear{}
+\pubyear{}
+
+\def\journal{Computational Neuroscience}
+\def\DOI{}
+\def\articleType{Research Article}
+\def\keyFont{\fontsize{8}{11}\helveticabold }
+\def\firstAuthorLast{Yatsenko {et~al.}} %use et al only if is more than 1 author
+\def\Authors{
+Dimitri Yatsenko\,$^{1,*}$, 
+Alexander Ecker\,$^{2,1}$,
+Emmanouil Foudarakis\,$^{1}$,
+R.~James Cotton\,$^{1}$,
+Kre\v{s}imir Josi\'{c}\,$^{3}$,
+and Andreas S.~Tolias\,$^1$}
+
+% Affiliations should be keyed to the author's name with superscript numbers and be listed as follows: Laboratory, Institute, Department, Organization, City, State abbreviation (USA, Canada, Australia), and Country (without detailed address information such as city zip codes or street names).
+% If one of the authors has a change of address, list the new address below the correspondence details using a superscript symbol and use the same symbol to indicate the author in the author list.
+\def\Address{
+$^{1}$Department of Neuroscience, Baylor College of Medicine, Houston, TX, USA\\
+$^{2}$Max Planck Institute of Biological Cybernetics, T\"ubingen, Germany\\
+$^{3}$Department of Mathematics and Department of Biology and Biochemistry, University of Texas, Houston, TX, USA
+}
+% The Corresponding Author should be marked with an asterisk
+% Provide the exact contact address (this time including street name and city zip code) and email of the corresponding author
+\def\corrAuthor{Dimitri Yatsenko}
+\def\corrAddress{Andreas Tolias Lab, Department of Neuroscience, Baylor College of Medicine, One Baylor Plaza, Houston, TX 77030, USA}
+\def\corrEmail{yatsenko@cns.bcm.edu}
+
+% \color{FrontiersColor} Is the color used in the Journal name, in the title, and the names of the sections
+
 
 \begin{document}
-\title{Improved estimation of neural correlations suggests detailed interactions in visual cortex}
-\author{Dimitri Yatsenko}
-\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
-\author{Alexander Ecker}
-\affiliation{Max Planck Institute of Biological Cybernetics, T\"ubingen, Germany}
-\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
-\author{Emmanouil Froudarakis}
-\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
-\author{R. James Cotton}
-\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
-\email{yatsenko@cns.bcm.edu}
-\author{Kre\v{s}imir Josi\'{c}}
-\affiliation{Dept.~of Mathematics and Dept.~of Biology and Biochemistry, Univ.~of Houston, Houston, TX, USA}
-\author{Andreas S. Tolias}
-\affiliation{Dept.~of Neuroscience, Baylor College of Medicine, Houston, TX, USA}
-\date{\today} 
+\onecolumn
+\firstpage{1}
 
-\begin{abstract}
-\input{sections/Abstract.tex}
-\end{abstract}
+\title[Improved estimation of neural correlations]{Improved estimation of neural correlations suggests detailed interactions in visual cortex}
+\author[\firstAuthorLast ]{\Authors}
+\address{}
+\correspondance{}
+\editor{}
+\topic{Research Topic}
 
 \maketitle
-\section*{Introduction}
+\begin{abstract}
+\input{sections/Abstract.tex}
+
+\section{}
+%As a primary goal, the abstract should render the general significance and conceptual advance of the work clearly accessible to a broad readership. References should not be cited in the abstract.
+%See the Summary Table at \\ \url{http://www.frontiersin.org/}\texttt{\journal}\url{/authorguidelines} \\for abstract requirement and length according to article type.
+
+
+\tiny
+ \keyFont{ \section{Keywords:} population activity, neural circuits, functional connectivity, neural correlations, noise correlations, regularization, covariance estimation} %All article types: you may provide up to 8 keywords; at least 5 are mandatory.
+\end{abstract}
+
+
+\section{Introduction}
+% For Original Research Articles, Clinical Trial Articles, and Technology Reports the introduction should be succinct, with no subheadings.
+%
+%For Clinical Case Studies the Introduction should include symptoms at presentation, physical exams and lab results.
+%
 \input{sections/Introduction.tex}
 
-\section*{Theory and simulation results}
+
+
+
+%\begin{methods}
+\section{Material \& Methods}
 \input{sections/Theory.tex}
 
-\section*{Methods}
-\section*{Results}
-\section*{Discussion}
-%\input{sections/Discussion.tex}
+\section{Results}
+
+\section{Discussion}
+\input{sections/Discussion.tex}
+
+\section*{Acknowledgement}
 
 
-\bibliographystyle{kluwer}
-\newpage\bibliography{references.bib}
+\paragraph{Funding\textcolon}
+
+\section*{Supplemental Data}
+
+
+\bibliographystyle{frontiersinSCNS&ENG} % for Science and Engineering articles
+\bibliography{references.bib}
+\bibliography{test}
+
 \end{document}
