@@ -3,7 +3,7 @@ Let $x_1,\ldots,x_n$ denote a sample of observations of instantaneous spiking ra
 
 Then the true  covariance matrix $\Sigma$ is defined as
 \begin{equation}
-\Sigma =\mathbb E_z[ (z-\mathbb E_{z\sim f} [z])(z-\mathbb E_z [z])^\T]
+\Sigma =\mathbb E_z[ zz^\T] - \left(\mathbb E_z[z]\right)\left(\mathbb E_z[z]\right)^\T
 \end{equation}
 where $\mathbb E_z[g(z)]$ denotes the expected value of $g(z)$ when $z$ is distributed according to $f(z)$. 
 
@@ -44,7 +44,7 @@ If we ensure that  $\hat\Sigma_Y$ is unbiased, i.e.\;$\mathbb E_Y\left[\hat \Sig
 
 In other words, the empirical loss $\mathcal L(\hat\Sigma,\hat\Sigma_Y)$ is an ubiased estimator of true loss $\mathcal L(\hat\Sigma,\Sigma)$ provided that $\hat\Sigma_Y$ is unbiased and $\hat\Sigma$ and $\hat\Sigma_Y$ are estimated from independent samples.  Note that $\hat\Sigma$ does not need to be unbiased.  
 
-In practice, recording a separate independent sample may not be sensible.  Instead, the recorded data a split into a training sample and validation sample.  One popular approach is $K$-fold validation, in which the data are split into $K$ roughly equal-sized subsets.  Each subset then successively serves as the validation  sample while the rest of the data make up the training sample. This procedure yields $k$ estimates of the loss, although not quite independent. 
+In practice, recording a separate independent sample may not be sensible.  Instead, the recorded data a split into a training sample and validation sample.  One popular approach is $K$-fold \emph{cross-validation}, in which the data are split into $K$ roughly equal-sized subsets.  Each subset then successively serves as the validation  sample while the rest of the data make up the training sample. This procedure yields $k$ estimates of the loss, although not quite independent. 
  
 \subsection*{Covariance estimators}
 It has long been recognized that the empirical covariance 
