@@ -1,31 +1,93 @@
-\subsection{Problem setup}
-Let $x_1,\ldots,x_n$ denote a sample of observations of instantaneous spiking rates of $p$ neurons in time bins $i=1,\ldots,n$.  Each obseravation $x_i$ is a $p\times 1$ vector of spike counts.  We assume that observations independent, identically distributed, i.e.\;all observations are drawn from a common true distribution $x_1,\ldots,x_n \sim f$.  However, this assumptions can be relaxed and corrected for as discussed in this section. We make no assumption about the exact form of distribution $f$. 
+\subsection{Covariance estimation}
 
-Then the true  covariance matrix $\Sigma$ is defined as
+\subsubsection{Problem setup}
+
+Let $x_i \in \mathcal X, i=1\ldots,x_n$ denote a sample of consequtive observations of population activity of $p$ neurons in time bins $i$.  
+The activity of each neuron is the real-valued firing rate, thus  $\mathcal X \in \mathbb R^{p\times 1}$.  
+We assume that observations are drawn from some true cumulative probability distribution $F: \mathcal X \mapsto R$. Then let $\hat F_n$ denote the empirical distribution function obtained from the observed sample, which itself is a random variable.
 \begin{equation}
-\Sigma =\mathbb E_z[ zz^\T] - \left(\mathbb E_z[z]\right)\left(\mathbb E_z[z]\right)^\T
+\hat F_n(x) = \sum\limits_{i=1}^n \mathbf{1}(x > x_i)
 \end{equation}
-where $\mathbb E_z[g(z)]$ denotes the expected value of $g(z)$ when $z$ is distributed according to $f(z)$. 
+where $\mathbf 1(x_i \le x)$ is the indicator function which equals 1 when all elements of $x$ are greater than the corresponding elements of $x_i$ and 0 otherwise.
 
-The purpose of the covariance estimation procedure is to obtain an estimate $\hat \Sigma$ that is as close as possible to $\Sigma$ given the finite sample  $x_1,\ldots,x_n$. We define a scalar \emph{loss function} $\mathcal L\left(\hat \Sigma, \Sigma\right)$ to measure the distance between $\hat \Sigma$ and $\Sigma$.  The loss function must have minimum at $\hat \Sigma=\Sigma$. 
+The observations need not be independently and identically sampled from $F$. The only assumption is that the data generating process is ergodic, \emph{i.e.}\;that $\max_x \left[\hat F_n(x) - F(x)\right] \to 0$ as the sample size $n$ increases. Then each $x_i$ can be thought to be drawn from $F$ when not conditioned on nearby observations.
 
-In particular, we consider the sum-of-squared-error loss
+The true covariance matrix $\Sigma \in \Theta$ is defined as a function of the true probability distribution
 \begin{equation}
-\mathcal L_e(\hat \Sigma, \Sigma) =  \| \hat \Sigma - \Sigma\|^2_F 
+\Sigma(F) = \int\limits_{z\in\mathcal X} (z - \bar x)(z - \bar x)^\T \dif F(z)
+\quad\mbox{where}\;
+\bar x = \int\limits_{z\in\mathcal X} z \dif F(z)
 \end{equation}
-where $\| A \|_F = \sqrt{\Tr(AA^\T)}$ denotes the Frobenius matrix norm; $\Tr(\cdot)$ denotes the matrix trace.
-
-We also consider the normal-theory-log-likelihood loss
+The \emph{plug-in estimator} is obtained by plugging the empirical distribution in place of the true distribution
 \begin{equation}
-\mathcal L_g(\hat \Sigma,\Sigma) = \ln |\hat \Sigma|  + \Tr(\hat \Sigma^{-1}\Sigma)
+\begin{split}
+\Sigma(\hat F_n) = \int\limits_{z\in\mathcal X} (z - \bar x)(z - \bar x)^\T \dif \hat F_n(z) 
+\equiv \frac  1 n\sum\limits_{i=1}^n (x_i-\bar x)(x_i - \bar x)
+\\
+\mbox{where}\;\bar x = 
+\int\limits_{z\in \mathcal X}z \dif \hat F_n(z) \equiv \frac 1 n\sum\limits_{i=1}^n x_i
+\end{split}
 \end{equation}
-where $|A|$ denotes the determinant of matrix $A$.
+The plugin estimator is known to be biased toward zero because the estimate of the mean $\bar x$ absorbs a fraction of the variance. 
 
-Note that both $\mathcal L_e(\hat\Sigma,\Sigma)$ and $\mathcal L_g(\hat\Sigma,\Sigma)$ attain their minima when $\hat\Sigma = \Sigma$.   $\mathcal L_g$ is derived as the negative log likelihood function (scaled and shifted) when $f$ is a multivariate normal distribution.  However, using either of these loss functions does not amount to assuming a specific form of $f$. Other loss functions have been defended in statistical literature \citep{James:1961,Fan:2008}.  
+The usual unbiased estimate, the sample covariance matrix, rescales the plug-in estimator compensates for the bias
+\begin{equation}
+\hat\Sigma(\hat F_n) = \frac n {n - d} \Sigma(\hat F_n) \equiv \frac 1 {n-d} \sum\limits_{i=1}^n (x_i - \bar x) (x_i - \bar x)^\T
+\end{equation}
+When observations are independent, then $d=1$.  But when nearby samples are correlated, covariances become underestimated. Then we can use $d=cn$ where $c>1$ is called the \emph{overdispersion coefficient}, which may be estimated from data.
 
+\subsubsection{Definition of regularization}
+Now let's define a sequence of approximate biased estimates $\hat\Sigma_\gamma(\hat F_n)$ indexed by the \emph{regularization intensity}  $\gamma$ such that $\hat\Sigma_{\gamma=0}(\hat F_n)\equiv \hat\Sigma(\hat F_n)$, which become increasingly biased as $\gamma$ increases.
 
+To evaluate the estimate, let's define the \emph{loss function} $\mathcal L : \Theta \times \Theta \mapsto \mathbb R$, which is minimized when its two arguments are equal.  Then \emph{excess loss} $\ell(\hat S, S) = \mathcal L(\hat S, S) - \mathcal L(S,S)$ assumes zero at the minimum.
 
-The loss function can be estimated based on another estimate $\hat\Sigma_Y$ of the covariance matrix obtained from an independent \emph{validation} sample $Y = (y_1,\ldots,y_m)\sim f^m$.  
+The overall error, known as \emph{estimator risk} is expressed as
+\begin{equation}
+r_\gamma = \mathbb E_F\left[ \ell\left(\Sigma_\gamma(P_n),\Sigma\right) \right]
+\end{equation}
+
+The expected value of the approximate estimate 
+$\Sigma_\gamma^{(n)} = \mathbb E_F\left[\hat \Sigma_\gamma(\hat F_n)\right]$ 
+is biased with the amout of bias or \emph{approximaton error} expressed as  
+\begin{equation}
+b_\gamma^2 = \ell \left( \Sigma_\gamma^{(n)},\Sigma\right)
+\end{equation}
+
+Then the \emph{estimation error} 
+\begin{equation}
+\varepsilon_\gamma^2 = \mathbb E_F \left[ \ell\left(\hat \Sigma_\gamma(\hat F_n), \Sigma_\gamma^{(n)}\right) \right]
+\end{equation}
+
+When the loss function is the sum of squared error (Euclidean norm squared), which, for matricies, is called the Frobenius norm, $\mathcal L(\hat S,S) = \mathcal L_e(\hat S,S) = \|\hat S-S\|_F^2 = \Tr\left((\hat S-S)(\hat S-S)^\T\right)$, the estimation error is called \emph{variance} and the overall error is expressed as the the sum 
+\begin{equation}
+r_\gamma =  b_\gamma^2 + \varepsilon_\gamma^2
+\end{equation}
+
+With other loss functions, the overall error is also an increasing function of both kinds of errors, but not necessarily a simple sum.
+
+One other popular loss function for covariance estimation arises from the theory of normal distributions.  Under the assumption of normality  with zero mean, the log likelihood of the covariance matrix $\Sigma$ given the independent sample $z_1,\ldots,z_m$, with $S = \tfrac 1 m \sum\limits_{i=1}^m z_i z_i^\T$,  
+\begin{equation}
+L\left(\Sigma \mid S\right) = -\tfrac m 2 \ln(2\pi) - \tfrac m 2 \ln \det \Sigma - \tfrac m 2 \Tr(\Sigma^{-1} S)
+\end{equation}
+Then the Gaussian loss function $\mathcal L_g$ is constructed by rescaling the normal log likelihood and dropping the constant term
+\begin{equation}
+\begin{split}
+\mathcal L_g(\hat S,S) = &-\frac 2 m L\left(S \mid \hat S \right) - \ln(2\pi) 
+\\ 
+\equiv & \ln \det \hat S + \Tr(\hat S^{-1} S) 
+\end{split}
+\end{equation}
+The corresponding excess loss 
+\begin{equation}
+\ell_g(\hat S,S) = \mathcal L_g(\hat S,S) - \mathcal L_g(S,S) 
+= -\ln \det \left(\hat S^{-1} S\right) + \Tr\left(\hat S^{-1}S\right) - p
+\end{equation}
+is known as \emph{entropy loss} \citep{James:1961}.
+
+Despite the fact that entropy loss is inspired by the normal theory, the choice of a loss function is not equivalent to assuming a specific form of $F$. The loss function only measures the distance between the estimate and the true value of a parameter of the true distribution but not the distance between distributions themselves. Minimizing the loss function improves the estimate under any true distribution.
+
+The task of regulazation comprises the choice of the \emph{regularization path} $\hat \Sigma_\gamma(\hat F_n)$ and the optimal location $\hat\gamma = \gamma(\hat F_n)$ on that path in oder to minimize the risk $r_\gamma$.  
+By definition $\hat\Sigma_{\gamma=0}(\hat F_n)$ is an unbiased estimator with $b_{\gamma=0}^2 = 0$. 
 
 Both $\mathcal L_e(\hat\Sigma,\Sigma)$ and $\mathcal L_g(\hat\Sigma,\Sigma)$ are linear with respect to $\Sigma$ in the sense that
 \begin{equation}
@@ -41,7 +103,6 @@ If we ensure that  $\hat\Sigma_Y$ is unbiased, i.e.\;$\mathbb E_Y\left[\hat \Sig
 = 
 \mathcal L(\hat\Sigma,\Sigma)
 \end{equation}
-
 In other words, the empirical loss $\mathcal L(\hat\Sigma,\hat\Sigma_Y)$ is an ubiased estimator of true loss $\mathcal L(\hat\Sigma,\Sigma)$ provided that $\hat\Sigma_Y$ is unbiased and $\hat\Sigma$ and $\hat\Sigma_Y$ are estimated from independent samples.  Note that $\hat\Sigma$ does not need to be unbiased.  
 
 In practice, recording a separate independent sample may not be sensible.  Instead, the recorded data a split into a training sample and validation sample.  One popular approach is $K$-fold \emph{cross-validation}, in which the data are split into $K$ roughly equal-sized subsets.  Each subset then successively serves as the validation  sample while the rest of the data make up the training sample. This procedure yields $k$ estimates of the loss, although not quite independent. 
