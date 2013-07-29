@@ -64,7 +64,7 @@ r_\gamma =  b_\gamma^2 + \varepsilon_\gamma^2
 
 With other loss functions, the risk is also an increasing function of the two components, although is not generally the sum.
 
-Regularization is the game of minimizing risk $r_\gamma$ by reducing estimation error $\varepsilon_\gamma$ at the cost of increased bias $b_\gamma$, the \emph{bias-variance tradeoff}.  
+Regularization is the game of minimizing risk $r_\gamma$ by reducing estimation error $\varepsilon_\gamma$ at the cost of increased bias $b_\gamma$, the \emph{bias-variance tradeoff}.  \TODO{This point can be untuitive.  For example, \cite{Varoquaux:2012} misrepresents the effect of regularization by stating that regularization removes the upward bias of correlations in the sample covariance matrix. In reality, regularization should start with an unbiased estimator and bias it toward a low-variance target so that the estimation risk is reduced. Another important point is ``Stein's paradox'': regularization does not improve the estimate of each covariance. In fact, it makes it worse. Regularization only improves the risk when measured on the entire matrix. Regularization should not be used to improve the estimate of average correlations or the distribution of correlations.}
 We follow the convention that $\hat\Sigma_{\gamma=0}$ is the unbiased estimator $\hat\Sigma_0$, \emph{i.e.}\;$b_{\gamma=0}^2 = 0$.  Then as $\gamma$ increases, $\hat\Sigma_\gamma$ less variable but increasingly biased.  Thus $\hat\Sigma_\gamma$ defines the \emph{regularization path}, for which \emph{regularization intensity} $\gamma$ specifies the location along the path, which may be real-valued or discrete, or even a vector to steer the bias toward multiple targets.  
 
 \paragraph{Evaluation of estimators:}
