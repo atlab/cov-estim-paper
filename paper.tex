@@ -1,7 +1,7 @@
 \documentclass{frontiersSCNS} % for Science articles
 
 \usepackage{url,lineno}
-\usepackage{color,soul}
+\usepackage{color}
 \usepackage{enumerate}
 \linenumbers
 \usepackage{bbm}
@@ -11,6 +11,7 @@
 \newcommand{\mcond}{\,\middle\vert\,}
 \newcommand{\cond}{\,\vert\,}
 \newcommand{\T}{\intercal}
+\newcommand{\TODO}[1]{\emph{\tiny\color{RedViolet} #1}}
 \newcommand*\dif{\mathop{}\,d}
 
 % Leave a blank line between paragraphs instead of using \\
@@ -85,6 +86,7 @@ $^{3}$Department of Mathematics and Department of Biology and Biochemistry, Univ
 \input{sections/Simulation.tex}
 
 \section{Results}
+\input{sections/Results.tex}
 
 \section{Discussion}
 \input{sections/Discussion.tex}

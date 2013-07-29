@@ -1,6 +1,6 @@
 \subsection{Covariance estimation}
 
-\subsubsection{Problem setup}
+\paragraph{Problem setup:}
 
 Let $x_i \in \mathcal X, i=1\ldots,x_n$ denote a sample of consequtive observations of population activity of $p$ neurons in time bins $i$.  
 The activity of each neuron is the real-valued firing rate, thus  $\mathcal X = \mathbb R^{p\times 1}$.  
@@ -36,7 +36,7 @@ The usual unbiased estimate, the sample covariance matrix, rescales the plug-in 
 \end{equation}
 When observations are independent, then $d=1$.  But when nearby samples are correlated, the estimate of the mean absorbs more of the variance, becomes \emph{overdispersed}. As a result the covariances become underestimated. Then we can use $d=cn$ where $c>1$ is called the \emph{overdispersion coefficient}, which may be estimated from the data.
 
-\subsubsection{Bias-variance tradeoff}
+\paragraph{Variance-bias tradeoff:}
 Let $\hat\Sigma_\gamma$ be a family of approximate (biased) covariance estimates indexed by $\gamma$. To evaluate each estimate, let's define the \emph{loss function} $\mathcal L : \Theta \times \Theta \mapsto \mathbb R$ such that $\mathcal L(\hat S,S)$ is minimized when $\hat S = S$.  Then \emph{excess loss} $\ell(\hat S, S) = \mathcal L(\hat S, S) - \mathcal L(S,S)$ assumes zero at the minimum.
 
 The overall error or \emph{estimator risk} 
@@ -62,12 +62,12 @@ the bias-variance decomposition is the simple sum
 r_\gamma =  b_\gamma^2 + \varepsilon_\gamma^2
 \end{equation}
 
-With other loss functions, the risk is also an increasing function of the two components, although not generally the sum.
+With other loss functions, the risk is also an increasing function of the two components, although is not generally the sum.
 
 Regularization is the game of minimizing risk $r_\gamma$ by reducing estimation error $\varepsilon_\gamma$ at the cost of increased bias $b_\gamma$, the \emph{bias-variance tradeoff}.  
 We follow the convention that $\hat\Sigma_{\gamma=0}$ is the unbiased estimator $\hat\Sigma_0$, \emph{i.e.}\;$b_{\gamma=0}^2 = 0$.  Then as $\gamma$ increases, $\hat\Sigma_\gamma$ less variable but increasingly biased.  Thus $\hat\Sigma_\gamma$ defines the \emph{regularization path}, for which \emph{regularization intensity} $\gamma$ specifies the location along the path, which may be real-valued or discrete, or even a vector to steer the bias toward multiple targets.  
 
-\subsubsection{Evaluation of estimators}
+\paragraph{Evaluation of estimators:}
 Another popular loss  function for covariance estimation arises from the theory of normal distributions.  Under the assumption of normality  with zero mean, the log likelihood of the covariance matrix $\Sigma$ given the independent sample $z_1,\ldots,z_m$, with $S = \tfrac 1 m \sum\limits_{i=1}^m z_i z_i^\T$,  
 \begin{equation}
 L\left(\Sigma \mid S\right) = -\tfrac m 2 \ln(2\pi) - \tfrac m 2 \ln \det \Sigma - \tfrac m 2 \Tr(\Sigma^{-1} S)
@@ -87,7 +87,7 @@ The corresponding excess loss
 \end{equation}
 is known as \emph{entropy loss} \citep{James:1961}.
 
-Despite the fact that entropy loss is derived from normal theory, the choice of a loss function is not equivalent to assuming a specific form of $F$. The loss function only measures the distance between the estimate and the true value of a parameter of the true distribution but not the distance between distributions themselves. Minimizing the loss function improves the estimate under any true distribution.
+Despite the fact that entropy loss is derived from normal theory, the choice of a loss function is not equivalent to assuming a specific form of $F$. The loss function measures the discrepancy between distribution parameters rather than the distance between distributions. \TODO{explain Bregman divergence?} 
 
 In practice, the true covariance matrix $\Sigma$ is not available and the estimator risk must be estimated from data. This requires a separate \emph{validation} empirical distribution $\hat F_m^\prime$ of $m$ observations sampled from $F$ independently of the \emph{training} distribution $\hat F_n$. The we can produce an independent unbiased covariance estimate $\hat \Sigma_0(\hat F_m^\prime)$.
 
@@ -100,7 +100,7 @@ Then the \emph{empirical risk} is
 \begin{equation}
 \mathcal L\left(\hat S,\alpha S_1 + (1-\alpha)S_2\right) 
 \equiv 
-\alpha\mathcal L(\hat\Sigma,S_1) + (1-\alpha)\mathcal L(\hat S,S_2)
+\alpha\mathcal L(\hat S,S_1) + (1-\alpha)\mathcal L(\hat S,S_2)
 \end{equation}
 which allows bringing the expectation inside 
 \begin{equation}
@@ -123,7 +123,7 @@ In practice, recording a separate independent validation sample may not be sensi
 Different regularization schemes can then be compared by comparing cross-validated empirical losses.
 
  
-\subsubsection{Constructing a regularized estimator}
+\paragraph{Constructing a regularized estimator:}
 The task of designing a regularized estimators consists of defining a sequence of approximations $\hat\Sigma_\gamma$, called \emph{regularization path} and the optimal location on that path, \emph{regularization intensity} $\hat\gamma$ as  functions of the empirical distribution. 
 
 There are two basic approaches to design a family of approximations of a parameter that reduce the estimation error: \emph{dimensionality reduction} and \emph{shrinkage}.  
@@ -144,17 +144,18 @@ This approach results in forcing many of the coefficients in the inverse of the 
 
 Many regularization schemes combine multiple targets or multiple approaches, in which case $\gamma$ can become a vector of regularization parameters \citep{Schafer:2005,Fan:2011,Ma:2013} to be optimized in parallel.
 
-\subsubsection{Optimization of the regularization parameter}
+\paragraph{Optimization of the regularization parameter:}
 Analytic solutions when exist \citep{Ledoit:2004,Schafer:2005}, nested cross-validation otherwise.
 
-\subsubsection{Interpretation of revealed structure}
+\paragraph{Interpretation of revealed structure:}
 Sparseness (dimensionality reduction) are key, but must be supported by data, not emph{ad hoc}. \citep{Fan:2006,Malmersjo:2013}.
 
-\subsubsection{Out choices of regularized covariance estimates}
+\paragraph{Out choices of regularized covariance estimates:}
 \begin{enumerate}[\qquad 1.\;\;]
 \item sample covariance (benchmark)
-\item covariance shrinkage 
-\item factor model
+\item linear shrinkage toward identity 
+\item linear shrinkage toward a single-factor model.
+\item multifactor
 \item graphical lasso
 \item latent-variable graphical lasso
 \end{enumerate}
