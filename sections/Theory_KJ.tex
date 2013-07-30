@@ -1,0 +1,73 @@
+\subsection*{Problem setup}
+Let $x_1,\ldots,x_n \in \mathbb R^{p\times 1}$ denote a sample of $n$ observations of instantaneous activity (e.g.~spiking) rates of $p$ neurons averaged in time bins $i=1,\ldots,n$.  
+
+For simplicity, we assume that observations are sampled from a shared true distribution $x_1,\ldots,x_n \sim f$. 
+\hl{\tiny explain: the derivations remain valid even without such a strong assumption.  We account for overdispersion due to temporal dependence and shuffle chunks of data to account for nonstationarities.} 
+\Kcomment{Do the samples have to be independent?  I assume not, but does this complicate some
+of the explanation below?}
+
+For simplicity, we assume that the data have zero means. \Kcomment{This is confusing.  I think you are assuming
+that the true marginals have zero means.  The sample means will not be zero, right?  I'd say that data having zero
+means sample means are zero.}
+We seek to estimate the true covariance matrix 
+\begin{equation}
+\Sigma=\mathbb E_{z\sim f}[ zz^\T].
+\end{equation}
+
+The purpose of the estimation procedure is to use the sample $x_1,\ldots,x_n$ to compute a covariance estimate $S$ that is as close as possible to $\Sigma$. 
+The quality of the covariance estimate $S$ will be defined using a \emph{loss function} $\mathcal L\left(S, \Sigma\right)$, which is minimized when $S=\Sigma$. 
+
+In particular, we consider the mean-squared loss
+\begin{equation}
+\mathcal L_e( S, \Sigma) =  \| S - \Sigma\|^2_F 
+\end{equation}
+where $\| \cdot \|_F$ denotes the Frobenius norm;
+
+and the multivariate normal log likelihood loss
+\begin{equation}
+\mathcal L_g(S,\Sigma) = \ln |S| +  \Tr(S^{-1} \Sigma)
+\end{equation}
+where $|S|$ denotes the determinant of matrix $S$. \Kcomment{You may want to explain both of these.
+Again, keep the audience in mind.  First they may not know what the Frobenius norm is.  Second,
+they may appreciate a reminder of the log likelihood loss. You can give the above equation (3) as a
+special case then.}
+
+\hl{\tiny list other possible loss functions and justify the choice of these two. Consider Stein's entropy loss and qudratic loss.   James:1961 showed failures of the MSE loss, but it continued to be widely used. Fan:2008 provides other arguments.}
+
+
+The linearity of $\mathcal L_e(S,\Sigma)$ and $\mathcal L_g(S,\Sigma)$ with respect to the elements of $\Sigma$ allows unbiased empirical estimation of $\mathcal L$ from a validation sample $y_1,\ldots,y_m \sim f$ acquired independently of the original training sample $x_1,\ldots,x_n$ that was used to construct the estimate $S$.
+\begin{equation}
+\begin{split}
+\mathcal L(S,\Sigma) & \equiv \mathbb E_{z\sim f} \left[ \mathcal L(S,zz^\T) \right] \\ 
+&\approx \frac 1 m \sum\limits_{i=1}^m \mathcal L(S,y_i y_i^\T) = \mathcal L(S,\hat S_y)
+\end{split}
+\end{equation}
+where $\hat S_y = \frac 1 m \sum\limits_{i=1}^m x_i x_i^\T$ is the empirical covariance of the validation dataset. 
+\Kcomment{I think the previous is too terse.  I think you should explain the validation sample.}
+
+\hl{\tiny cross-validation}
+In practice, neural recordings are limited.   Instead of validation with a dedicated validation dataset, $K$-fold cross-validation is used: The data are split into $K$ subsets of approximately equal size and each subset is used as the validation set with the covariance estimator trained on the remaning data.  The estimation of the loss from the $K$ tests is then averaged, which is justified, again, thanks to the linearity property of the chosen loss functions. 
+\hl{\tiny exlain how the data are split into continuous chunks so that dependences between the training and validation datasets due to temporal correlations are minimized.  Coversely, each test set comprises multiple distirbuted chunks to reduce the effect of non-stationarities.}
+ 
+ \Kcomment{Will you explain double cross-validation?}
+ 
+\subsection*{Covariance estimators}
+It has long been recognized that the empirical covariance 
+\begin{equation}
+\hat S = \frac 1 n \sum\limits_{i=1}^n x_i x_i^\T
+\end{equation}
+is statistically inadmissible, meaning that larger sample sizes are required to reduce the loss function to the same level as other, more statistically efficient covariance estimators. \Kcomment{I am not quite sure what this implies. Inadmissible 
+seems to mean that you can never use it.  Is this what you want to say?}
+
+Covariance estimators can be made more efficient using two broad approaches, which are not mutually exclusive: (1) deliberately bias the estimator in order to reduce its variability and (b) reduce the dimensionality of the estimator by choosing a specific parametric model. 
+
+\subsubsection*{Shrinkage estimators}
+The most familiar example of the first approach is the linear shrinkage estimator, calculated is a linear mixture of the empirical covariance estimate $\hat S$ and another low-variance target estimator $T$:
+\begin{equation}
+S_{shrink} = (1-\lambda) \hat S + \lambda T
+\end{equation}
+A popular target covariance is the identity matrix scaled by the mean sample variance  $T = \frac 1 p \Tr(\hat S) I$.
+The optimal value of shrinkage estimate with respect to $\mathcal L_e$ can be estimated analytically from the data \citep{Ledoit:2004,Schafer:2005}.  
+
+\subsubsection*{Dimensionality reduction}
+The second broad approach is to impose a structure on the covariance estimate by reducing the number of free parameters in one of its parameterizations. 
