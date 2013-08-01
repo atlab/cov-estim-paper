@@ -1,4 +1,4 @@
-\subsection{Covariance estimation}
+\subsection{Theory and notation}
 
 \paragraph{Problem setup:}
 
@@ -68,7 +68,7 @@ Regularization is the game of minimizing risk $r_\gamma$ by reducing estimation 
 We follow the convention that $\hat\Sigma_{\gamma=0}$ is the unbiased estimator $\hat\Sigma_0$, \emph{i.e.}\;$b_{\gamma=0}^2 = 0$. 
 We define a sequence of approximations $\hat\Sigma_\gamma$ that become less variable as as $\gamma$ increases, which is usually accompanies by increased bias. Then $\hat\Sigma_\gamma$ defines the \emph{regularization path}, for which \emph{regularization intensity} $\gamma$ specifies the location along the path, which may be real-valued or discrete, or even a vector to steer the bias toward multiple targets.  
 
-An unbiased estimate does not guarantee lack of bias in nonlinear functions of that estimate: $\mathbb E\left[\hat\Sigma_0\right]=0 \centernot\implies  E\left[\varphi(\hat\Sigma_0\right)]=0$, where $\varphi$ is a nonlinear function. 
+An unbiased estimate does not guarantee lack of bias in nonlinear functions of that estimate: $\mathbb E\left[\hat\Sigma_0\right]=\Sigma \centernot\implies  E\left[\varphi(\hat\Sigma_0)\right]=\varphi(\Sigma)$, where $\varphi$ is a nonlinear function. For example, if $u_{\max}(S)$ is the largest eigevalue of square matrix $S$, then $\mathbb E\left[u_{\max}(\hat\Sigma_0)\right] > u_{\max}(\Sigma)$. Some regularization schemes have been designed to correct for the eigenspectrum bias  at the cost of adding bias to covariance coefficients \citep{Ledoit:2004}.
 
 \paragraph{Evaluation of estimators:}
 Another popular loss  function for covariance estimation arises from the theory of normal distributions.  Under the assumption of normality  with zero mean, the log likelihood of the covariance matrix $\Sigma$ given the independent sample $z_1,\ldots,z_m$, with $S = \tfrac 1 m \sum\limits_{i=1}^m z_i z_i^\T$,  
@@ -126,7 +126,7 @@ In practice, recording a separate independent validation sample may not be sensi
 Different regularization schemes can then be compared by comparing cross-validated empirical losses.
 
  
-\paragraph{Constructing a regularized estimator:}
+\subsection{Regularized covariance estimates}
 The task of designing a regularized estimators consists of defining a sequence of approximations $\hat\Sigma_\gamma$, called \emph{regularization path} and the optimal location on that path, \emph{regularization intensity} $\hat\gamma$ as  functions of the empirical distribution. 
 
 There are two basic approaches to design a family of approximations of a parameter that reduce the estimation error: \emph{dimensionality reduction} and \emph{shrinkage}.  
