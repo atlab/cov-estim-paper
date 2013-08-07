@@ -126,7 +126,7 @@ In practice, recording a separate independent validation sample may not be sensi
 Different regularization schemes can then be compared by comparing cross-validated empirical losses.
 
  
-\subsection{Regularized covariance estimates}
+\subsection{Regularization of covariance estimates}
 The task of designing a regularized estimators consists of defining a sequence of approximations $\hat\Sigma_\gamma$, called \emph{regularization path} and the optimal location on that path, \emph{regularization intensity} $\hat\gamma$ as  functions of the empirical distribution. 
 
 There are two basic approaches to design a family of approximations of a parameter that reduce the estimation error: \emph{dimensionality reduction} and \emph{shrinkage}.  
@@ -162,4 +162,12 @@ Sparseness (dimensionality reduction) are key, but must be supported by data, no
 \item graphical lasso
 \item latent-variable graphical lasso
 \end{enumerate}
+
+\textbf{Figure 2.}{
+Gaussian Graphical models corresponding to the low-dimensional targets of the four regularization schemes used in the paper.
+\textbf{A}: A diagonal matrix corresponds to a Gaussian graphical model with no dependencies. 
+\textbf{B}: In factor analysis, observed nodes are assumed to be influenced by several latent units (``factors") but are otherwise independent. 
+\textbf{C}: The Gaussian graphical model (also known as the Gaussian Markov Field), correlations arise from pairwise interactions between 
+\textbf{D}: A similar covariance matrix with sparse + low-rank inverse with 3 latent units.
+}\label{fig:02}
 
