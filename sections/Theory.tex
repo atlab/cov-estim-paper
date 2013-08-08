@@ -1,6 +1,18 @@
-\subsection{Theory and notation}
+\subsection{Overview}
+Given a finite sample, the \emph{sample covariance matrix} $\hat\Sigma_0$ is the usual estimator of the \emph{true covariance matrix} $\Sigma$ of the underlying random process.  $\hat\Sigma_0$ is unbiased but, with finite sample sizes, not as close to $\Sigma$ as possible.  More \emph{efficient} estimators can be constructed by \emph{regularization}, which is the deliberate biasing of the usual estmate toward a different, low-dimensional parametric \emph{target estimate} $\hat T$. 
+Target estimates are biased approximations because they cannot represent an arbitrary $\Sigma$, but they also have lower random variability.
+Regularization reduces the overall error by striking a favorable balance between the variance  (\emph{estimation error}) and the bias \emph{(approximation error)} of the estimate.  
+  
+Regularization requires making the following three choices: 
+\begin{enumerate}[  1. ]
+\item define a set of low-dimensional target estimates
+\item given the data, select the optimal target estimate from the set 
+\item given the data, select the optimal amount of biasing toward the target estimate
+\end{enumerate}
+The first choice, the selection of the general form of target estimates, must be made \emph{a priori}.  Curiously, \emph{some} improvement can be produced with an arbitrary target estimate as long as its variance is lower than that of the unbiased estimator.  The perplexing fact that estimates can be improved by biasing toward an arbitrary less variable target is known as \emph{Stein's paradox} \citep{Efron:1977}.  
 
-\paragraph{Problem setup:}
+
+\subsection{Probabilistic framework}
 
 Let $x_i \in \mathcal X, i=1\ldots,x_n$ denote a sample of consequtive observations of population activity of $p$ neurons in time bins $i$.  
 The activity of each neuron is the real-valued firing rate \TODO{Need to define rate more precisely}, thus  $\mathcal X = \mathbb R^{p\times 1}$.  
@@ -10,7 +22,7 @@ We assume that observations are drawn from some true cumulative probability dist
 \end{equation}
 where $\mathbf 1(x \ge x_i)$ is the indicator function which equals 1 when all elements of $x$ are greater than the corresponding elements of $x_i$ and 0 otherwise. \TODO{KJ: Are you using cumulative distributions to avoid binning? DY: Yes. Many theorems such as Glivenko-Catelli Theorem and Skorohod's Representation are proven using  cumulative representation. The empirical distribution is nearly always represented in its cumulative form. Expressing convergence is requires binning or using cumulative; the latter is simpler.}
 
-The observations need not be independently and identically sampled from $F$. The only assumption is that the data generating process is ergodic, \emph{i.e.}\;that $\max_x \left[\hat F_n(x) - F(x)\right] \to 0$ as the sample size $n$ increases. Then each $x_i$ can be thought to be drawn from $F$ when not conditioned on nearby observations.
+The observations need not be independently and identically sampled from $F$. The only assumption is that the data generating process is ergodic, \emph{i.e.}\;that $\max\limits_x \left[\hat F_n(x) - F(x)\right] \to 0$ as the sample size $n$ increases. Then each $x_i$ can be thought to be drawn from $F$ when not conditioned on nearby observations.
 
 The true covariance matrix $\Sigma \in \Theta$ is defined as a function of the true probability distribution
 \begin{equation}
@@ -36,7 +48,7 @@ The usual unbiased estimate, the sample covariance matrix, rescales the plug-in 
 \end{equation}
 When observations are independent, then $d=1$.  But when nearby samples are correlated, the estimate of the mean absorbs more of the variance, becomes \emph{overdispersed}. As a result the covariances become underestimated. Then we can use $d=cn$ where $c>1$ is called the \emph{overdispersion coefficient}, which may be estimated from the data.
 
-\paragraph{Variance-bias tradeoff:}
+\subsection{Measures of error}
 Let $\hat\Sigma_\gamma$ be a family of approximate (biased) covariance estimates indexed by $\gamma$. To evaluate each estimate, let's define the \emph{loss function} $\mathcal L : \Theta \times \Theta \mapsto \mathbb R$ such that $\mathcal L(\hat S,S)$ is minimized when $\hat S = S$.  Then \emph{excess loss} $\ell(\hat S, S) = \mathcal L(\hat S, S) - \mathcal L(S,S)$ assumes zero at the minimum. \TODO{This is too abstract -- need to motivate with some examples maybe}
 
 The overall error or \emph{estimator risk} 
@@ -163,11 +175,18 @@ Sparseness (dimensionality reduction) are key, but must be supported by data, no
 \item latent-variable graphical lasso
 \end{enumerate}
 
-\textbf{Figure 2.}{
+
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{figures/Figure2.pdf}
+\caption{
+%\textbf{Figure 2.}{
 Gaussian Graphical models corresponding to the low-dimensional targets of the four regularization schemes used in the paper.
 \textbf{A}: A diagonal matrix corresponds to a Gaussian graphical model with no dependencies. 
 \textbf{B}: In factor analysis, observed nodes are assumed to be influenced by several latent units (``factors") but are otherwise independent. 
-\textbf{C}: The Gaussian graphical model (also known as the Gaussian Markov Field), correlations arise from pairwise interactions between 
-\textbf{D}: A similar covariance matrix with sparse + low-rank inverse with 3 latent units.
+\textbf{C}: In the Gaussian graphical model (also known as the Gaussian Markov Field), correlations arise from sparse pairwise linear interactions between visible units. 
+\textbf{D}: In the Gaussian graphical model with latent units, correlations arise  between pairs of nodes 
 }\label{fig:02}
+%}
+\end{figure}
 
