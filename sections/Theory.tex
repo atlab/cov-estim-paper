@@ -3,7 +3,7 @@ Given a finite sample, the \emph{sample covariance matrix} $\hat\Sigma_0$ is the
 Target estimates are biased approximations because they cannot represent an arbitrary $\Sigma$, but they also have lower random variability.
 Regularization reduces the overall error by striking a favorable balance between the variance  (\emph{estimation error}) and the bias \emph{(approximation error)} of the estimate.  
   
-Regularization requires making the following three choices: 
+A regularized estimate requires the following three choices: 
 \begin{enumerate}[  1. ]
 \item define a set of low-dimensional target estimates
 \item given the data, select the optimal target estimate from the set 
@@ -13,7 +13,7 @@ The first choice, the selection of the general form of target estimates, must be
 
 
 \subsection{Probabilistic framework}
-
+\TODO{This section is not strictly necessary. It helps relate probabilistic models to our approach, which does not rely on an explicity probabilistic model.}
 Let $x_i \in \mathcal X, i=1\ldots,x_n$ denote a sample of consequtive observations of population activity of $p$ neurons in time bins $i$.  
 The activity of each neuron is the real-valued firing rate \TODO{Need to define rate more precisely}, thus  $\mathcal X = \mathbb R^{p\times 1}$.  
 We assume that observations are drawn from some true cumulative probability distribution $F: \mathcal X \mapsto R$. Then let $\hat F_n$ denote the empirical distribution function obtained from the observed sample, which itself is a random variable.
@@ -181,7 +181,7 @@ Sparseness (dimensionality reduction) are key, but must be supported by data, no
 \includegraphics[width=0.6\textwidth]{figures/Figure2.pdf}
 \caption{
 %\textbf{Figure 2.}{
-Gaussian Graphical models corresponding to the low-dimensional targets of the four regularization schemes used in the paper.
+Graphical models corresponding to the low-dimensional targets of the four regularization schemes used in the paper.
 \textbf{A}: A diagonal matrix corresponds to a Gaussian graphical model with no dependencies. 
 \textbf{B}: In factor analysis, observed nodes are assumed to be influenced by several latent units (``factors") but are otherwise independent. 
 \textbf{C}: In the Gaussian graphical model (also known as the Gaussian Markov Field), correlations arise from sparse pairwise linear interactions between visible units. 
