@@ -30,15 +30,15 @@ But the usual estimator of the true covariance matrix $\Sigma$ is  the sample co
 where $c$ is the sum of temporal correlations \TODO{there must be a better description of this}. For independent observations, $c=1$;  $c>1$ when nearby samples are correlated; the value of $c$ can be estimated from the data.
 
 $\hat\Sigma_0$ is designed to be unbiased such that $\mathbb E\left[\hat\Sigma_0\right]=\Sigma$.
-Here and below, $\mathbb E[\cdot]$ denotes the expected value under the  unknown true distribution $F$. All variables with a hat (\emph{e.g.}\;$\hat \Sigma_0,\hat \mu$) are functions of the empirical distribution $\hat F_n$, which itself is a random variable.
+Here and througout, $\mathbb E[\cdot]$ denotes the expected value under the  unknown true distribution $F$. All variables with a hat (\emph{e.g.}\;$\hat \Sigma_0,\hat \mu$) are functions of the empirical distribution $\hat F_n$, which itself is a random variable.
 
-Nonlinear functions of an unbiased estimate can be biased: $\mathbb E\left[\hat\Sigma_0\right]=\Sigma \centernot\implies  E\left[\varphi(\hat\Sigma_0)\right]=\varphi(\Sigma)$.  For example, if $u_{\max}(S)$ is the largest eigevalue of square matrix $S$, then $\mathbb E\left[u_{\max}(\hat\Sigma_0)\right] > u_{\max}(\Sigma)$. Some estimators have been designed to correct for the eigenspectrum bias at the cost of adding bias to covariance coefficients \citep{Ledoit:2004}.
+Nonlinear functions of an unbiased estimate can be biased: $\mathbb E\left[\hat\Sigma_0\right]=\Sigma \centernot\implies  E\left[\varphi(\hat\Sigma_0)\right]=\varphi(\Sigma)$.  For example, if $u_{\max}(S)$ is the largest eigevalue of square matrix $S$, then $\mathbb E\left[u_{\max}(\hat\Sigma_0)\right] > u_{\max}(\Sigma)$. Some covariance matrix estimators are designed to correct for the eigenspectrum bias at the cost of adding bias to covariance coefficients \citep{Ledoit:2004}.
 
 
 
 
 \subsection{Loss function}
-The optimization of a covariance matrix estimate $\hat\Sigma$ is performed with respect to a \emph{loss function} $\mathcal L(\hat\Sigma,\Sigma)$, which expresses the discrepancy \TODO{right word?} between $\hat\Sigma$ and $\Sigma$ and attains its minimum when $\hat\Sigma=\Sigma$.  
+The optimization of a covariance matrix estimate $\hat\Sigma$ is performed with respect to a \emph{loss function} $\mathcal L(\hat\Sigma,\Sigma)$, which expresses the discrepancy between $\hat\Sigma$ and $\Sigma$ and attains its minimum when $\hat\Sigma=\Sigma$.  
 Then \emph{excess loss}  
 \begin{equation}
 \ell(\hat\Sigma,\Sigma) = \mathcal L(\hat\Sigma,\Sigma)-\mathcal L(\Sigma,\Sigma)
@@ -51,7 +51,7 @@ A particularly useful loss function is the mean squared error (MSE), which is pr
 \end{equation}
 The MSE is its own excess loss: $\ell_e(\hat\Sigma,\Sigma) \equiv \mathcal L_e(\hat\Sigma,\Sigma)$.
 
-The Gaussian loss function $\mathcal L_g$  arises from the theory of normal distributions. When observations are identically and independently distributed according to a multivariate normal distribution with zero means, the log likelihood of the covariance matrix $\Sigma$ with $\hat\Sigma = \frac 1 n \sum\limits_{i=1}^n x_i x_i^\T$ is  
+The Gaussian loss function $\mathcal L_g$  arises from the theory of multivariate normal distributions. When observations are identically and independently distributed according to a multivariate normal distribution with zero means, the log likelihood of the covariance matrix $\Sigma$ with $\hat\Sigma = \frac 1 n \sum\limits_{i=1}^n x_i x_i^\T$ is  
 \begin{equation}
 L\left(\Sigma \mid \hat\Sigma\right) = -\frac n 2 \ln(2\pi) - \frac n 2 \ln \det \Sigma - \frac n 2 \Tr(\Sigma^{-1} \hat \Sigma)
 \end{equation}
@@ -68,44 +68,72 @@ The corresponding excess loss
 \end{equation}
 is known as \emph{entropy loss} \citep{James:1961}.
 
-Despite the fact that entropy loss is derived from normal theory, the choice of a loss function is not equivalent to assuming a specific form of $F$. The loss function measures the discrepancy between distribution parameters rather than the distance between distributions. \TODO{explain Bregman divergence?} 
+Despite the fact that entropy loss is derived from normal theory, the choice of a loss function is not equivalent to assuming a specific form of $F$. The loss function measures the discrepancy between distribution parameters rather than the distance between the distributions themselves. \TODO{explain Bregman divergence?} 
 
-\subsection{Emprical loss}
+The expected value of excess loss is the \emph{estimator risk}:
+\begin{equation}\label{eq:risk}
+r = \mathbb E\left[\ell(\hat\Sigma,\Sigma)\right]
+\end{equation}
+The estimator risk is the primary quality criterion for covariance estimation. Estimator $\hat\Sigma_a$ is considered more \emph{efficient} than estimator $\hat\Sigma_b$ if $\hat\Sigma_a$ has lower risk for the given sample than $\hat\Sigma_b$.   \TODO{explain that the risk depends not only on $\hat\Sigma$ but also on the distribution of $\Sigma$ in the specific domain.}
 
+\subsection{Cross validation}
+In practice, the true covariance matrix $\Sigma$ is not accessible and the estimator risk $r$ must be estimated from data. This requires a separate \emph{validation} empirical distribution $\hat F_m^\prime$ of $m$ observations sampled from $F$ independently of the \emph{training} distribution $\hat F_n$. 
+Then let  $\hat \Sigma_0^\prime$ be the sample covariance obtained from $\hat F_m^\prime$. 
 
-
-\subsection{Variance/bias decomposition}
-the variance-bias decomposition is the simple sum
+Then the \emph{empirical loss} of $\hat\Sigma$ is $\mathcal L(\hat\Sigma,\hat\Sigma_0)$ and its expectation is the \emph{empirical risk}  
 \begin{equation}
-r_\gamma =  b_\gamma^2 + \varepsilon_\gamma^2
+\hat r = \mathbb E\left[\mathcal L(\hat\Sigma,\hat\Sigma_0^\prime)\right]
 \end{equation}
 
-
-
-
-Let $\hat\Sigma_\gamma$ be a family of approximate (biased) covariance estimates indexed by $\gamma$. To evaluate each estimate, let's define the \emph{loss function} $\mathcal L : \Theta \times \Theta \mapsto \mathbb R$ such that $\mathcal L(\hat S,S)$ is minimized when $\hat S = S$.  Then \emph{excess loss} $\ell(\hat S, S) = \mathcal L(\hat S, S) - \mathcal L(S,S)$ assumes zero at the minimum. \TODO{This is too abstract -- need to motivate with some examples maybe}
-
-The overall error or \emph{estimator risk} 
+ The two loss functions $\mathcal L_e(\hat\Sigma,\Sigma)$ and $\mathcal L_g(\hat\Sigma,\Sigma)$ are particularly suitable for risk estimation thanks to their linearity with respect to $\Sigma$ in the sense that 
 \begin{equation}
-r_\gamma = \mathbb E\left[ \ell\left(\hat\Sigma_\gamma,\Sigma\right) \right]
+\mathcal L\left(\hat\Sigma,\alpha S_1 + (1-\alpha)S_2\right) 
+\equiv 
+\alpha\mathcal L(\hat \Sigma,S_1) + (1-\alpha)\mathcal L(\hat \Sigma,S_2)
 \end{equation}
-can be decomposed into \emph{approximation error} or \emph{bias}   
+which allows bringing the expectation inside the empirical loss function:
 \begin{equation}
-b_\gamma^2 = \ell \left( \mathbb E\left[\hat \Sigma_\gamma\right],\Sigma\right)
+\hat r = 
+\mathbb E\left[ \mathcal L(\hat\Sigma, \hat\Sigma_0^\prime) \right] 
+=
+\mathbb E\left[ \mathcal L\left(\hat\Sigma, \mathbb E\left[\hat\Sigma_0^\prime\right]\right) \right] 
+=
+\mathbb E\left[ \mathcal L(\hat\Sigma, \Sigma) \right] 
+= 
+r + \mathcal L(\Sigma,\Sigma)
+\end{equation}
+This means, that the empirical loss $\mathcal L(\hat\Sigma,\hat\Sigma_0^\prime)$ is an unbiased estimate of the estimator risk $r$ (up to a constant offset): minimization of the empirical loss implies minimization of the true estimator risk. 
+
+Recording a separate independent validation sample is usually not sensible.  Instead, the recorded data are split into a training sample and validation sample. In $K$-fold \emph{cross-validation} the data are split into $K$ roughly equal-sized subsets. Each subset then successively serve as the testing sample while the remainder of the data serves as the training sample.  This procedure produces $K$ estimates of the  risk, which are then averaged together to produce a better averaged estimate.
+
+
+\subsection{Bias/variance decomposition}
+The estimator risk (\autoref{eq:risk}) can be decomposed into \emph{approximation error} or \emph{bias}   
+\begin{equation}
+b^2 = \ell \left( \mathbb E[\hat \Sigma],\Sigma\right)
 \end{equation}
 and \emph{estimation error} or \emph{variance}
 \begin{equation}
-\varepsilon_\gamma^2 = \mathbb E \left[ \ell\left(\hat \Sigma_\gamma, 
-\mathbb E\left[\hat \Sigma_\gamma\right]\right) \right]
+\varepsilon^2 = \mathbb E \left[ \ell\left(\hat \Sigma, 
+\mathbb E[\hat \Sigma]\right) \right]
 \end{equation}
 
+Under the MSE loss function $\mathcal L_e$, the decomposition is the simple sum $r = b^2 + \varepsilon^2$. 
+Under other loss functions, $r$ is an increasing function of both $b^2$ and $\varepsilon^2$ although not generally a simple sum.  
+\TODO{As far as I know, the terms `bias' and `variance' are only applicable under a quadratic loss function  like $\mathcal L_e$.  Under other loss functions, we may need to use approximation/estimation error.} 
 
-With other loss functions, the risk is also an increasing function of the two components, although is not generally the sum.
+The sample covariance matrix $\hat\Sigma_0$ has zero bias but high variance. Other estimators may be biased but have lower estimation error and potentially lower risk.
 
 
+\subsection{Regularized estimators}
 
-  
-\subsection{Target estimates}
+\emph{Regularization} is the deliberate biasing of the unbiased estimate toward a less variable low-dimensional \emph{target estimate} $\hat T$ in order to strike a favorable balance between bias and variance and minimize the estimator risk.  A regularized covariance matrix estimator must solve two problems: (a) choose and fit the target covariate estimate $\hat T$ and (b) mix $\hat\Sigma_0$ with $\hat T$ by the optimal amount. Regularized covariance matrix estimates can be generally expressed as 
+\begin{equation}
+\hat\Sigma_{d,\lambda} = mix(\Sigma_0,\hat T_{\hat d},\hat\lambda) 
+\end{equation}
+where $\hat d$ indicates the choice of the target estimate from the family of target estimates $T_d$ and $\hat \lambda$ regulates the amount biasing of $\hat\Sigma_0$ toward $\hat T$.
+Both $\hat d$ and $\hat \lambda$ must be calculated from the training sample. 
+
 A good target estimate is one that has low dimensionality to reduce its variance while still allowing to accurately match typical covariance matrices in the given domain. 
 
 A regularized estimate requires the following three choices: 
@@ -127,38 +155,6 @@ We define a sequence of approximations $\hat\Sigma_\gamma$ that become less vari
 
 \paragraph{Evaluation of estimators:}
 
-In practice, the true covariance matrix $\Sigma$ is not available and the estimator risk must be estimated from data. This requires a separate \emph{validation} empirical distribution $\hat F_m^\prime$ of $m$ observations sampled from $F$ independently of the \emph{training} distribution $\hat F_n$. The we can produce an independent unbiased covariance estimate $\hat \Sigma_0(\hat F_m^\prime)$.
-
-Then the \emph{empirical risk} is 
-\begin{equation}
-\hat r_\gamma = \mathcal L\left(\hat\Sigma_\gamma,\hat\Sigma_0(\hat F_m^\prime)\right) 
-\end{equation}
-
- The two loss functions $\mathcal L_e(\hat S,S)$ and $\mathcal L_g(\hat S,S)$ are particularly suitable for empirical risk estimation thanks to their linearity with respect to $S$ in the sense that 
-\begin{equation}
-\mathcal L\left(\hat S,\alpha S_1 + (1-\alpha)S_2\right) 
-\equiv 
-\alpha\mathcal L(\hat S,S_1) + (1-\alpha)\mathcal L(\hat S,S_2)
-\end{equation}
-which allows bringing the expectation inside 
-\begin{equation}
-\mathbb E\left[ \mathcal L\left(\hat\Sigma_r, \hat\Sigma_0(\hat F_m^\prime)\right) \right] 
-=
-\mathbb E\left[ \mathcal L\left(\hat\Sigma_\gamma, \mathbb E\left[\Sigma_0(\hat F_m^\prime)\right]\right) \right] 
-=
-\mathbb E\left[ \mathcal L\left(\hat\Sigma_\gamma, \Sigma\right) \right] 
-\end{equation}
-Then the expectation of the empirical risk is 
-\begin{equation}
-\mathbb E\left[\hat r_\gamma\right] 
-= \mathbb E\left[\mathcal L(\hat\Sigma_\gamma,\Sigma)\right]
-= r_\gamma + \mathcal L(\Sigma,\Sigma)
-\end{equation}
-This means, that our goal of minimizing the true loss $r_\gamma$ can be replaced with minimizing  the empirical loss $\hat r_\gamma$.
-
-In practice, recording a separate independent validation sample may not be sensible.  Instead, the recorded data a split into a training sample and validation sample. In $K$-fold \emph{cross-validation} the data are split into $K$ roughly equal-sized subsets. Each subset then successively serves to construct the validation distribution $\hat F_m^\prime$  while the rest of the data is used to construct the training distribution $\hat F_n$.  This procedure produces $K$ estimates of the empirical risk, which are then averaged together to produce a better, averaged, estimate of the true risk.
-
-Different regularization schemes can then be compared by comparing cross-validated empirical losses.
 
  
 \subsection{Regularization of covariance estimates}
