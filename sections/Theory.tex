@@ -37,7 +37,7 @@ Nonlinear functions of an unbiased estimate can be biased: $\mathbb E\left[\hat\
 
 
 
-\subsection{Loss function}
+\subsection{Loss functions and risk}
 The optimization of a covariance matrix estimate $\hat\Sigma$ is performed with respect to a \emph{loss function} $\mathcal L(\hat\Sigma,\Sigma)$, which expresses the discrepancy between $\hat\Sigma$ and $\Sigma$ and attains its minimum when $\hat\Sigma=\Sigma$.  
 Then \emph{excess loss}  
 \begin{equation}
@@ -125,14 +125,17 @@ Under other loss functions, $r$ is an increasing function of both $b^2$ and $\va
 The sample covariance matrix $\hat\Sigma_0$ has zero bias but high variance. Other estimators may be biased but have lower estimation error and potentially lower risk.
 
 
-\subsection{Regularized estimators}
+\subsection{Regularization}
 
-\emph{Regularization} is the deliberate biasing of the unbiased estimate toward a less variable low-dimensional \emph{target estimate} $\hat T$ in order to strike a favorable balance between bias and variance and minimize the estimator risk.  A regularized covariance matrix estimator must solve two problems: (a) choose and fit the target covariate estimate $\hat T$ and (b) mix $\hat\Sigma_0$ with $\hat T$ by the optimal amount. Regularized covariance matrix estimates can be generally expressed as 
+\emph{Regularization} is the deliberate biasing of the unbiased estimate toward a less variable low-dimensional \emph{target estimate} $\hat T$ in order to minimize the estimator risk by striking a favorable balance between bias and variance.
+A regularized covariance matrix estimator must solve two problems: (a) choose and fit the target covariate estimate $\hat T$ and (b) mix $\hat\Sigma_0$ with $\hat T$ by the optimal amount. 
+Regularized covariance matrix estimates can be generally expressed as 
 \begin{equation}
 \hat\Sigma_{d,\lambda} = mix(\Sigma_0,\hat T_{\hat d},\hat\lambda) 
 \end{equation}
-where $\hat d$ indicates the choice of the target estimate from the family of target estimates $T_d$ and $\hat \lambda$ regulates the amount biasing of $\hat\Sigma_0$ toward $\hat T$.
-Both $\hat d$ and $\hat \lambda$ must be calculated from the training sample. 
+where $\hat d$ indicates the choice of the target estimate from the family of target estimates $\hat T_d$. $mix(\cdot,\cdot,\hat\lambda)$ is the mixing function of $\hat\Sigma_0$ and $\hat T_{\hat d}$ in proportion controlled by $\hat \lambda$. Both $\hat d$ and $\hat \lambda$ must be calculated from the training sample. 
+
+A number of regularization schemes have been developed, which differ by their target estimates and mixing functions.  In this study, we evaluate four regularized estimators. 
 
 A good target estimate is one that has low dimensionality to reduce its variance while still allowing to accurately match typical covariance matrices in the given domain. 
 
