@@ -1,7 +1,7 @@
 \subsection{Basic concepts}
 Let $x_i \in \mathcal X, i=1\ldots,n$ denote a sample of consecutive observations of population activity of $p$ neurons in time bins $i$.  
 The activity of each neuron is denoted by the real-valued firing rate, thus  $\mathcal X = \mathbb R^{p\times 1}$.  
-For example, in our applicaiton, the firing rate is estimated from somatic calcium fluorescence signals with the mean stimulus response subtracted, making it possible for elements of $x_i$ to take on negative values. 
+For example, in our applicaiton, the firing rate is examplestimated from somatic calcium fluorescence signals with the mean stimulus response subtracted, making it possible for elements of $x_i$ to take on negative values. 
 
 We do not assume that the observations $x_i$ are independently distributed. Rather, the data generating process is assumed to be \emph{ergodic}, \emph{i.e.}\;described by a \emph{true distirbution} $F: \mathcal X \mapsto  \mathbb [0, 1]$ (cumulative) over long periods of time such that the \emph{empirical distribution} $\hat F_n$ from a given sample will convege to $F$ with increasing sample size $n$.
 
@@ -28,6 +28,7 @@ But the usual estimator of the true covariance matrix $\Sigma$ is  the sample co
 \hat\mu = \frac 1 n \sum\limits_{i=1}^n x_i
 \end{equation}
 where $c$ is the sum of temporal correlations \TODO{there must be a better description of this}. For independent observations, $c=1$;  $c>1$ when nearby samples are correlated; the value of $c$ can be estimated from the data.
+\TODO{Under the Gaussian loss, $\mathcal L_g$ (\autoref{eq:GaussLoss}) the scaling is irrelevant, so we will not spend any time talking about the scaling.  But it would be important if we used $\mathcal L_e$.} 
 
 $\hat\Sigma_0$ is designed to be unbiased such that $\mathbb E\left[\hat\Sigma_0\right]=\Sigma$.
 Here and througout, $\mathbb E[\cdot]$ denotes the expected value under the  unknown true distribution $F$. All variables with a hat (\emph{e.g.}\;$\hat \Sigma_0,\hat \mu$) are functions of the empirical distribution $\hat F_n$, which itself is a random variable.
@@ -46,7 +47,7 @@ Then \emph{excess loss}
 assumes zero at its minimum.
 
 A particularly useful loss function is the mean squared error (MSE), which is proportional to the square of the Frobenius  norm $\|\cdot\|_F$ of the difference between the matrices: 
-\begin{equation}
+\begin{equation}\label{eq:MSE}
 \mathcal L_e(\hat\Sigma,\Sigma) =\frac 1 p \|\hat\Sigma-\Sigma\|_F^2 = \frac 1 p \Tr\left((\hat \Sigma-\Sigma)(\hat\Sigma-\Sigma)^\T\right)
 \end{equation}
 The MSE is its own excess loss: $\ell_e(\hat\Sigma,\Sigma) \equiv \mathcal L_e(\hat\Sigma,\Sigma)$.
@@ -56,7 +57,7 @@ The Gaussian loss function $\mathcal L_g$  arises from the theory of multivariat
 L\left(\Sigma \mid \hat\Sigma\right) = -\frac n 2 \ln(2\pi) - \frac n 2 \ln \det \Sigma - \frac n 2 \Tr(\Sigma^{-1} \hat \Sigma)
 \end{equation}
 Then $\mathcal L_g$ is constructed by rescaling $L\left(\Sigma \mid \hat\Sigma\right)$ and dropping the constant term:
-\begin{equation}
+\begin{equation}\label{eq:GaussLoss}
 \mathcal L_g(\hat\Sigma,\Sigma) 
 =  -\frac 2 {pn} L\left(\Sigma \mid \hat\Sigma \right) - \frac 1 p \ln(2\pi) 
 \equiv  \frac 1 p\left(\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}) \right) 
@@ -118,7 +119,7 @@ and \emph{estimation error} or \emph{variance}
 \mathbb E[\hat \Sigma]\right) \right]
 \end{equation}
 
-Under the MSE loss function $\mathcal L_e$, the decomposition is the simple sum $r = b^2 + \varepsilon^2$. 
+Under the MSE loss function $\mathcal L_e$ (\autoref{eq:MSE}), the decomposition is the simple sum $r = b^2 + \varepsilon^2$. 
 Under other loss functions, $r$ is an increasing function of both $b^2$ and $\varepsilon^2$ although not generally a simple sum.  
 \TODO{As far as I know, the terms `bias' and `variance' are only applicable under a quadratic loss function  like $\mathcal L_e$.  Under other loss functions, we may need to use approximation/estimation error.} 
 
@@ -139,9 +140,9 @@ A number of regularization schemes have been developed, which differ by their ta
 
 In this study, we evaluate four regularized estimators whose target estimates correspond to the graphical models in Figure \ref{fig:02}: diagonal (A), multifactor (B), sparse partial correlations (C), and sparse  partial correlations with latent units (D).  The following describe each regularization scheme separately.
 
-\begin{figure}
+\begin{figure}[htp]
 \centering
-\includegraphics[width=0.6\textwidth]{figures/Figure2.pdf}
+\includegraphics[width=0.5\textwidth]{figures/Figure2.pdf}
 \caption{
 Graphical models corresponding to the low-dimensional targets of the four regularization schemes used in the paper.
 \textbf{A}: A diagonal matrix corresponds to a Gaussian graphical model with no dependencies. 
@@ -151,7 +152,7 @@ Graphical models corresponding to the low-dimensional targets of the four regula
 }\label{fig:02}
 \end{figure}
 
-\subsection{Estimator A: Shrinkage toward a diagonal}
+\subsection{Estimator A: Shrinkage toward diagonal}
 The most popular covariance regularization schemes use diagonal target estimates and linear shrinkage toward the target.  For example, the target could be the identity matrix:  
 \begin{equation}
 \hat T = \hat v I
@@ -166,67 +167,38 @@ where $\circ$ is the entrywise matrix product.
 
 Finally, the target could be a linear mixture of the common variance and independent variance targets
 \begin{equation}
-\hat T_\eta = (1-\eta)(\hat\Sigma_0 \circ I) + \eta\hat v I
+\hat T_{\hat\eta} = (1-\hat\eta)(\hat\Sigma_0 \circ I) + \hat\eta\hat v I
 \end{equation}
 
-The regularized estimator is the linear mixture of $\hat\Sigma_0$ and $\hat T_\eta$:
+The regularized estimator is the linear mixture of $\hat\Sigma_0$ and $\hat T_{\hat\eta}$:
 \begin{equation}
-\hat\Sigma_{\eta,\lambda} = (1-\lambda)\hat\Sigma_0 + \lambda \hat T_\eta 
+\hat\Sigma_{\hat\eta,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat\lambda \hat T_{\hat\eta} 
 \end{equation}
 
+The hyperparameters $\hat\eta$ and $\hat\lambda$ must be estimated from the data.  Under the MSE loss function $\mathcal L_e$ (\autoref{eq:MSE}), the optimal values of $\hat\eta$ and $\hat\lambda$ can be estimated analytically \citep{Ledoit:2004,Schafer:2005,Schaefer:2010}. However, these estimates are no longer optimal under the Guassian loss $\mathcal L_g$. \TODO{I have tested this and there was a substantial difference in both synthetic and empirical data}  When an analytical solution for optimal hyperparameters is not available, the optimal values can be found by cross validation, entirely within the the training sample. \TODO{explain nested cross-validation in more detail?}
+
+\TODO{Describe how the empirical loss is convex in the hyperparameters in this case}
 
 \subsection{Estimator B: Shrinkage toward a factor model}
+In estimator B, the target is a factor model, composed as the sum of a low-rank component $\hat L_{\hat d}\hat L_{\hat d}^\T$ and a diagonal matrix $\hat \Psi$:
+\begin{equation}
+\hat T_{\hat d} = \hat L_{\hat d} \hat L_{\hat d}^\T + \hat\Psi
+\end{equation}
+Here $\hat L_{\hat d}$ is an $p\times\hat d$ matrix and $\hat\Psi$ is diagonal.  
+
+If $F$ were assume to be multivariate normal \TODO{or other distributions that are defined by linear dependencies}, the factor model is corresponds to the graphical model (\autoref{fig:02}B) where the activity of all neurons are dependent only $\hat d$ latent units. This suggest a mechanistic interpretation in which the interactions between neurons are insignificant compared to the influence of inputs outside the recorded circuit.
+
+Just as in Estimator A, Estimator B is allowed to only partially commit to the low-dimensional target: the overall estimate is the linear mixture of the sample covariance and the target
+%\begin{equation}
+%\hat\Sigma_{\hat d,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat  
+%\end{equation}
+
+\TODO{Check \citep{Fan:2011,Fan:2006}}
 
 \subsection{Estimator C: Sparse partial correlations}
+\citep{Meinshausen:2006,Friedman:2008}
 
 \subsection{Estimator D: Sparse partial correlations with latent units}
+\citep{Ma:2013} 
 
-
-
-
-
-A good target estimate is one that has low dimensionality to reduce its variance while still allowing to accurately match typical covariance matrices in the given domain. 
-
-A regularized estimate requires the following three choices: 
-\begin{enumerate}[  1. ]
-\item define a set of low-dimensional target estimates
-\item given the data, select the optimal target estimate from the set 
-\item given the data, select the optimal amount of biasing toward the target estimate
-\end{enumerate}
-
-$\hat\Sigma_0$ is unbiased but, with finite sample sizes, not as close to $\Sigma$ as possible.  More \emph{efficient} estimators can be constructed by \emph{regularization}, which is the deliberate biasing of the usual estmate toward a less variable \emph{target estimate} $\hat T$. Target estimates are low-dimensional approximations cannot represent an arbitrary $\Sigma$, but they also have lower random variability.
-Regularization reduces the overall error by striking a favorable balance between the variance  (\emph{estimation error}) and the bias \emph{(approximation error)} of the estimate.  
-
-
-Regularization is the game of minimizing risk $r_\gamma$ by reducing estimation error $\varepsilon_\gamma$ at the cost of increased bias $b_\gamma$, the \emph{bias-variance tradeoff}.  
-We follow the convention that $\hat\Sigma_{\gamma=0}$ is the unbiased estimator $\hat\Sigma_0$, \emph{i.e.}\;$b_{\gamma=0}^2 = 0$. 
-We define a sequence of approximations $\hat\Sigma_\gamma$ that become less variable as as $\gamma$ increases, which is usually accompanies by increased bias. Then $\hat\Sigma_\gamma$ defines the \emph{regularization path}, for which \emph{regularization intensity} $\gamma$ specifies the location along the path, which may be real-valued or discrete, or even a vector to steer the bias toward multiple targets.  
-
- 
-\subsection{Regularization of covariance estimates}
-The task of designing a regularized estimators consists of defining a sequence of approximations $\hat\Sigma_\gamma$, called \emph{regularization path} and the optimal location on that path, \emph{regularization intensity} $\hat\gamma$ as  functions of the empirical distribution. 
-
-There are two basic approaches to design a family of approximations of a parameter that reduce the estimation error: \emph{dimensionality reduction} and \emph{shrinkage}.  
-
-Dimensionality reduction projects the estimate onto a low-dimensional manifold (subspace) within the $p(p+1)/2$-dimensional space of covariance matrices $\Theta$.  The variance in the projection is likely to be lower (if the manifold is smooth).  For example, factor analysis with $\nu$ factors projects (w.r.t.\;$\mathcal L_g$) $\hat\Sigma_0$ onto the low-dimensional manifold of covariance matrices representable by factor models. Thus factor analysis can be used as a regularized covariance estimator \citep{Fan:2008} with $\gamma$ controlling the number of factors (or, alternatively, the nuclear norm).  Another dimensionality reduction technique is \emph{covariance selection} \citep{Dempster:1972}, wherein a fraction of inverse covariance coefficients are constrained to zero and the closest (w.r.t.\;$\mathcal L_g$) solution to $\hat\Sigma_0$ is found. 
-
-Covariance shrinkage \citep{Schafer:2005,Ledoit:2004} uses a fixed, low-dimensional \emph{target estimate} $T$ and constructs the estimator as the linear mixture, with $\gamma \in [0,1]$,
-\begin{equation}
-\hat\Sigma_\gamma = \hat\Sigma_0  + \gamma (T-\hat\Sigma_0) 
-\end{equation}
- The target can be a diagonal matrix with sample variances, an identity matrix scaled to the mean variance, a single factor model, or any other low-dimensional estimate.
-
-An effective hybrid of dimensionality reduction and shrinkage can be obtained by using $L_1$-regularization techniques.  For example, graphical lasso \citep{Meinshausen:2006,Friedman:2008}, shrinks the inverse of the covariance toward zero as 
-\begin{equation}
-\hat\Sigma_\gamma = \arg\min\limits_S \mathcal L_g(S,\hat \Sigma_0) + \gamma \| S^{-1} \|_1
-\end{equation}
-This approach results in forcing many of the coefficients in the inverse of the estimate to zero, or ``sparsification'' of the the inverse.
-
-Many regularization schemes combine multiple targets or multiple approaches, in which case $\gamma$ can become a vector of regularization parameters \citep{Schafer:2005,Fan:2011,Ma:2013} to be optimized in parallel.
-
-\paragraph{Optimization of the regularization parameter:}
-Analytic solutions when exist \citep{Ledoit:2004,Schafer:2005}, nested cross-validation otherwise.
-
-\paragraph{Interpretation of revealed structure:}
-Sparseness (dimensionality reduction) are key, but must be supported by data, not emph{ad hoc}. \citep{Fan:2006,Malmersjo:2013}.
 
