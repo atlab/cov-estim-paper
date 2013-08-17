@@ -1,15 +1,15 @@
 \subsection{Basic concepts}
-Let $x_i \in \mathcal X, i=1\ldots,n$ denote a sample of consecutive observations of population activity of $p$ neurons in time bins $i$.  
+Let $x(t) \in \mathcal X, t=1\ldots,n$ denote a sample of consecutive observations of population activity of $p$ neurons in time bins $t$.  
 The activity of each neuron is denoted by the real-valued firing rate, thus  $\mathcal X = \mathbb R^{p\times 1}$.  
-For example, in our applicaiton, the firing rate is examplestimated from somatic calcium fluorescence signals with the mean stimulus response subtracted, making it possible for elements of $x_i$ to take on negative values. 
+For example, in our applicaiton, the firing rate is estimated from somatic calcium fluorescence signals with the mean stimulus response subtracted, making it possible for elements of $x(t)$ to take on negative and non-integer values. 
 
-We do not assume that the observations $x_i$ are independently distributed. Rather, the data generating process is assumed to be \emph{ergodic}, \emph{i.e.}\;described by a \emph{true distirbution} $F: \mathcal X \mapsto  \mathbb [0, 1]$ (cumulative) over long periods of time such that the \emph{empirical distribution} $\hat F_n$ from a given sample will convege to $F$ with increasing sample size $n$.
+We do not assume that the observations $x(t)$ are independently distributed. Rather, the data generating process is assumed to be \emph{ergodic}, \emph{i.e.}\;described by a \emph{true distirbution} $F: \mathcal X \mapsto  \mathbb [0, 1]$ (cumulative) over long periods of time such that the \emph{empirical distribution} $\hat F_n$ from a given sample will convege to $F$ with increasing sample size $n$.
 
 Formally, the emprical distribution is defined as \TODO{this may be unecessary, but I leave it for now.}
 \begin{equation}
-\hat F_n(x) = \frac 1 n \sum\limits_{i=1}^n \mathbf{1}(x \ge x_i)
+\hat F_n(x) = \frac 1 n \sum\limits_{t=1}^n \mathbf{1}(x \ge x(t))
 \end{equation}
-where $\mathbf 1(x \ge x_i)$ is the indicator function which equals 1 when all elements of $x$ are greater than the corresponding elements of $x_i$ and 0 otherwise. \TODO{KJ: Are you using cumulative distributions to avoid binning? DY: Yes. Many theorems such as Glivenko-Catelli Theorem and Skorohod's Representation are proven using  cumulative representation. The empirical distribution is nearly always represented in its cumulative form. Expressing convergence is requires binning or using cumulative; the latter is simpler.}
+where $\mathbf 1(x \ge x(t))$ is the indicator function which equals 1 when all elements of $x$ are greater than the corresponding elements of $x(t)$ and 0 otherwise. \TODO{KJ: Are you using cumulative distributions to avoid binning? DY: Yes. Many theorems such as Glivenko-Catelli Theorem and Skorohod's Representation are proven using  cumulative representation. The empirical distribution is nearly always represented in its cumulative form. Expressing convergence is requires binning or using cumulative; the latter is simpler.}
 
 And, for an ergodic process, $\max\limits_{x\in\mathcal X} \left|\hat F_n(x) - F(x)\right| \to 0$ as $n$ increases.
 
@@ -23,12 +23,12 @@ The domain $\Theta$ is the set of all positive-definite $p\times p$ matrices, wh
 
 But the usual estimator of the true covariance matrix $\Sigma$ is  the sample covariance matrix:
 \begin{equation}
-\hat\Sigma_0 =  \frac 1 {n-c} \sum\limits_{i=1}^n (x_i -\hat\mu) (x_i - \hat\mu)^\T
+\hat\Sigma_0 =  \frac 1 {n-c} \sum\limits_{t=1}^n (x(t) -\hat\mu) (x(t) - \hat\mu)^\T
 \quad\mbox{where}\;
-\hat\mu = \frac 1 n \sum\limits_{i=1}^n x_i
+\hat\mu = \frac 1 n \sum\limits_{t=1}^n x(t)
 \end{equation}
 where $c$ is the sum of temporal correlations \TODO{there must be a better description of this}. For independent observations, $c=1$;  $c>1$ when nearby samples are correlated; the value of $c$ can be estimated from the data.
-\TODO{Under the Gaussian loss, $\mathcal L_g$ (\autoref{eq:GaussLoss}) the scaling is irrelevant, so we will not spend any time talking about the scaling.  But it would be important if we used $\mathcal L_e$.} 
+\TODO{Under the Gaussian loss, $\mathcal L_g$ (\autoref{eq:GaussLoss}) the scaling is irrelevant, so we will not spend any time talking about the scaling.  But it would be important if we used $\mathcal L_e$ (\autoref{eq:MSE}).} 
 
 $\hat\Sigma_0$ is designed to be unbiased such that $\mathbb E\left[\hat\Sigma_0\right]=\Sigma$.
 Here and througout, $\mathbb E[\cdot]$ denotes the expected value under the  unknown true distribution $F$. All variables with a hat (\emph{e.g.}\;$\hat \Sigma_0,\hat \mu$) are functions of the empirical distribution $\hat F_n$, which itself is a random variable.
@@ -38,7 +38,7 @@ Nonlinear functions of an unbiased estimate can be biased: $\mathbb E\left[\hat\
 
 
 
-\subsection{Loss functions and risk}
+\subsection{Loss and risk}
 The optimization of a covariance matrix estimate $\hat\Sigma$ is performed with respect to a \emph{loss function} $\mathcal L(\hat\Sigma,\Sigma)$, which expresses the discrepancy between $\hat\Sigma$ and $\Sigma$ and attains its minimum when $\hat\Sigma=\Sigma$.  
 Then \emph{excess loss}  
 \begin{equation}
@@ -46,13 +46,13 @@ Then \emph{excess loss}
 \end{equation}
 assumes zero at its minimum.
 
-A particularly useful loss function is the mean squared error (MSE), which is proportional to the square of the Frobenius  norm $\|\cdot\|_F$ of the difference between the matrices: 
+A particularly useful loss function is the mean squared error (MSE), which is proportional to the square of the Frobenius  norm $\|\cdot\|_F$ of the difference between the two matrices: 
 \begin{equation}\label{eq:MSE}
 \mathcal L_e(\hat\Sigma,\Sigma) =\frac 1 p \|\hat\Sigma-\Sigma\|_F^2 = \frac 1 p \Tr\left((\hat \Sigma-\Sigma)(\hat\Sigma-\Sigma)^\T\right)
 \end{equation}
-The MSE is its own excess loss: $\ell_e(\hat\Sigma,\Sigma) \equiv \mathcal L_e(\hat\Sigma,\Sigma)$.
+Since $\mathcal L_e(\Sigma,\Sigma) \equiv 0$, the MSE is its own excess loss: $\ell_e(\hat\Sigma,\Sigma) \equiv \mathcal L_e(\hat\Sigma,\Sigma)$.
 
-The Gaussian loss function $\mathcal L_g$  arises from the theory of multivariate normal distributions. When observations are identically and independently distributed according to a multivariate normal distribution with zero means, the log likelihood of the covariance matrix $\Sigma$ with $\hat\Sigma = \frac 1 n \sum\limits_{i=1}^n x_i x_i^\T$ is  
+The Gaussian loss function $\mathcal L_g$  arises from the theory of multivariate normal distributions. When observations are identically and independently distributed according to a multivariate normal distribution with zero means, the log likelihood of the covariance matrix $\Sigma$ with $\hat\Sigma = \frac 1 n \sum\limits_{t=1}^n x(t) x(t)^\T$ is  
 \begin{equation}
 L\left(\Sigma \mid \hat\Sigma\right) = -\frac n 2 \ln(2\pi) - \frac n 2 \ln \det \Sigma - \frac n 2 \Tr(\Sigma^{-1} \hat \Sigma)
 \end{equation}
@@ -67,7 +67,7 @@ The corresponding excess loss
 \ell_g(\hat\Sigma,\Sigma) = \mathcal L_g(\hat\Sigma,\Sigma) - \mathcal L_g(\Sigma,\Sigma)  
 = \frac 1 p \left(-\ln \det (\hat \Sigma^{-1} \Sigma) + \Tr(\hat \Sigma^{-1}\Sigma)\right) - 1
 \end{equation}
-is known as \emph{entropy loss} \citep{James:1961}.
+is known as \emph{entropy loss} \citep{James:1961}. \TODO{The order of the operands is reversed. Check that it's okay.}
 
 Despite the fact that entropy loss is derived from normal theory, the choice of a loss function is not equivalent to assuming a specific form of $F$. The loss function measures the discrepancy between distribution parameters rather than the distance between the distributions themselves. \TODO{explain Bregman divergence?} 
 
@@ -151,54 +151,4 @@ Graphical models corresponding to the low-dimensional targets of the four regula
 \textbf{D}: In the Gaussian graphical model with latent units, correlations arise  between pairs of nodes 
 }\label{fig:02}
 \end{figure}
-
-\subsection{Estimator A: Shrinkage toward diagonal}
-The most popular covariance regularization schemes use diagonal target estimates and linear shrinkage toward the target.  For example, the target could be the identity matrix:  
-\begin{equation}
-\hat T = \hat v I
-\end{equation}
-where $\hat v = \frac 1 p \sum\limits_{i=1}^p(\hat\Sigma_0)_{ii}$ is the mean sample variance. 
-
-Alternatively, the target could contain the sample variances:
-\begin{equation}
-\hat T= \hat\Sigma_0 \circ I 
-\end{equation}
-where $\circ$ is the entrywise matrix product.
-
-Finally, the target could be a linear mixture of the common variance and independent variance targets
-\begin{equation}
-\hat T_{\hat\eta} = (1-\hat\eta)(\hat\Sigma_0 \circ I) + \hat\eta\hat v I
-\end{equation}
-
-The regularized estimator is the linear mixture of $\hat\Sigma_0$ and $\hat T_{\hat\eta}$:
-\begin{equation}
-\hat\Sigma_{\hat\eta,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat\lambda \hat T_{\hat\eta} 
-\end{equation}
-
-The hyperparameters $\hat\eta$ and $\hat\lambda$ must be estimated from the data.  Under the MSE loss function $\mathcal L_e$ (\autoref{eq:MSE}), the optimal values of $\hat\eta$ and $\hat\lambda$ can be estimated analytically \citep{Ledoit:2004,Schafer:2005,Schaefer:2010}. However, these estimates are no longer optimal under the Guassian loss $\mathcal L_g$. \TODO{I have tested this and there was a substantial difference in both synthetic and empirical data}  When an analytical solution for optimal hyperparameters is not available, the optimal values can be found by cross validation, entirely within the the training sample. \TODO{explain nested cross-validation in more detail?}
-
-\TODO{Describe how the empirical loss is convex in the hyperparameters in this case}
-
-\subsection{Estimator B: Shrinkage toward a factor model}
-In estimator B, the target is a factor model, composed as the sum of a low-rank component $\hat L_{\hat d}\hat L_{\hat d}^\T$ and a diagonal matrix $\hat \Psi$:
-\begin{equation}
-\hat T_{\hat d} = \hat L_{\hat d} \hat L_{\hat d}^\T + \hat\Psi
-\end{equation}
-Here $\hat L_{\hat d}$ is an $p\times\hat d$ matrix and $\hat\Psi$ is diagonal.  
-
-If $F$ were assume to be multivariate normal \TODO{or other distributions that are defined by linear dependencies}, the factor model is corresponds to the graphical model (\autoref{fig:02}B) where the activity of all neurons are dependent only $\hat d$ latent units. This suggest a mechanistic interpretation in which the interactions between neurons are insignificant compared to the influence of inputs outside the recorded circuit.
-
-Just as in Estimator A, Estimator B is allowed to only partially commit to the low-dimensional target: the overall estimate is the linear mixture of the sample covariance and the target
-%\begin{equation}
-%\hat\Sigma_{\hat d,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat  
-%\end{equation}
-
-\TODO{Check \citep{Fan:2011,Fan:2006}}
-
-\subsection{Estimator C: Sparse partial correlations}
-\citep{Meinshausen:2006,Friedman:2008}
-
-\subsection{Estimator D: Sparse partial correlations with latent units}
-\citep{Ma:2013} 
-
 

@@ -1,0 +1,66 @@
+\subsection{Estimator A: Shrinkage toward diagonal}
+The most popular covariance regularization schemes use diagonal target estimates and linear shrinkage toward the target.  For example, the target could be the identity matrix:  
+\begin{equation}
+\hat T = \hat v I
+\end{equation}
+where $\hat v = \frac 1 p \sum\limits_{i=1}^p(\hat\Sigma_0)_{ii}$ is the mean sample variance. 
+
+Alternatively, the target could contain the sample variances:
+\begin{equation}
+\hat T= \hat\Sigma_0 \circ I 
+\end{equation}
+where $\circ$ is the entrywise matrix product.
+
+Finally, the target could be a linear mixture of the common variance and independent variance targets
+\begin{equation}
+\hat T_{\hat\eta} = (1-\hat\eta)(\hat\Sigma_0 \circ I) + \hat\eta\hat v I
+\end{equation}
+
+The regularized estimator is the linear mixture of $\hat\Sigma_0$ and $\hat T_{\hat\eta}$:
+\begin{equation}
+\hat\Sigma_{\hat\eta,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat\lambda \hat T_{\hat\eta} 
+\end{equation}
+
+The hyperparameters $\hat\eta$ and $\hat\lambda$ must be estimated from the data.  Under the MSE loss function $\mathcal L_e$ (\autoref{eq:MSE}), the optimal values of $\hat\eta$ and $\hat\lambda$ can be estimated analytically \citep{Ledoit:2004,Schafer:2005,Schaefer:2010}. However, these estimates are no longer optimal under the Guassian loss $\mathcal L_g$. \TODO{I have tested this and there was a substantial difference in both synthetic and empirical data}  When an analytical solution for optimal hyperparameters is not available, the optimal values can be found by cross validation, entirely within the the training sample. \TODO{explain nested cross-validation in more detail?}
+
+\TODO{Describe how the empirical loss is convex in the hyperparameters in this case}
+
+\subsection{Estimator B: Shrinkage toward a factor model}
+In estimator B, the target is a factor model, composed as the sum of a low-rank component $\hat L_{\hat d}\hat L_{\hat d}^\T$ and a diagonal matrix $\hat \Psi$:
+\begin{equation}
+\hat T_{\hat d} = \hat L_{\hat d} \hat L_{\hat d}^\T + \hat\Psi
+\end{equation}
+Here $\hat L_{\hat d}$ is an $p\times\hat d$ matrix and $\hat\Psi$ is diagonal.  
+
+If $F$ were assume to be multivariate normal \TODO{or other distributions that are defined by linear dependencies}, the factor model is corresponds to the graphical model (\autoref{fig:02}B) where the activity of all neurons are dependent only $\hat d$ latent units. This suggest a mechanistic interpretation in which the interactions between neurons are insignificant compared to the influence of inputs outside the recorded circuit.
+
+Just as in Estimator A, Estimator B is allowed to commit to the low-dimensional target only partially: the overall estimate is the linear mixture of the sample covariance and the target
+\begin{equation}
+\hat\Sigma_{\hat d,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat  T_{\hat d}
+\end{equation}
+
+\TODO{Check \citep{Ledoit:2003,Fan:2011,Fan:2006}}
+
+\subsection{Estimator C: Sparse inverse}
+Assuming that $x$ is distributed normally, the inverse of the covariance matrix or \emph{precision matrix} $K=\Sigma^{-1}$ has special significance: zeros in the precision matrix indicate conditional independence between the corresponding pairs. To see this, let $x=(x_1,\ldots,x_p)^\T \sim g\left(x\cond K\right)$
+\begin{equation}
+g\left(x\cond K\right) = \frac 1 {Z(K)} \exp\left(-\frac 1 2 \sum\limits_{i=1}^p\sum\limits_{j=1}^p  K_{ij} x_i x_j\right)
+\end{equation} 
+If $K_{12}\equiv K_{21} = 0$, then the joint distribution of $x_1$ and $x_2$, conditioned on $x_3=a_3,\ldots,x_p=a_p$ can be decomposed as product of independent distributions of $x_1$ and $x_2$: 
+\begin{equation}
+\begin{split}
+g\left( x_1, x_2 \cond K, x_3=a_3,\ldots,x_p=a_p\right) &=
+\frac 1 {Z(K)} \exp\left(-\frac 1 2 \sum\limits_{i=3}^p\sum\limits_{j=3}^p  K_{ij} a_i a_j \right)\times
+\\
+ &  \exp\left( -\frac 1 2\left( K_{11} x_1^2 +  x_1\sum\limits_{i=3}^p K_{1i}a_i \right)  \right)
+\\
+ &  \exp\left( -\frac 1 2\left( K_{22} x_2^2 +  x_2\sum\limits_{i=3}^p K_{2i}a_i \right)  \right)
+\end{split}
+\end{equation}
+
+
+\citep{Dempster:1972,Meinshausen:2006,Friedman:2008}
+
+\subsection{Estimator D: Sparse inverse with latent units}
+\citep{Ma:2013} 
+
