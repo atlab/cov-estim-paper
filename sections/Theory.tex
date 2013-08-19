@@ -1,4 +1,4 @@
-\subsection{Basic concepts}
+\subsection*{Basic concepts}
 Let $x(t) \in \mathcal X, t=1\ldots,n$ denote a sample of consecutive observations of population activity of $p$ neurons in time bins $t$.  
 The activity of each neuron is denoted by the real-valued firing rate, thus  $\mathcal X = \mathbb R^{p\times 1}$.  
 For example, in our applicaiton, the firing rate is estimated from somatic calcium fluorescence signals with the mean stimulus response subtracted, making it possible for elements of $x(t)$ to take on negative and non-integer values. 
@@ -28,17 +28,17 @@ But the usual estimator of the true covariance matrix $\Sigma$ is  the sample co
 \hat\mu = \frac 1 n \sum\limits_{t=1}^n x(t)
 \end{equation}
 where $c$ is the sum of temporal correlations \TODO{there must be a better description of this}. For independent observations, $c=1$;  $c>1$ when nearby samples are correlated; the value of $c$ can be estimated from the data.
-\TODO{Under the Gaussian loss, $\mathcal L_g$ (\autoref{eq:GaussLoss}) the scaling is irrelevant, so we will not spend any time talking about the scaling.  But it would be important if we used $\mathcal L_e$ (\autoref{eq:MSE}).} 
+\TODO{Under the Gaussian loss, $\mathcal L_g$ (\ref{eq:GaussLoss}) the scaling is irrelevant, so we will not spend any time talking about the scaling.  But it would be important if we used $\mathcal L_e$ (\ref{eq:MSE}).} 
 
 $\hat\Sigma_0$ is designed to be unbiased such that $\mathbb E\left[\hat\Sigma_0\right]=\Sigma$.
 Here and througout, $\mathbb E[\cdot]$ denotes the expected value under the  unknown true distribution $F$. All variables with a hat (\emph{e.g.}\;$\hat \Sigma_0,\hat \mu$) are functions of the empirical distribution $\hat F_n$, which itself is a random variable.
 
-Nonlinear functions of an unbiased estimate can be biased: $\mathbb E\left[\hat\Sigma_0\right]=\Sigma \centernot\implies  E\left[\varphi(\hat\Sigma_0)\right]=\varphi(\Sigma)$.  For example, if $u_{\max}(S)$ is the largest eigevalue of square matrix $S$, then $\mathbb E\left[u_{\max}(\hat\Sigma_0)\right] > u_{\max}(\Sigma)$. Some covariance matrix estimators are designed to correct for the eigenspectrum bias at the cost of adding bias to covariance coefficients \citep{Ledoit:2004}.
+%Nonlinear functions of an unbiased estimate can be biased: $\mathbb E\left[\hat\Sigma_0\right]=\Sigma \centernot\implies  E\left[\varphi(\hat\Sigma_0)\right]=\varphi(\Sigma)$.  For example, if $u_{\max}(S)$ is the largest eigevalue of square matrix $S$, then $\mathbb E\left[u_{\max}(\hat\Sigma_0)\right] > u_{\max}(\Sigma)$. Some covariance matrix estimators are designed to correct for the eigenspectrum bias at the cost  of adding bias to covariance coefficients \cite{Ledoit:2004}.
 
 
 
 
-\subsection{Loss and risk}
+\subsection*{Loss and risk}
 The optimization of a covariance matrix estimate $\hat\Sigma$ is performed with respect to a \emph{loss function} $\mathcal L(\hat\Sigma,\Sigma)$, which expresses the discrepancy between $\hat\Sigma$ and $\Sigma$ and attains its minimum when $\hat\Sigma=\Sigma$.  
 Then \emph{excess loss}  
 \begin{equation}
@@ -67,7 +67,7 @@ The corresponding excess loss
 \ell_g(\hat\Sigma,\Sigma) = \mathcal L_g(\hat\Sigma,\Sigma) - \mathcal L_g(\Sigma,\Sigma)  
 = \frac 1 p \left(-\ln \det (\hat \Sigma^{-1} \Sigma) + \Tr(\hat \Sigma^{-1}\Sigma)\right) - 1
 \end{equation}
-is known as \emph{entropy loss} \citep{James:1961}. \TODO{The order of the operands is reversed. Check that it's okay.}
+is known as \emph{entropy loss} \cite{James:1961}. \TODO{The order of the operands is reversed. Check that it's okay.}
 
 Despite the fact that entropy loss is derived from normal theory, the choice of a loss function is not equivalent to assuming a specific form of $F$. The loss function measures the discrepancy between distribution parameters rather than the distance between the distributions themselves. \TODO{explain Bregman divergence?} 
 
@@ -77,7 +77,7 @@ r = \mathbb E\left[\ell(\hat\Sigma,\Sigma)\right]
 \end{equation}
 The estimator risk is the primary quality criterion for covariance estimation. Estimator $\hat\Sigma_a$ is considered more \emph{efficient} than estimator $\hat\Sigma_b$ if $\hat\Sigma_a$ has lower risk for the given sample than $\hat\Sigma_b$.   \TODO{explain that the risk depends not only on $\hat\Sigma$ but also on the distribution of $\Sigma$ in the specific domain.}
 
-\subsection{Cross validation}
+\subsection*{Cross validation}
 In practice, the true covariance matrix $\Sigma$ is not accessible and the estimator risk $r$ must be estimated from data. This requires a separate \emph{validation} empirical distribution $\hat F_m^\prime$ of $m$ observations sampled from $F$ independently of the \emph{training} distribution $\hat F_n$. 
 Then let  $\hat \Sigma_0^\prime$ be the sample covariance obtained from $\hat F_m^\prime$. 
 
@@ -108,8 +108,8 @@ This means, that the empirical loss $\mathcal L(\hat\Sigma,\hat\Sigma_0^\prime)$
 Recording a separate independent validation sample is usually not sensible.  Instead, the recorded data are split into a training sample and validation sample. In $K$-fold \emph{cross-validation} the data are split into $K$ roughly equal-sized subsets. Each subset then successively serve as the testing sample while the remainder of the data serves as the training sample.  This procedure produces $K$ estimates of the  risk, which are then averaged together to produce a better averaged estimate.
 
 
-\subsection{Bias/variance decomposition}
-The estimator risk (\autoref{eq:risk}) can be decomposed into \emph{approximation error} or \emph{bias}   
+\subsection*{Bias/variance decomposition}
+The estimator risk (\ref{eq:risk}) can be decomposed into \emph{approximation error} or \emph{bias}   
 \begin{equation}
 b^2 = \ell \left( \mathbb E[\hat \Sigma],\Sigma\right)
 \end{equation}
@@ -119,14 +119,14 @@ and \emph{estimation error} or \emph{variance}
 \mathbb E[\hat \Sigma]\right) \right]
 \end{equation}
 
-Under the MSE loss function $\mathcal L_e$ (\autoref{eq:MSE}), the decomposition is the simple sum $r = b^2 + \varepsilon^2$. 
+Under the MSE loss function $\mathcal L_e$ (\ref{eq:MSE}), the decomposition is the simple sum $r = b^2 + \varepsilon^2$. 
 Under other loss functions, $r$ is an increasing function of both $b^2$ and $\varepsilon^2$ although not generally a simple sum.  
 \TODO{As far as I know, the terms `bias' and `variance' are only applicable under a quadratic loss function  like $\mathcal L_e$.  Under other loss functions, we may need to use approximation/estimation error.} 
 
 The sample covariance matrix $\hat\Sigma_0$ has zero bias but high variance. Other estimators may be biased but have lower estimation error and potentially lower risk.
 
 
-\subsection{Regularization}
+\subsection*{Regularization}
 
 \emph{Regularization} is the deliberate biasing (`shrinkage') of the unbiased estimate toward a less variable low-dimensional \emph{target estimate} $\hat T$ in order to minimize the estimator risk by striking a favorable balance between bias and variance.
 A regularized covariance matrix estimator must solve two problems: (a) choose and fit the target covariate estimate $\hat T$ and (b) mix $\hat\Sigma_0$ with $\hat T$ by the optimal amount. 
@@ -136,7 +136,7 @@ Regularized covariance matrix estimates can be generally expressed as
 \end{equation}
 where $\hat d$ indicates the choice of the target estimate from the family of target estimates $\hat T_d$. $mix(\cdot,\cdot,\hat\lambda)$ is the mixing function of $\hat\Sigma_0$ and $\hat T_{\hat d}$ in proportion controlled by $\hat \lambda$. Both $\hat d$ and $\hat \lambda$ must be calculated from the training sample. 
 
-A number of regularization schemes have been developed, which differ by their target estimates and mixing functions.    Curiously, \emph{some} improvement can be produced with an arbitrary target estimate as long as its variance is lower than that of $\hat\Sigma_0$.  The perplexing phenomenon that estimates can be improved by a bias toward an arbitrary less variable target is known as \emph{Stein's paradox} \citep{Efron:1977}.   \TODO{This point can be untuitive.  For example, \cite{Varoquaux:2012} misrepresents the effect of regularization by stating that regularization removes the upward bias of correlations in the sample covariance matrix. In reality, regularization should start with an unbiased estimator and bias it toward a low-variance target so that the estimation risk is reduced.} However, if a family of target estimates can capture the underlying regularities in the covariance structure of a specific system with a small number of parameters, biasing the estimate toward these targets ought to produce a greater reduction in estimator risk. 
+A number of regularization schemes have been developed, which differ by their target estimates and mixing functions.    Curiously, \emph{some} improvement can be produced with an arbitrary target estimate as long as its variance is lower than that of $\hat\Sigma_0$.  The perplexing phenomenon that estimates can be improved by a bias toward an arbitrary less variable target is known as \emph{Stein's paradox} \cite{Efron:1977}.   \TODO{This point can be untuitive.  For example, \cite{Varoquaux:2012} misrepresents the effect of regularization by stating that regularization removes the upward bias of correlations in the sample covariance matrix. In reality, regularization should start with an unbiased estimator and bias it toward a low-variance target so that the estimation risk is reduced.} However, if a family of target estimates can capture the underlying regularities in the covariance structure of a specific system with a small number of parameters, biasing the estimate toward these targets ought to produce a greater reduction in estimator risk. 
 
 In this study, we evaluate four regularized estimators whose target estimates correspond to the graphical models in Figure \ref{fig:02}: diagonal (A), multifactor (B), sparse partial correlations (C), and sparse  partial correlations with latent units (D).  The following describe each regularization scheme separately.
 
