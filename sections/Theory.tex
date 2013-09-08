@@ -54,14 +54,15 @@ Since $\mathcal L_e(\Sigma,\Sigma) \equiv 0$, the MSE is its own excess loss: $\
 
 The Gaussian loss function $\mathcal L_g$  arises from the theory of multivariate normal distributions. When observations are identically and independently distributed according to a multivariate normal distribution with zero means, the log likelihood of the covariance matrix $\Sigma$ with $\hat\Sigma = \frac 1 n \sum\limits_{t=1}^n x(t) x(t)^\T$ is  
 \begin{equation}
-L\left(\Sigma \mid \hat\Sigma\right) = -\frac n 2 \ln(2\pi) - \frac n 2 \ln \det \Sigma - \frac n 2 \Tr(\Sigma^{-1} \hat \Sigma)
+L\left(\Sigma \mid \Sigma\right) = -\frac n 2 \ln(2\pi) - \frac n 2 \ln \det \Sigma - \frac n 2 \Tr(\Sigma^{-1} \hat \Sigma)
 \end{equation}
 Then $\mathcal L_g$ is constructed by rescaling $L\left(\Sigma \mid \hat\Sigma\right)$ and dropping the constant term:
 \begin{equation}\label{eq:GaussLoss}
 \mathcal L_g(\hat\Sigma,\Sigma) 
-=  -\frac 2 {pn} L\left(\Sigma \mid \hat\Sigma \right) - \frac 1 p \ln(2\pi) 
-\equiv  \frac 1 p\left(\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}) \right) 
+=  -\frac 2 {pn} L\left(\hat\Sigma \mid \Sigma \right) - \frac 1 p \ln(2\pi) 
+\equiv  \frac 1 p\left(\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma) \right) 
 \end{equation}
+\TODO{Note that the switch from $L\left(\Sigma \mid \hat\Sigma \right)$ to $L\left(\hat\Sigma \mid \Sigma \right)$ is on purpose, which will become clear in the next few steps.}
 The corresponding excess loss 
 \begin{equation}
 \ell_g(\hat\Sigma,\Sigma) = \mathcal L_g(\hat\Sigma,\Sigma) - \mathcal L_g(\Sigma,\Sigma)  
