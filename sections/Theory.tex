@@ -1,9 +1,9 @@
 \subsection*{Basic concepts}
 Let $x(t) \in \mathcal X, t=1\ldots,n$ denote a sample of consecutive observations of population activity of $p$ neurons in time bins $t$.  
 The activity of each neuron is denoted by the real-valued firing rate, thus  $\mathcal X = \mathbb R^{p\times 1}$.  
-For example, in our applicaiton, the firing rate is estimated from somatic calcium fluorescence signals with the mean stimulus response subtracted, making it possible for elements of $x(t)$ to take on negative and non-integer values. 
+For example, in our application, the firing rate is estimated from somatic calcium fluorescence signals with the mean stimulus response subtracted, making it possible for elements of $x(t)$ to take on negative and non-integer values. 
 
-We do not assume that the observations $x(t)$ are independently distributed. Rather, the data generating process is assumed to be \emph{ergodic}, \emph{i.e.}\;described by a \emph{true distirbution} $F: \mathcal X \mapsto  \mathbb [0, 1]$ (cumulative) over long periods of time such that the \emph{empirical distribution} $\hat F_n$ from a given sample will convege to $F$ with increasing sample size $n$.
+We do not assume that the observations $x(t)$ are independently distributed. Rather, the data generating process is assumed to be \emph{ergodic}, \emph{i.e.}\;described by a \emph{true distribution} $F: \mathcal X \mapsto  \mathbb [0, 1]$ (cumulative) over long periods of time such that the \emph{empirical distribution} $\hat F_n$ from a given sample will convege to $F$ with increasing sample size $n$.
 
 Formally, the emprical distribution is defined as \TODO{this may be unecessary, but I leave it for now.}
 \begin{equation}
@@ -11,7 +11,7 @@ Formally, the emprical distribution is defined as \TODO{this may be unecessary, 
 \end{equation}
 where $\mathbf 1(x \ge x(t))$ is the indicator function which equals 1 when all elements of $x$ are greater than the corresponding elements of $x(t)$ and 0 otherwise. \TODO{KJ: Are you using cumulative distributions to avoid binning? DY: Yes. Many theorems such as Glivenko-Catelli Theorem and Skorohod's Representation are proven using  cumulative representation. The empirical distribution is nearly always represented in its cumulative form. Expressing convergence is requires binning or using cumulative; the latter is simpler.}
 
-And, for an ergodic process, $\max\limits_{x\in\mathcal X} \left|\hat F_n(x) - F(x)\right| \to 0$ as $n$ increases.
+For an ergodic process, $\max\limits_{x\in\mathcal X} \left|\hat F_n(x) - F(x)\right| \to 0$ as $n$ increases.  \TODO{If you decide to leave this in, provide a reference to a standard book in the field.}
 
 The true covariance matrix $\Sigma \in \Theta$ is defined as a function of $F$:
 \begin{equation}
@@ -27,7 +27,7 @@ But the usual estimator of the true covariance matrix $\Sigma$ is  the sample co
 \quad\mbox{where}\;
 \hat\mu = \frac 1 n \sum\limits_{t=1}^n x(t)
 \end{equation}
-where $c$ is the sum of temporal correlations \TODO{there must be a better description of this}. For independent observations, $c=1$;  $c>1$ when nearby samples are correlated; the value of $c$ can be estimated from the data.
+where $c$ is the sum of temporal correlations \TODO{there must be a better description of this} \TODO{Which?  I think the equation is OK.  Do you mean $c$?  This is standard, and again, I suggest just providing a reference.}. For independent observations, $c=1$;  $c>1$ when nearby samples are correlated; the value of $c$ can be estimated from the data.
 \TODO{Under the Gaussian loss, $\mathcal L_g$ (\ref{eq:GaussLoss}) the scaling is irrelevant, so we will not spend any time talking about the scaling.  But it would be important if we used $\mathcal L_e$ (\ref{eq:MSE}).} 
 
 $\hat\Sigma_0$ is designed to be unbiased such that $\mathbb E\left[\hat\Sigma_0\right]=\Sigma$.

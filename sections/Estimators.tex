@@ -21,12 +21,18 @@ The regularized estimator is the linear mixture of $\hat\Sigma_0$ and $\hat T_{\
 \hat\Sigma_{\hat\eta,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat\lambda \hat T_{\hat\eta} 
 \end{equation}
 
-The hyperparameters $\hat\eta$ and $\hat\lambda$ must be estimated from the data.  Under the MSE loss function $\mathcal L_e$ (\ref{eq:MSE}), the optimal values of $\hat\eta$ and $\hat\lambda$ can be estimated analytically \cite{Ledoit:2004,Schafer:2005,Schaefer:2010}. However, these estimates are no longer optimal under the Guassian loss $\mathcal L_g$. \TODO{I have tested this and there was a substantial difference in both synthetic and empirical data}  When an analytical solution for optimal hyperparameters is not available, the optimal values can be found by cross validation, entirely within the the training sample. \TODO{explain nested cross-validation in more detail?}
+The hyperparameters $\hat\eta$ and $\hat\lambda$ must be estimated from the data.  Under the MSE loss function $\mathcal L_e$ (\ref{eq:MSE}), the optimal values of $\hat\eta$ and $\hat\lambda$ can be estimated analytically \cite{Ledoit:2004,Schafer:2005,Schaefer:2010}. However, these estimates are no longer optimal under the Gaussian loss $\mathcal L_g$. \TODO{I have tested this and there was a substantial difference in both synthetic and empirical data}  When an analytical solution for optimal hyperparameters is not available, the optimal values can be found by cross validation, entirely within the the training sample. \TODO{explain nested cross-validation in more detail?} \TODO{KJ: Yes - see above.}
+
+\TODO{KJ: I am confused.  This suggests that you are getting different results using the two different loss functions.
+However, there was no argument yet that either gives us more relevant information about the underlying distribution
+if we do not assume Gaussianity, for instance.  I would argue that the Gaussian loss is better, but this is simply 
+because the Euclidean metric is not appropriate on the cone of positive semidefinite variances.  As the 
+discussion we have been having with Alex demonstrates, this is a point that needs to be explained clearly.}
 
 \TODO{Describe how the empirical loss is convex in the hyperparameters in this case}
 
 \subsection*{Estimator B: Shrinkage toward a factor model}
-In estimator B, the target is a factor model, composed as the sum of a low-rank component $\hat L_{\hat d}\hat L_{\hat d}^\T$ and a diagonal matrix $\hat \Psi$:
+For estimator B, the target is a factor model, composed as the sum of a low-rank component $\hat L_{\hat d}\hat L_{\hat d}^\T$ and a diagonal matrix $\hat \Psi$:
 \begin{equation}
 \hat T_{\hat d} = \hat L_{\hat d} \hat L_{\hat d}^\T + \hat\Psi
 \end{equation}
@@ -34,7 +40,7 @@ Here $\hat L_{\hat d}$ is an $p\times\hat d$ matrix and $\hat\Psi$ is diagonal.
 
 If $F$ were assume to be multivariate normal \TODO{or other distributions that are defined by linear dependencies}, the factor model is corresponds to the graphical model (\ref{fig:02}B) where the activity of all neurons are dependent only $\hat d$ latent units. This suggest a mechanistic interpretation in which the interactions between neurons are insignificant compared to the influence of inputs outside the recorded circuit.
 
-Just as in Estimator A, Estimator B is allowed to commit to the low-dimensional target only partially: the overall estimate is the linear mixture of the sample covariance and the target
+Just as with Estimator A, Estimator B is allowed to commit to the low-dimensional target only partially: the overall estimate is the linear mixture of the sample covariance and the target
 \begin{equation}
 \hat\Sigma_{\hat d,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat  T_{\hat d}
 \end{equation}
