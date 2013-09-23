@@ -1,2 +1,6 @@
-We estimated the covariance matrices of the calcium activity of populations of neurons in the primary visual cortex.  
-In the effort to improve the estimate, we imposed several types of sparse structure of the covariance matrix and, using cross-validation, compared the performance for resulting estimators.  
+Covariance matrices of the activity of populations of neurons are useful descriptions of the functional organization of neural circuits with implications for stimulus coding and neural circuit architecture. 
+Estimates of the covariance matrix can be dramatically improved by \emph{regularization}, i.e.\;the biasing of the usual estimate toward one of several possible low-dimensional approximations, the \emph{target estimate}. However, the amount of improvement depends on how closely the selected approximation reflects the dominant interactions in the circuit. 
+In simulation, we demonstrated that no regularized estimate was universally superior to others: each performed best when the target estimate was the closest match to the structure of the data generating process. 
+We then evaluated covariance matrix estimates on the calcium activity recorded \emph{in vivo} from large populations of closely spaced neurons  in mouse primary visual cortex, after subtracting the average stimulus response.
+Using cross-validation, we found that the best estimate was produced when the covariance matrix was approximated as that of a sparse Gaussian graphical models with a small number of latent units. 
+Thanks to the paucity of their parameters, these optimally estimated covariance matrices also help interpretation of the covariance structure and allow relating the functional organization of the neural circuit to its cytoarchitecture.
