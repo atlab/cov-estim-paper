@@ -6,14 +6,13 @@ We aim to estimate the true covariance matrix $\Sigma = \mathbb E [(x-\mu)(x-\mu
 
 The usual estimator of $\Sigma$ is the sample covariance matrix
 \begin{equation}
-\hat \Sigma_0 = \frac 1 {n-c} \sum\limits_{t=1}^T (x(t)-\mu)(x(t)-\mu)^\T 
+\hat \Sigma_0 = \frac 1 {n-c} \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T 
 \end{equation}
-where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals. Bessel's correction $c$ makes the estimate unbiased such that $\mathbb E[\Sigma_0] = \Sigma$. When observations $x(t)$ can be assumed to be independent then $c=1$; but when observations are correlated $c>1$ may be estimated from the data. 
+where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals. Bessel's correction $c$ makes the estimate unbiased such that $\mathbb E[\hat\Sigma_0] = \Sigma$. When observations $x(t)$ can be assumed to be independent then $c=1$; but when observations are correlated $c>1$ may be estimated from the data. 
 
-\subsubsection*{Regularization}
-Although $\hat\Sigma_0$ is unbiased, it is not necessarily as close as possible to $\Sigma$.  Closer estimates can be produced by admitting a moderate amount of bias (\emph{approximation error}) in order to reduce the variance (\emph{estimation error}) of the estimate. 
-
-Regularization is the deliberate biasing of the unbiased estimate toward a low-dimensional target estimate in order to strike a favorable balance between bias and variance and minimize the overall expected error. \cite{Bickel:2006,
+\subsubsection*{Regularized estimates}
+Although $\hat\Sigma_0$ is unbiased, it is not as close as possible to $\Sigma$.  Closer estimates can be produced by admitting a moderate amount of bias (\emph{approximation error}) in order to reduce the variance (\emph{estimation error}) of the estimate. 
+\emph{Regularization} is the deliberate biasing of the estimate toward a low-dimensional target estimate in order to strike a favorable balance between bias and variance and minimize the overall expected error \cite{Bickel:2006,Ledoit:2004}.
 
 A great variety of regularized covariance estimators can be conceived, which consistently outperform the sample covariance estimate. Regularized estimators differ from each other by the following aspects:
 \begin{itemize}
