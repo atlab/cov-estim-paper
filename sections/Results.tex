@@ -1,9 +1,9 @@
 \subsection*{Data acquisition}
-We recorded the calcium activity  of dense populations of neurons in the supragranular layers of mouse primary visual cortex using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}   while presenting numerious repetitions of full-field drifting gratings (Fig. 1A and 1B). This technique allowed recording from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. Somatic calcium signals were deconvolved using  sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig. 1C and 1D).  The average stimulus response was subtracted to remove stimulus covariance and the sample noise covariance matrix was computed (Fig. 1E).
+We recorded the calcium activity  of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}.  Numerious repetitions of full-field drifting gratings (Fig. 1A and 1B) were presented to the eye contralateral to the imaged site. This technique allowed recording from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. Somatic calcium signals were deconvolved using  sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig. 1C and 1D).  The average stimulus response was subtracted to remove stimulus covariance and the sample noise covariance matrix was computed (Fig. 1E).
 
 \input{sections/Figure1.tex}
 
-\subsection*{Covariance estimation}
+\subsection*{Sample covariance matrix}
 We aim to estimate the true covariance matrix $\Sigma = \mathbb E [(x-\mu)(x-\mu)^\T]$ , where $\mathbb E[\cdot]$ denotes expectation \TODO{under the true model}, $x$ denotes the $p\times 1$ vector of real-valued instanteous firing rates of $p$ neurons in a bin of duration $\Delta t$ and $\mu = \mathbb E[x]$.  For more rigourous notation, definitions, and derivations, see Appendix. 
 
 The usual estimator of $\Sigma$ is the sample covariance matrix
@@ -12,26 +12,36 @@ The usual estimator of $\Sigma$ is the sample covariance matrix
 \end{equation}
 where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals. Bessel's correction $c$ makes the estimate unbiased such that $\mathbb E[\hat\Sigma_0] = \Sigma$. When observations $x(t)$ can be assumed to be independent then $c=1$; but when observations are correlated $c>1$ may be estimated from the data. 
 
+\subsection*{Regularized estimates of the covariance matrix}
+To assess the quality of a covariance matrix estimate $\hat\Sigma$, we must define a real-valued \emph{loss function} $\mathcal L(\hat\Sigma,\Sigma)$, which attains its minimum when $\hat\Sigma = \Sigma$. For the purposes of this study, we adopted the \emph{Gaussian loss} function:
+\begin{equation}
+\mathcal L(\hat\Sigma,\Sigma) = \mathcal L_g(\hat\Sigma,\Sigma) = \frac 1 p(\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma))
+\end{equation}
+which resembles the negative multivariate normal log-likelihood (see Appendix).
+ 
+
+Although the sample covariance matrix is unbiased: $\mathbb E[\hat\Sigma_0]=\Sigma$, it is not as close to $\Sigma$ as possible, on average. We must seek  to minimize the expected value of the loss function, known as \emph{estimator risk} 
+\begin{equation}
+r = \mathbb E[\mathcal L(\hat\Sigma, \Sigma)]
+\end{equation}
+
+Estimator risk can be reduced by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}.  Resulting regularized estimators are biased but  less variable. Regularization procedures must strike favorable balance between bias and variance so that the estimator risk is minimized. The terms \emph{bias} and \emph{variance} are applicable only the loss function is mean-squared-error. The more general terms are \emph{approximation error} and \emph{estimation error})
+
+Numerous regularized covariance matrix estimates have been devised. They start with the sample covariance matrix but differ in the choice of the target estimate and the shrinkage path and intensity. Some regularization schemes focus on the optimal choice of the low-dimensional target estimate from a large family of target estimates and do not require shrinkages.  Others have a fairly simple target estimate but instead adjust the shrinkage intensity to reduce the estimation error.
+
+A regularized estimate of $\Sigma$ can be constructed by either (a) selecting an optimal low-dimensional approximation of $\hat\Sigma_0$ from a given family of approximations and/or (b) biasing or \emph{shrinkage} of $\hat\Sigma_0$ toward a given low-dimensional target estimate by an optimal amount.  Both dimensionality reduction and shrinkage approaches reduce the variance of the solution while introducing bias. 
 
 
-\subsubsection*{Regularized estimates}
-Although $\hat\Sigma_0$ is unbiased, it is not as close as possible to $\Sigma$.  Closer estimates can be produced by admitting a moderate amount of bias (\emph{approximation error}) in order to reduce the variance (\emph{estimation error}) of the estimate. 
-\emph{Regularization} is the deliberate biasing of the estimate toward a low-dimensional target estimate in order to strike a favorable balance between bias and variance and minimize the overall expected error \cite{Bickel:2006,Ledoit:2004}.
+We evaluated four regularized estimators which we will denote as A, B, C, and D.  Their target estimates correspond to covariance matrices of Gaussian graphical models depicted in Figure 2.  Here the green spheres represent the recorded neurons. The light-colored balls represent latent units of the graphical model and the edges connecting them represent conditional dependencies.
 
-A great variety of regularized covariance estimators can be conceived, which consistently outperform the sample covariance estimate. Regularized estimators differ from each other by the following aspects:
-\begin{itemize}
-\item the choice of the family of the target estimate, 
-\item the choice of the specific member of the family of target estimates
-\item the choice of the path from the unbiased estimate toward the chosen target
-\item the distance along that path
-\end{itemize}
-Steps 1 and 2 produce a low-dimensional estimate. Steps 3 and 4 are often called shrinkage and allow deviations from (or distribution about) the low-dimensional estimates.
+\input{sections/Figure2.tex}
 
-We evaluated four regularized estimators which we will denote as A, B, C, and D.  Their target estimates are graphically depicted in Figure 2. 
-The green spheres represent the observed neurons. The light-colored balls represent latent units and the edges connecting them represent conditional dependencies.
+A \emph{graphical model} is a multivarate probability distribution with a specified graph of conditional dependencies between its variables \cite{Koller:2009}.  When such a distribution is a multivariate normal distribution, the model becomes a \emph{Gaussian graphical model} or, equivalently, a \emph{Gaussian Markov Random Field}.  Gaussian graphical models have a straightforward relationship to their covariance matrix $\Sigma$:  Zero elements in the inverse of $\Sigma$ indicate conditional independence between the corresponding pair of variables.  
+
+Fitting a graphical model to data involves two tasks: (1) the selection of the set of non-zero covariances or \emph{covariance selection} \cite{Dempster:1972} and (b) the fitting of the non-zero elements.
 
 \subsubsection*{Estimate A: Shrinkage toward the independent model}
-In A, the target is a family of diagonal matrices 
+In estimate A, the target is a family of diagonal matrices 
 \begin{equation}
 \hat T_\alpha = (1-\alpha)(\hat\Sigma_0 \circ I) + \frac \alpha p \mbox{tr}(\hat \Sigma_0)I
 \end{equation}
@@ -55,7 +65,7 @@ Just as in A, the overall estimate is found by linear mixing:
 \end{equation}
 
 \subsubsection*{Estimate C}
-In estimate C, the target $ \hat S_\alpha$ is a matrix whose inverse is <em>sparse</em>, with a large fraction of off-diagonal elements fixed at zero. The coefficient $ \alpha$ controls the sparsity in $ \hat S_\alpha$.
+In estimate C, the target $ \hat S_\alpha$ is a matrix whose inverse is \emph{sparse}, with a large fraction of off-diagonal elements fixed at zero. The coefficient $ \alpha$ controls the sparsity in $ \hat S_\alpha$.
 
 In models with only linear dependencies, zeros in the inverse covariance indicate conditional independence. Thus the target estimate is depicted as the graphical model with sparse interneuronal interactions.
 

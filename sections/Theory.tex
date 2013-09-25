@@ -54,7 +54,7 @@ Since $\mathcal L_e(\Sigma,\Sigma) \equiv 0$, the MSE is its own excess loss: $\
 
 The Gaussian loss function $\mathcal L_g$  arises from the theory of multivariate normal distributions. When observations are identically and independently distributed according to a multivariate normal distribution with zero means, the log likelihood of the covariance matrix $\Sigma$ with $\hat\Sigma = \frac 1 n \sum\limits_{t=1}^n x(t) x(t)^\T$ is  
 \begin{equation}
-L\left(\Sigma \mid \Sigma\right) = -\frac n 2 \ln(2\pi) - \frac n 2 \ln \det \Sigma - \frac n 2 \Tr(\Sigma^{-1} \hat \Sigma)
+L\left(\Sigma \mid \hat\Sigma\right) = -\frac n 2 \ln(2\pi) - \frac n 2 \ln \det \Sigma - \frac n 2 \Tr(\Sigma^{-1} \hat \Sigma)
 \end{equation}
 Then $\mathcal L_g$ is constructed by rescaling $L\left(\Sigma \mid \hat\Sigma\right)$ and dropping the constant term:
 \begin{equation}\label{eq:GaussLoss}
@@ -125,31 +125,3 @@ Under other loss functions, $r$ is an increasing function of both $b^2$ and $\va
 \TODO{As far as I know, the terms `bias' and `variance' are only applicable under a quadratic loss function  like $\mathcal L_e$.  Under other loss functions, we may need to use approximation/estimation error.} 
 
 The sample covariance matrix $\hat\Sigma_0$ has zero bias but high variance. Other estimators may be biased but have lower estimation error and potentially lower risk.
-
-
-\subsection*{Regularization}
-
-\emph{Regularization} is the deliberate biasing (`shrinkage') of the unbiased estimate toward a less variable low-dimensional \emph{target estimate} $\hat T$ in order to minimize the estimator risk by striking a favorable balance between bias and variance.
-A regularized covariance matrix estimator must solve two problems: (a) choose and fit the target covariate estimate $\hat T$ and (b) mix $\hat\Sigma_0$ with $\hat T$ by the optimal amount. 
-Regularized covariance matrix estimates can be generally expressed as 
-\begin{equation}
-\hat\Sigma_{d,\lambda} = mix(\Sigma_0,\hat T_{\hat d},\hat\lambda) 
-\end{equation}
-where $\hat d$ indicates the choice of the target estimate from the family of target estimates $\hat T_d$. $mix(\cdot,\cdot,\hat\lambda)$ is the mixing function of $\hat\Sigma_0$ and $\hat T_{\hat d}$ in proportion controlled by $\hat \lambda$. Both $\hat d$ and $\hat \lambda$ must be calculated from the training sample. 
-
-A number of regularization schemes have been developed, which differ by their target estimates and mixing functions.    Curiously, \emph{some} improvement can be produced with an arbitrary target estimate as long as its variance is lower than that of $\hat\Sigma_0$.  The perplexing phenomenon that estimates can be improved by a bias toward an arbitrary less variable target is known as \emph{Stein's paradox} \cite{Efron:1977}.   \TODO{This point can be untuitive.  For example, \cite{Varoquaux:2012} misrepresents the effect of regularization by stating that regularization removes the upward bias of correlations in the sample covariance matrix. In reality, regularization should start with an unbiased estimator and bias it toward a low-variance target so that the estimation risk is reduced.} However, if a family of target estimates can capture the underlying regularities in the covariance structure of a specific system with a small number of parameters, biasing the estimate toward these targets ought to produce a greater reduction in estimator risk. 
-
-In this study, we evaluate four regularized estimators whose target estimates correspond to the graphical models in Figure \ref{fig:02}: diagonal (A), multifactor (B), sparse partial correlations (C), and sparse  partial correlations with latent units (D).  The following describe each regularization scheme separately.
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=0.5\textwidth]{figures/Figure2.pdf}
-\caption{
-Graphical models corresponding to the low-dimensional targets of the four regularization schemes used in the paper.
-\textbf{A}: A diagonal matrix corresponds to a Gaussian graphical model with no dependencies. 
-\textbf{B}: In factor analysis, observed nodes are assumed to be influenced by several latent units (``factors") but are otherwise independent. 
-\textbf{C}: In the Gaussian graphical model (also known as the Gaussian Markov Field), correlations arise from sparse pairwise linear interactions between visible units. 
-\textbf{D}: In the Gaussian graphical model with latent units, correlations arise  between pairs of nodes 
-}\label{fig:02}
-\end{figure}
-
