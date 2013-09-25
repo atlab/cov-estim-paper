@@ -1,14 +1,18 @@
 \subsection*{Data acquisition}
-We recorded the calcium activity  of dense populations of neurons in the supragranular layers of mouse primary visual cortex using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}   while presenting numerious repetitions of full-field drifting gratings (Fig. 1A and 1B). This technique allowed recording from a large number (150--350) of cells in a small volume of cortical tissue (200 x 200 x 100 $\mu$m) in layers 2/3 and 4. Somatic calcium signals were deconvolved using  sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig. 1C and 1D).  The average stimulus response was subtracted to remove stimulus covariance and the sample noise covariance matrix was computed (Fig. 1E).
+We recorded the calcium activity  of dense populations of neurons in the supragranular layers of mouse primary visual cortex using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}   while presenting numerious repetitions of full-field drifting gratings (Fig. 1A and 1B). This technique allowed recording from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. Somatic calcium signals were deconvolved using  sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig. 1C and 1D).  The average stimulus response was subtracted to remove stimulus covariance and the sample noise covariance matrix was computed (Fig. 1E).
+
+\input{sections/Figure1.tex}
 
 \subsection*{Covariance estimation}
-We aim to estimate the true covariance matrix $\Sigma = \mathbb E [(x-\mu)(x-\mu)^\T]$ , where $\mathbb E[\cdot]$ denotes expectation, $x$ denotes the $p\times 1$ vector of real-valued instanteous firing rates of $p$ neurons in a bin of duration $\Delta t$ and $\mu = \mathbb E[x]$.  For more rigourous notation, definitions, and derivations, see Appendix. 
+We aim to estimate the true covariance matrix $\Sigma = \mathbb E [(x-\mu)(x-\mu)^\T]$ , where $\mathbb E[\cdot]$ denotes expectation \TODO{under the true model}, $x$ denotes the $p\times 1$ vector of real-valued instanteous firing rates of $p$ neurons in a bin of duration $\Delta t$ and $\mu = \mathbb E[x]$.  For more rigourous notation, definitions, and derivations, see Appendix. 
 
 The usual estimator of $\Sigma$ is the sample covariance matrix
 \begin{equation}
 \hat \Sigma_0 = \frac 1 {n-c} \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T 
 \end{equation}
 where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals. Bessel's correction $c$ makes the estimate unbiased such that $\mathbb E[\hat\Sigma_0] = \Sigma$. When observations $x(t)$ can be assumed to be independent then $c=1$; but when observations are correlated $c>1$ may be estimated from the data. 
+
+
 
 \subsubsection*{Regularized estimates}
 Although $\hat\Sigma_0$ is unbiased, it is not as close as possible to $\Sigma$.  Closer estimates can be produced by admitting a moderate amount of bias (\emph{approximation error}) in order to reduce the variance (\emph{estimation error}) of the estimate. 
