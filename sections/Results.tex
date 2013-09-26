@@ -13,17 +13,17 @@ The usual estimator of $\Sigma$ is the sample covariance matrix
 where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals. Bessel's correction $c$ makes the estimate unbiased such that $\mathbb E[\hat\Sigma_0] = \Sigma$. When observations $x(t)$ can be assumed to be independent then $c=1$; but when observations are correlated $c>1$ may be estimated from the data. 
 
 \subsection*{Regularized estimates of the covariance matrix}
-To assess the quality of a covariance matrix estimate $\hat\Sigma$, we must define a real-valued \emph{loss function} $\mathcal L(\hat\Sigma,\Sigma)$, which attains its minimum when $\hat\Sigma = \Sigma$. For the purposes of this study, we adopted the \emph{Gaussian loss} function:
+To assess the quality of a covariance matrix estimate $\hat\Sigma$, we must define a real-valued \emph{loss function} $\mathcal L(\hat\Sigma,\Sigma)$, which attains its minimum when $\hat\Sigma = \Sigma$. For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function (see Appendix for details):
 \begin{equation}
-\mathcal L(\hat\Sigma,\Sigma) = \mathcal L_g(\hat\Sigma,\Sigma) = \frac 1 p(\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma))
+\mathcal L(\hat\Sigma,\Sigma) = \frac 1 p\left[\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma)\right]
 \end{equation}
-which resembles the negative multivariate normal log-likelihood (see Appendix).
- 
 
-Although the sample covariance matrix is unbiased: $\mathbb E[\hat\Sigma_0]=\Sigma$, it is not as close to $\Sigma$ as possible, on average. We must seek  to minimize the expected value of the loss function, known as \emph{estimator risk} 
+We seek an estimate of the covariance matrix that minimizes the expected value of loss, referred to as \emph{estimator risk}: 
 \begin{equation}
 r = \mathbb E[\mathcal L(\hat\Sigma, \Sigma)]
 \end{equation}
+
+The sample covariance matrix is unbiased: it minimizes the bias $\mathcal L (\mathbb E[\hat\Sigma],\Sigma)$ but it does
 
 Estimator risk can be reduced by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}.  Resulting regularized estimators are biased but  less variable. Regularization procedures must strike favorable balance between bias and variance so that the estimator risk is minimized. The terms \emph{bias} and \emph{variance} are applicable only the loss function is mean-squared-error. The more general terms are \emph{approximation error} and \emph{estimation error})
 
