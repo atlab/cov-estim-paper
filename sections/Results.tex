@@ -1,31 +1,52 @@
 \subsection*{Data acquisition}
-We recorded the calcium activity  of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}.  Numerious repetitions of full-field drifting gratings (Fig. 1A and 1B) were presented to the eye contralateral to the imaged site. This technique allowed recording from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. Somatic calcium signals were deconvolved using  sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig. 1C and 1D).  The average stimulus response was subtracted to remove stimulus covariance and the sample noise covariance matrix was computed (Fig. 1E).
+We recorded the calcium activity  of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}.  Numerious repetitions of full-field drifting gratings (Fig. 1A and 1B) were presented to the eye contralateral to the imaged site. This technique allowed recording from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. Somatic calcium signals were deconvolved using  sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig.\;1C and 1D).  The average stimulus response was subtracted to remove stimulus covariance and the sample noise covariance matrix was computed (Fig.\;1E).
 
 \input{sections/Figure1.tex}
 
-\subsection*{Sample covariance matrix}
-We aim to estimate the true covariance matrix $\Sigma = \mathbb E [(x-\mu)(x-\mu)^\T]$ , where $\mathbb E[\cdot]$ denotes expectation \TODO{under the true model}, $x$ denotes the $p\times 1$ vector of real-valued instanteous firing rates of $p$ neurons in a bin of duration $\Delta t$ and $\mu = \mathbb E[x]$.  For more rigourous notation, definitions, and derivations, see Appendix. 
+\subsection*{The sample covariance matrix}
+We aim to estimate the true covariance matrix $\Sigma = \E{(x-\mu)(x-\mu)^\T}$ of the instantaneous activity vector $x$ of a population of $p$ neurons. Here $\E{\cdot}$ denotes expectation \TODO{for the true data generating process} and $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates discretized into bins of duration $\Delta t$ and $\mu = \E{x}$.  
+
+For more rigorous notation, definitions, and derivations, see Appendix. 
 
 The usual estimator of $\Sigma$ is the sample covariance matrix
 \begin{equation}
 \hat \Sigma_0 = \frac 1 {n-c} \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T 
 \end{equation}
-where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals. Bessel's correction $c$ makes the estimate unbiased such that $\mathbb E[\hat\Sigma_0] = \Sigma$. When observations $x(t)$ can be assumed to be independent then $c=1$; but when observations are correlated $c>1$ may be estimated from the data. 
+where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals. Bessel's correction $c$ makes the estimate unbiased such that $\E{\hat\Sigma_0} = \Sigma$. When observations $x(t)$ can be assumed to be independent then $c=1$; but when observations are correlated $c>1$ may be estimated from the data. 
 
 \subsection*{Regularized estimates of the covariance matrix}
-To assess the quality of a covariance matrix estimate $\hat\Sigma$, we must define a real-valued \emph{loss function} $\mathcal L(\hat\Sigma,\Sigma)$, which attains its minimum when $\hat\Sigma = \Sigma$. For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function (see Appendix for details):
+The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  The loss function quantifies the discrepancy between $\hat\Sigma$ and $\Sigma$ and attains its minimum  when $\hat\Sigma = \Sigma$. 
+
+For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function:
+\begin{equation}\label{eq:loss}
+\loss{\hat\Sigma,\Sigma} = \frac 1 p\left[\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma)\right]
+\end{equation}
+This choice is motivated by mathematical convenience and, we assert, the conclusions of the study are unlikely to change drastically under other popular loss functions such as quadratic loss or Stein's entropy loss.
+
+The aim of our project is produce covariance matrix estimates that minimize the expected loss.  The expected value of the loss function of an estimator is known as its \emph{risk}: 
 \begin{equation}
-\mathcal L(\hat\Sigma,\Sigma) = \frac 1 p\left[\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma)\right]
+r = \E{\loss{\hat\Sigma, \Sigma}}
 \end{equation}
 
-We seek an estimate of the covariance matrix that minimizes the expected value of loss, referred to as \emph{estimator risk}: 
-\begin{equation}
-r = \mathbb E[\mathcal L(\hat\Sigma, \Sigma)]
+Under many loss functions\footnote{
+The strict equality in Eq.~\ref{eq:bias-variance} does not hold for our choice of the loss function in Eq.~\ref{eq:loss}. However, the equality does hold for its close cousin, Stein's entropy loss,  $\mathcal L_s(\hat\Sigma,\Sigma) \equiv \loss{\Sigma,\hat\Sigma} - \loss{\Sigma,\Sigma}$, which only differs by the order of its arguments and a constant offset. This does not present a major problem because we minimize the loss directly, without assessing the two error components individually.}, 
+the estimator's risk can be decomposed as the sum
+\begin{equation}\label{eq:bias-variance}
+r = b + \varepsilon
 \end{equation}
+of \emph{approximation error} (``bias'')
+\begin{equation}
+b = \loss{\bar\Sigma,\Sigma}
+\end{equation}
+and \emph{estimation error} (``variance'') 
+\begin{equation}
+\varepsilon = \E{\loss{\hat\Sigma, \bar\Sigma}}
+\end{equation}
+where $\bar\Sigma = \E{\hat\Sigma}$ is the expected value of the estimate. 
 
-The sample covariance matrix is unbiased: it minimizes the bias $\mathcal L (\mathbb E[\hat\Sigma],\Sigma)$ but it does
+An unbiased estimator, such as $\hat\Sigma_0$, makes $\bar\Sigma=\Sigma$ and thus minimizes the approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
 
-Estimator risk can be reduced by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}.  Resulting regularized estimators are biased but  less variable. Regularization procedures must strike favorable balance between bias and variance so that the estimator risk is minimized. The terms \emph{bias} and \emph{variance} are applicable only the loss function is mean-squared-error. The more general terms are \emph{approximation error} and \emph{estimation error})
+The overall error, or risk, of the estimator can be minimized by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}.  Regularization procedures solve the bias-variance tradeoff problem and produce biased but less variable estimates that, when performed optimally, allow minimizing the estimator risk.
 
 Numerous regularized covariance matrix estimates have been devised. They start with the sample covariance matrix but differ in the choice of the target estimate and the shrinkage path and intensity. Some regularization schemes focus on the optimal choice of the low-dimensional target estimate from a large family of target estimates and do not require shrinkages.  Others have a fairly simple target estimate but instead adjust the shrinkage intensity to reduce the estimation error.
 
