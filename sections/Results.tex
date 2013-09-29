@@ -14,27 +14,49 @@ The usual estimator of $\Sigma$ is the sample covariance matrix
 \end{equation}
 where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals. Bessel's correction $c$ makes the estimate unbiased such that $\E{\hat\Sigma_0} = \Sigma$. When observations $x(t)$ can be assumed to be independent then $c=1$; but when observations are correlated $c>1$ may be estimated from the data. 
 
-\subsection*{Regularized estimates of the covariance matrix}
-The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  The loss function quantifies the discrepancy between $\hat\Sigma$ and $\Sigma$ and attains its minimum  when $\hat\Sigma = \Sigma$. 
+\subsection*{Evaluation of covariance matrix estimates}
+The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  The loss function quantifies the deviation of $\hat\Sigma$ from $\Sigma$ and attains its minimum  when $\hat\Sigma = \Sigma$. 
 
 For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function:
 \begin{equation}\label{eq:loss}
 \loss{\hat\Sigma,\Sigma} = \frac 1 p\left[\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma)\right]
 \end{equation}
-This choice is motivated by mathematical convenience and, we assert, the conclusions of the study are unlikely to change drastically under other popular loss functions such as quadratic loss or Stein's entropy loss.
+This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\hat\Sigma-\Sigma$, Stein's entropy loss, and quadratic loss \cite{James:1961,Ledoit:2004,Schafer:2005,Fan:2008}.  We assert that the main conclusions of our study are unlikely to change drastically other well behaved loss functions.
 
-The aim of our project is produce covariance matrix estimates that minimize the expected loss.  The expected value of the loss function of an estimator is known as its \emph{risk}: 
+The aim of our project is produce covariance matrix estimates that minimize the expected loss.  The expected loss of an estimator is known as its \emph{risk}: 
 \begin{equation}
 r = \E{\loss{\hat\Sigma, \Sigma}}
 \end{equation}
 
+In practice, the true value $\Sigma$ is not accessible and estimators' risks must be estimated from the data.  This may be accomplished through validation: 
+Let $\hat\Sigma_0^\prime$ denote a sample covariance matrix measured from an independent sample that was not used included in the computation of $\hat\Sigma$. Then \emph{empirical loss} is 
+\begin{equation}
+\hat \ell = \loss{\hat\Sigma,\hat\Sigma_0^\prime}
+\end{equation}
+ and its expected value or \emph{empirical risk} is
+\begin{equation}\label{eq:empiricalRisk}
+\hat r = \E{\hat\ell} = \mathbb E_{\hat\Sigma} \left[ \mathbb E_{\hat\Sigma_0^\prime} \left[ {\loss{\hat\Sigma,\hat\Sigma_0^\prime}} \right] \right]
+\end{equation}
+Because the chosen loss function is linear in its second argument in the sense that
+\begin{equation}
+\loss{\hat\Sigma,X_1} + \loss{\hat\Sigma,X_2} \equiv \loss{\hat\Sigma,X_1+X_2}
+\end{equation}
+the expection on the second argument in Eq.~\ref{eq:empiricalRisk} may be taken inside the loss function:
+\begin{equation}
+\hat r = \E{\loss{\hat\Sigma,\E{\hat\Sigma_0^\prime}}}  = \E{\loss{\hat\Sigma,\Sigma}} = r
+\end{equation}
+Thus the empirical loss $\loss{\hat \Sigma,\hat \Sigma_0^\prime}$ serves as an unbiased estimate of risk $r$. 
+
+Because the loss function is equivalent to the negative normal log likelihood, the above derivation led us to the familiar criterion that the optimal covariance matrix estimator is one that consistently maximizes the normal log likelihood of the validation dataset.
+
+\subsection*{Regularization}
 Under many loss functions\footnote{
-The strict equality in Eq.~\ref{eq:bias-variance} does not hold for our choice of the loss function in Eq.~\ref{eq:loss}. However, the equality does hold for its close cousin, Stein's entropy loss,  $\mathcal L_s(\hat\Sigma,\Sigma) \equiv \loss{\Sigma,\hat\Sigma} - \loss{\Sigma,\Sigma}$, which only differs by the order of its arguments and a constant offset. This does not present a major problem because we minimize the loss directly, without assessing the two error components individually.}, 
+The strict equality in Eq.~\ref{eq:bias-variance} does not hold under the loss function in Eq.~\ref{eq:loss}. However, the equality does hold for its close cousin, Stein's \emph{entropy loss},  which only differs by the order of its arguments and a constant offset: $\mathcal L_s(\hat\Sigma,\Sigma) \equiv \loss{\Sigma,\hat\Sigma} - \loss{\Sigma,\Sigma}$. This defficiency presents no difficulty because we minimize the risk directly, without assessing the two error components individually. The bias-variance decomposition is presented here to motivate the use of regularization.}, 
 the estimator's risk can be decomposed as the sum
 \begin{equation}\label{eq:bias-variance}
 r = b + \varepsilon
 \end{equation}
-of \emph{approximation error} (``bias'')
+of \emph{approximation error} (``bias'' or systematic error)
 \begin{equation}
 b = \loss{\bar\Sigma,\Sigma}
 \end{equation}
@@ -44,25 +66,19 @@ and \emph{estimation error} (``variance'')
 \end{equation}
 where $\bar\Sigma = \E{\hat\Sigma}$ is the expected value of the estimate. 
 
-An unbiased estimator, such as $\hat\Sigma_0$, makes $\bar\Sigma=\Sigma$ and thus minimizes the approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
+The unbiased estimator $\hat\Sigma_0$ makes $\bar\Sigma=\Sigma$ and thus minimizes  approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
 
-The overall error, or risk, of the estimator can be minimized by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}.  Regularization procedures solve the bias-variance tradeoff problem and produce biased but less variable estimates that, when performed optimally, allow minimizing the estimator risk.
+The estimator risk can be reduced by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}. A regularized estimator solves the bias-variance tradeoff to produce a biased but less variable estimates aiming to minimize the estimator's risk.  Many popular covariance estimators use single pre-determined target estimator and optimize the shrinkage intensity.  Others emphasize the optimal selection of the low-dimensional target estimate from a family of estimates. Yet others effectively combine shrinkage and selection.
 
-Numerous regularized covariance matrix estimates have been devised. They start with the sample covariance matrix but differ in the choice of the target estimate and the shrinkage path and intensity. Some regularization schemes focus on the optimal choice of the low-dimensional target estimate from a large family of target estimates and do not require shrinkages.  Others have a fairly simple target estimate but instead adjust the shrinkage intensity to reduce the estimation error.
-
-A regularized estimate of $\Sigma$ can be constructed by either (a) selecting an optimal low-dimensional approximation of $\hat\Sigma_0$ from a given family of approximations and/or (b) biasing or \emph{shrinkage} of $\hat\Sigma_0$ toward a given low-dimensional target estimate by an optimal amount.  Both dimensionality reduction and shrinkage approaches reduce the variance of the solution while introducing bias. 
-
-
-We evaluated four regularized estimators which we will denote as A, B, C, and D.  Their target estimates correspond to covariance matrices of Gaussian graphical models depicted in Figure 2.  Here the green spheres represent the recorded neurons. The light-colored balls represent latent units of the graphical model and the edges connecting them represent conditional dependencies.
+We evaluated four regularized estimators denoted here as A, B, C, and D.  Their target estimates correspond to covariance matrices of Gaussian graphical models depicted in Figure 2.  The green spheres represent the recorded neurons, whereas the light-colored spheres represent latent units of the graphical model and the edges connecting them represent conditional dependencies. 
 
 \input{sections/Figure2.tex}
 
-A \emph{graphical model} is a multivarate probability distribution with a specified graph of conditional dependencies between its variables \cite{Koller:2009}.  When such a distribution is a multivariate normal distribution, the model becomes a \emph{Gaussian graphical model} or, equivalently, a \emph{Gaussian Markov Random Field}.  Gaussian graphical models have a straightforward relationship to their covariance matrix $\Sigma$:  Zero elements in the inverse of $\Sigma$ indicate conditional independence between the corresponding pair of variables.  
+A \emph{graphical model} is a multivarate probability distribution with a specified graph of conditional dependencies between its variables \cite{Koller:2009}.  When this distribution is a multivariate normal distribution, the model becomes a \emph{Gaussian graphical model} or, equivalently, a \emph{Gaussian Markov Random Field}.  Gaussian graphical models have a straightforward relationship to their covariance matrix $\Sigma$:  Zero elements in the inverse of $\Sigma$ indicate conditional independence between the corresponding pair of variables.  
 
 Fitting a graphical model to data involves two tasks: (1) the selection of the set of non-zero covariances or \emph{covariance selection} \cite{Dempster:1972} and (b) the fitting of the non-zero elements.
 
-\subsubsection*{Estimate A: Shrinkage toward the independent model}
-In estimate A, the target is a family of diagonal matrices 
+\emph{Estimate A} is shrinkage estimator toward an independent model.  
 \begin{equation}
 \hat T_\alpha = (1-\alpha)(\hat\Sigma_0 \circ I) + \frac \alpha p \mbox{tr}(\hat \Sigma_0)I
 \end{equation}
