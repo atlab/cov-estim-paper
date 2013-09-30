@@ -66,35 +66,54 @@ and \emph{estimation error} (``variance'')
 \end{equation}
 where $\bar\Sigma = \E{\hat\Sigma}$ is the expected value of the estimate. 
 
-The unbiased estimator $\hat\Sigma_0$ makes $\bar\Sigma=\Sigma$ and thus minimizes  approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
+The unbiased estimator $\hat\Sigma_0$ makes $\bar\Sigma=\Sigma$ and thereby minimizes the approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
 
-The estimator risk can be reduced by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}. A regularized estimator solves the bias-variance tradeoff to produce a biased but less variable estimates aiming to minimize the estimator's risk.  Many popular covariance estimators use single pre-determined target estimator and optimize the shrinkage intensity.  Others emphasize the optimal selection of the low-dimensional target estimate from a family of estimates. Yet others effectively combine shrinkage and selection.
+The estimator risk can be reduced by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}. A regularized estimator solves the bias-variance tradeoff to produce a biased but less variable estimates aiming to minimize the estimator's risk.  Various regularization schemes focus on the dimensionality reduction part \TODO{rephrase} by selecting the optimal target estimate from a family of estimates with reduced dimensionality \cite{findit}.  Other estimators only shrink the sample covariance matrix toward a single target estimator \cite{Schafer:2005}. Yet other regularizers effectively combine shrinkage and dimensionality reduction \cite{findit}.
 
-We evaluated four regularized estimators denoted here as A, B, C, and D.  Their target estimates correspond to covariance matrices of Gaussian graphical models depicted in Figure 2.  The green spheres represent the recorded neurons, whereas the light-colored spheres represent latent units of the graphical model and the edges connecting them represent conditional dependencies. 
+We evaluated four regularized estimators denoted here as A, B, C, and D.  Their target estimates correspond to covariance matrices of Gaussian graphical models depicted in Figure 2 where green spheres represent the recorded neurons,  light-colored spheres represent latent units of the graphical model, and edges connecting them represent conditional dependencies or interactions.
 
 \input{sections/Figure2.tex}
 
-A \emph{graphical model} is a multivarate probability distribution with a specified graph of conditional dependencies between its variables \cite{Koller:2009}.  When this distribution is a multivariate normal distribution, the model becomes a \emph{Gaussian graphical model} or, equivalently, a \emph{Gaussian Markov Random Field}.  Gaussian graphical models have a straightforward relationship to their covariance matrix $\Sigma$:  Zero elements in the inverse of $\Sigma$ indicate conditional independence between the corresponding pair of variables.  
+A \emph{graphical model} is a multivarate probability distribution with a specified graph of conditional dependencies between its variables \cite{Koller:2009}.  When this distribution is a multivariate normal distribution, the model becomes a \emph{Gaussian graphical model} (GGM) or, equivalently, a \emph{Gaussian Markov Random Field}.  Gaussian graphical models have a straightforward relationship to their covariance matrix $\Sigma$:  Zero elements in the inverse of $\Sigma$ indicate conditional independence between the corresponding pair of variables.  
 
 Fitting a graphical model to data involves two tasks: (1) the selection of the set of non-zero covariances or \emph{covariance selection} \cite{Dempster:1972} and (b) the fitting of the non-zero elements.
 
-\emph{Estimate A} is shrinkage estimator toward an independent model.  
+\subsubsection*{Estimator A: Shrinkage toward identity.}
+In \emph{estimator A}, the sample covariance matrix $\hat\Sigma_0$ is shrunk toward the independent model.  The covariance matrix of a GGM in which all units are independent will be diagonal.  
+For example, we  could leave the sample variances on the diagonal and zero out the off-diagonal products, making the target estimate 
+\begin{equation}\label{eq:sampleVariance}
+\hat T= \hat\Sigma_0\circ I
+\end{equation}
+where $\circ$ denotes the entrywise matrix product (Hadamard product). 
+Alternatively, the target could have equal variances, all equal to the average sample variance in the population $v = \frac 1 p \Tr(\hat\Sigma_0)$.
+\begin{equation}\label{eq:equalVariance}
+\hat T=\frac 1 p \Tr(\hat\Sigma_0) I
+\end{equation}
+The equal-variance target in Eq.~\ref{eq:equalVariance} has only one degree of freedom and thus lower estimation error but higher bias than the target with sample variances in Eq.~\ref{eq:sampleVariance}. It is not immediately clear which target is better in a particular application. We therefore use the linear mixture of the two targets paramaterized by the mixing coefficient $\alpha\in[0,1]$:
 \begin{equation}
 \hat T_\alpha = (1-\alpha)(\hat\Sigma_0 \circ I) + \frac \alpha p \mbox{tr}(\hat \Sigma_0)I
 \end{equation}
-where $\circ$ is the entrywise product (Hadamard product). When $\alpha=0$, $\hat T_\alpha$ has the average variance along the diagonal. When $ \alpha=1$, $ \hat T_\alpha$ has empirical variances on the diagonal.
-
-If dependencies between neurons are strictly linear, then a diagonal covariance matrix represents the case where neurons are independent, with no interactions.
-
-The overall estimate $\hat\Sigma$ is found by linear mixing of $\hat\Sigma_0$ and $ \hat T_\alpha$ controlled by the mixing proportion $\lambda$:
+Then the estimator $\hat\Sigma_{\alpha,\lambda}$ is the linear shrinkage of the sample covariance matrix $\hat\Sigma_0$ toward $\hat T_\alpha$ controlled by the mixing proportion $\lambda\in[0,1]$:
 \begin{equation}
-\hat\Sigma = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_\alpha 
+\hat\Sigma_{\alpha,\lambda} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_\alpha 
 \end{equation}
+This covariance matrix estimator is implemented by R's {\tt corpcor} package \cite{Schaefer:2010} and enjoys widespread use in many applications \cite{Schafer:2005}.
 
-The hyperparameters $ \alpha$ and $ \lambda$ can be optimally selected from the training data by nested cross-validation.
+We estimated the optimal values of hyperparameters $ \alpha$ and $ \lambda$  by nested cross-validation within the training dataset. \TODO{more detail?}
 
-\subsubsection*{Estimate B: Shrinkage toward }
-In estimator B, the target is the multifactor model $ \hat T_d$ with $ d$ latent units. When all dependencies are linear, factor models correspond to mutually independent neurons each influenced by $ d$ latent units. (This is  the conventional factor analysis).
+\subsubsection*{Estimate B: Shrinkage toward a factor model}
+\emph{Estimator B} shrinks the sample covariance matrix $\hat\Sigma_0$ toward a target estimated by \emph{factor analysis}. For multivariate normal distributions, factor analysis estimates a graphical model in which the observed units do not interact directly but are influenced by a small number of common inputs.
+
+The target estimate
+\begin{equation}
+T_d = L_dL_d^\T + \Psi
+\end{equation}
+where $L_d$ is the $p\times d$ \emph{loading matrix} and $\Psi$ is a diagonal matrix. 
+where $(L_d,\Psi) = \arg\min\limits_{\dot L_d,\dot\Psi} \loss{\hat\Sigma_0,\dot L_d \dot L_d^\T + \dot \Psi}$ 
+
+
+
+ $ \hat T_d$ with $ d$ latent units. When all dependencies are linear, factor models correspond to mutually independent neurons each influenced by $ d$ latent units. (This is  the conventional factor analysis).
 
 Just as in A, the overall estimate is found by linear mixing:
 \begin{equation}
