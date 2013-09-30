@@ -1,8 +1,10 @@
 *.aux
 *.log
 *.out
-*.pdf
 *.bbl
 *.bib
 *.gz
 *.blg
+plos.pdf
+paper.pdf
+rev*.pdf

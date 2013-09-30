@@ -1,72 +1,81 @@
-\subsection*{Estimator A: Shrinkage toward diagonal}
-The most popular covariance regularization schemes use diagonal target estimates and linear shrinkage toward the target.  For example, the target could be the identity matrix:  
-\begin{equation}
-\hat T = \hat v I
+We evaluated four regularized estimators denoted here as A, B, C, and D.  Their target estimates correspond to covariance matrices of Gaussian graphical models depicted in Figure 2 where green spheres represent the recorded neurons,  light-colored spheres represent latent units of the graphical model, and edges connecting them represent conditional dependencies or interactions.
+
+\input{sections/Figure2.tex}
+
+A \emph{graphical model} is a multivarate probability distribution with a specified graph of conditional dependencies between its variables \cite{Koller:2009}.  When this distribution is a multivariate normal distribution, the model becomes a \emph{Gaussian graphical model} (GGM) or, equivalently, a \emph{Gaussian Markov Random Field}.  Gaussian graphical models have a straightforward relationship to their covariance matrix $\Sigma$:  Zero elements in the inverse of $\Sigma$ indicate conditional independence between the corresponding pair of variables.  
+
+Fitting a graphical model to data involves two tasks: (1) the selection of the set of non-zero covariances or \emph{covariance selection} \cite{Dempster:1972} and (b) the fitting of the non-zero elements.
+
+\subsubsection*{Estimator A: Shrinkage toward diagonal.}
+In \emph{estimator A}, the sample covariance matrix $\hat\Sigma_0$ is shrunk toward the independent model.  The covariance matrix of a GGM in which all units are independent will be diagonal.  
+For example, we  could leave the sample variances on the diagonal and zero out the off-diagonal products, making the target estimate 
+\begin{equation}\label{eq:sampleVariance}
+\hat T= \hat\Sigma_0\circ I
 \end{equation}
-where $\hat v = \frac 1 p \sum\limits_{i=1}^p(\hat\Sigma_0)_{ii}$ is the mean sample variance. 
-
-Alternatively, the target could contain the sample variances:
-\begin{equation}
-\hat T= \hat\Sigma_0 \circ I 
+where $\circ$ denotes the entrywise matrix product (Hadamard product). 
+Alternatively, the target could have equal variances, all equal to the average sample variance in the population $v = \frac 1 p \Tr(\hat\Sigma_0)$.
+\begin{equation}\label{eq:equalVariance}
+\hat T=\frac 1 p \Tr(\hat\Sigma_0) I
 \end{equation}
-where $\circ$ is the entrywise matrix product.
-
-Finally, the target could be a linear mixture of the common variance and independent variance targets
+The equal-variance target in Eq.~\ref{eq:equalVariance} has only one degree of freedom and thus lower estimation error but higher bias than the target with sample variances in Eq.~\ref{eq:sampleVariance}. It is not immediately clear which target is better in a particular application. We therefore use the linear mixture of the two targets paramaterized by the mixing coefficient $\alpha\in[0,1]$:
 \begin{equation}
-\hat T_{\hat\eta} = (1-\hat\eta)(\hat\Sigma_0 \circ I) + \hat\eta\hat v I
+\hat T_\alpha = (1-\alpha)(\hat\Sigma_0 \circ I) + \frac \alpha p \mbox{tr}(\hat \Sigma_0)I
+\end{equation}
+Then the estimator $\hat\Sigma_{\alpha,\lambda}$ is the linear shrinkage of the sample covariance matrix $\hat\Sigma_0$ toward $\hat T_\alpha$ controlled by the mixing proportion $\lambda\in[0,1]$:
+\begin{equation}
+\hat\Sigma_{\alpha,\lambda} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_\alpha 
+\end{equation}
+This covariance matrix estimator is implemented by R's {\tt corpcor} package \cite{Schaefer:2010} and enjoys widespread use in many applications \cite{Schafer:2005}.
+
+We estimated the optimal values of hyperparameters $ \alpha$ and $ \lambda$  by  cross-validation within the training dataset. \TODO{more detail?} \TODO{discuss analytic optimization of shrinkage intensities.}
+
+\subsubsection*{Estimate B: Shrinkage toward a factor model}
+\emph{Estimator B} shrinks the sample covariance matrix $\hat\Sigma_0$ toward a target estimated by \emph{factor analysis} with $d$ factors. For multivariate normal distributions, factor analysis estimates a graphical model in which the observed units do not interact directly but are influenced by $d$ common inputs.
+
+The target estimate is then 
+\begin{equation}
+\hat T_d = \hat L_d\hat L_d^\T + \hat \Psi
+\end{equation}
+where $\hat L_d$ is the $p\times d$ \emph{loading matrix} and $\hat \Psi$ is the $p\times p$ diagonal matrix of specific variances. The value of $\hat T\_d$ is found by minimizing $\loss{\hat T_d, \hat\Sigma_0}$.
+
+Just as in estimator A, $\hat\Sigma_0$ is shrunk toward $\hat T_d$ by linear mixing controlled by shrinkage intensity $\lambda\in[0,1]$.
+\begin{equation}
+\hat\Sigma_{d,\lambda} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_d
+\end{equation}
+and the optimal values of $d$ and $\lambda$ are found by cross-validation within the training set.
+
+Factor analysis has a rich history of testing hypotheses about the dominance of a few common inputs \cite{findagoodone}.  In neuroscience, the hypothesis that the population activity in small local circuits is largely driven by a few latent factors has been investigated \cite{Yu:2009,Ecker:2013}.  Estimation of covariance matrices by shrinkage toward a factor model has been used in finance for portfolio risk assessment \cite{Ledoit:2003,Fan:2008}.
+
+\subsubsection*{Estimator C: Spare inverse}
+\emph{Estimator C} produces a low-dimensional estimate by finding an approximation of $\hat\Sigma_0$ that has many zeros in its inverse. This approximation problem is known as \emph{covariance selection} \cite{Dempster:1972,Meinshausen:2006}. 
+
+For Gaussian Graphical Models, zeros in the inverse covariance matrix indicate statisitcal independence between the corresponding pairs. Thus the inverse covariance matrix is also the adjacency matrix of the graphical model, indicating which pairs are conditionally dependent. \TODO{discuss how quickly (or slowly) this breaks down with deviations from gaussianity, e.g.~MaxEnt models, Ising models.} \TODO{Also, motivate this from the perpsective of linear regression as in \cite{Varoquaux:2012}.} \TODO{Relate to partial pairwise correlations.} Regularization of covariance matrix estimation by sparsifying the inverse of the estimate has been using in function genomics \cite{Schafer:2005,other} and fMRI functional connectivity \cite{Varoquaux:2012}. 
+
+The covariance matrix estimate is then 
+\begin{equation}
+\hat\Sigma_\rho = \left(\arg\min\limits_S \loss{S^{-1},\hat\Sigma_0}  \right)^{-1} \quad \mbox{such that} \quad  \|S_\rho\|_0 = \rho
+\end{equation}
+where $S_\rho$ is a sparse matrix with $\rho$ non-zero coefficients. $\|S\|_0$ denotes the number of non-zero elements of matrix $S$.
+Solving this approximation in this form is computationally challenging. However, replacing the $L_0$ norm with the $L_1$ norm makes the approximation problem convex  while still allowing to uncover the true zero structure \cite{Friedman:2008,Donoho:2000}.  The resulting algorithm, known as \emph{graphical lasso} \cite{Friedman:2008} finds the estimator as 
+\begin{equation}
+\hat\Sigma_\lambda = \left(\arg\min\limits_S \loss{S^{-1},\hat\Sigma_0} + \lambda \|S\|_1\right)^{-1}
+\end{equation}
+where $\lambda \|S\|_1$ is the $L_1$ norm of the matrix. \TODO{clarify}.
+
+Just as in the previous estimators, the optimal value of the regularization parameter $\lambda$ is found from training data by cross-validation.
+
+\subsubsection*{Estimator D: Sparse inverse + low-rank}
+\emph{Estimator D} produces a low-dimensional estimate by finding an apprxomation of $\hat\Sigma_0$ approximating the sample covariance matrix such that its inverse is the sum of a spase matrix and a low-rank matrix. 
+
+
+In estimate D, the target $\hat R_{d,\alpha}$ is the matrix whose inverse is the sum of a sparse matrix $\hat S_\alpha$ and a low-rank matrix $\hat L_d$ of rank $d$.
+\begin{equation}
+\hat R_{d,\alpha} = (\hat S_\alpha + \hat L_d)^{-1}
 \end{equation}
 
-The regularized estimator is the linear mixture of $\hat\Sigma_0$ and $\hat T_{\hat\eta}$:
-\begin{equation}
-\hat\Sigma_{\hat\eta,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat\lambda \hat T_{\hat\eta} 
-\end{equation}
-
-The hyperparameters $\hat\eta$ and $\hat\lambda$ must be estimated from the data.  Under the MSE loss function $\mathcal L_e$ (\ref{eq:MSE}), the optimal values of $\hat\eta$ and $\hat\lambda$ can be estimated analytically \cite{Ledoit:2004,Schafer:2005,Schaefer:2010}. However, these estimates are no longer optimal under the Gaussian loss $\mathcal L_g$. \TODO{I have tested this and there was a substantial difference in both synthetic and empirical data}  When an analytical solution for optimal hyperparameters is not available, the optimal values can be found by cross validation, entirely within the the training sample. \TODO{explain nested cross-validation in more detail?} \TODO{KJ: Yes - see above.}
-
-\TODO{KJ: I am confused.  This suggests that you are getting different results using the two different loss functions.
-However, there was no argument yet that either gives us more relevant information about the underlying distribution
-if we do not assume Gaussianity, for instance.  I would argue that the Gaussian loss is better, but this is simply 
-because the Euclidean metric is not appropriate on the cone of positive semidefinite variances.  As the 
-discussion we have been having with Alex demonstrates, this is a point that needs to be explained clearly.}
-
-\TODO{Describe how the empirical loss is convex in the hyperparameters in this case}
-
-\subsection*{Estimator B: Shrinkage toward a factor model}
-For estimator B, the target is a factor model, composed as the sum of a low-rank component $\hat L_{\hat d}\hat L_{\hat d}^\T$ and a diagonal matrix $\hat \Psi$:
-\begin{equation}
-\hat T_{\hat d} = \hat L_{\hat d} \hat L_{\hat d}^\T + \hat\Psi
-\end{equation}
-Here $\hat L_{\hat d}$ is an $p\times\hat d$ matrix and $\hat\Psi$ is diagonal.  
-
-If $F$ were assume to be multivariate normal \TODO{or other distributions that are defined by linear dependencies}, the factor model is corresponds to the graphical model (\ref{fig:02}B) where the activity of all neurons are dependent only $\hat d$ latent units. This suggest a mechanistic interpretation in which the interactions between neurons are insignificant compared to the influence of inputs outside the recorded circuit.
-
-Just as with Estimator A, Estimator B is allowed to commit to the low-dimensional target only partially: the overall estimate is the linear mixture of the sample covariance and the target
-\begin{equation}
-\hat\Sigma_{\hat d,\hat\lambda} = (1-\hat\lambda)\hat\Sigma_0 + \hat  T_{\hat d}
-\end{equation}
-
-\TODO{Check \cite{Ledoit:2003,Fan:2011,Fan:2006}}
-
-\subsection*{Estimator C: Sparse inverse}
-Assuming that $x$ is distributed normally, the inverse of the covariance matrix or \emph{precision matrix} $K=\Sigma^{-1}$ has special significance: zeros in the precision matrix indicate conditional independence between the corresponding pairs. To see this, let $x=(x_1,\ldots,x_p)^\T \sim g\left(x\cond K\right)$
-\begin{equation}
-g\left(x\cond K\right) = \frac 1 {Z(K)} \exp\left(-\frac 1 2 \sum\limits_{i=1}^p\sum\limits_{j=1}^p  K_{ij} x_i x_j\right)
-\end{equation} 
-If $K_{12}\equiv K_{21} = 0$, then the joint distribution of $x_1$ and $x_2$, conditioned on $x_3=a_3,\ldots,x_p=a_p$ can be decomposed as product of independent distributions of $x_1$ and $x_2$: 
-\begin{equation}
-\begin{split}
-g\left( x_1, x_2 \cond K, x_3=a_3,\ldots,x_p=a_p\right) &=
-\frac 1 {Z(K)} \exp\left(-\frac 1 2 \sum\limits_{i=3}^p\sum\limits_{j=3}^p  K_{ij} a_i a_j \right)\times
-\\
- &  \exp\left( -\frac 1 2\left( K_{11} x_1^2 +  x_1\sum\limits_{i=3}^p K_{1i}a_i \right)  \right)
-\\
- &  \exp\left( -\frac 1 2\left( K_{22} x_2^2 +  x_2\sum\limits_{i=3}^p K_{2i}a_i \right)  \right)
-\end{split}
-\end{equation}
+If all dependencies are linear, the estimate D describes a group of neurons where each interacts with a small number of latent units and a small fraction of the observed neurons. 
 
 
-\cite{Dempster:1972,Meinshausen:2006,Friedman:2008}
 
-\subsection*{Estimator D: Sparse inverse with latent units}
 \cite{Ma:2013} 
 
