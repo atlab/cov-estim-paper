@@ -1,0 +1,68 @@
+\subsection*{The sample covariance matrix}
+We aim to estimate the true covariance matrix $\Sigma = \E{(x-\mu)(x-\mu)^\T}$ of the instantaneous activity vector $x$ of a population of $p$ neurons. Here $\E{\cdot}$ denotes expectation \TODO{for the true data generating process} and $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates discretized into bins of duration $\Delta t$ and $\mu = \E{x}$.  
+
+For more rigorous notation, definitions, and derivations, see Appendix. 
+
+The usual estimator of $\Sigma$ is the sample covariance matrix
+\begin{equation}
+\hat \Sigma_0 = \frac 1 \nu \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T 
+\end{equation}
+where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals; $\nu$ is the number of degrees of freedom. For independent observations $\nu=n-1$ because estimation of the mean $\mu$ accounts for one degree of freedom. When observations are correlated, as is the case with calcium signals, $\nu < n-1$ and may be estimated from the signal. 
+
+The sample covariance matrix is constructed to be unbiased, such that $\E{\hat\Sigma_0} = \Sigma$. 
+
+\subsection*{Evaluation of covariance matrix estimates}
+The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  The loss function quantifies the deviation of $\hat\Sigma$ from $\Sigma$ and attains its minimum  when $\hat\Sigma = \Sigma$. 
+
+For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function:
+\begin{equation}\label{eq:loss}
+\loss{\hat\Sigma,\Sigma} = \frac 1 p\left[\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma)\right]
+\end{equation}
+This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\hat\Sigma-\Sigma$, Stein's entropy loss, and quadratic loss \cite{James:1961,Ledoit:2004,Schafer:2005,Fan:2008}.  We assert that the main conclusions of our study are unlikely to change drastically other well behaved loss functions.
+
+The aim of our project is produce covariance matrix estimates that minimize the expected loss.  The expected loss of an estimator is known as its \emph{risk}: 
+\begin{equation}
+r = \E{\loss{\hat\Sigma, \Sigma}}
+\end{equation}
+
+In practice, the true value $\Sigma$ is not accessible and estimators' risks must be estimated from the data.  This may be accomplished through validation: 
+Let $\hat\Sigma_0^\prime$ denote a sample covariance matrix measured from an independent sample that was not used included in the computation of $\hat\Sigma$. Then \emph{empirical loss} is 
+\begin{equation}
+\hat \ell = \loss{\hat\Sigma,\hat\Sigma_0^\prime}
+\end{equation}
+ and its expected value or \emph{empirical risk} is
+ \begin{equation}\label{eq:empiricalRisk}
+ \hat r = \E{\hat\ell} = \mathbb E_{\hat\Sigma} \left[ \mathbb E_{\hat\Sigma_0^\prime} \left[ {\loss{\hat\Sigma,\hat\Sigma_0^\prime}} \right] \right]
+ \end{equation}
+ Because the chosen loss function is linear in its second argument in the sense that
+ \begin{equation}
+ \loss{\hat\Sigma,X_1} + \loss{\hat\Sigma,X_2} \equiv \loss{\hat\Sigma,X_1+X_2}
+ \end{equation}
+ the expection on the second argument in Eq.~\ref{eq:empiricalRisk} may be taken inside the loss function:
+ \begin{equation}
+ \hat r = \E{\loss{\hat\Sigma,\E{\hat\Sigma_0^\prime}}}  = \E{\loss{\hat\Sigma,\Sigma}} = r
+ \end{equation}
+ Thus the empirical loss $\loss{\hat \Sigma,\hat \Sigma_0^\prime}$ serves as an unbiased estimate of risk $r$. 
+
+ Because the loss function is equivalent to the negative normal log likelihood, the above derivation led us to the familiar criterion that the optimal covariance matrix estimator is one that consistently maximizes the normal log likelihood of the validation dataset.
+
+ \subsection*{Regularization}
+ Under many loss functions\footnote{
+ The strict equality in Eq.~\ref{eq:bias-variance} does not hold under the loss function in Eq.~\ref{eq:loss}. However, the equality does hold for its close cousin, Stein's \emph{entropy loss},  which only differs by the order of its arguments and a constant offset: $\mathcal L_s(\hat\Sigma,\Sigma) \equiv \loss{\Sigma,\hat\Sigma} - \loss{\Sigma,\Sigma}$. This defficiency presents no difficulty because we minimize the risk directly, without assessing the two error components individually. The bias-variance decomposition is presented here to motivate the use of regularization.}, 
+ the estimator's risk can be decomposed as the sum
+ \begin{equation}\label{eq:bias-variance}
+ r = b + \varepsilon
+ \end{equation}
+ of \emph{approximation error} (``bias'' or systematic error)
+ \begin{equation}
+ b = \loss{\bar\Sigma,\Sigma}
+ \end{equation}
+ and \emph{estimation error} (``variance'') 
+ \begin{equation}
+ \varepsilon = \E{\loss{\hat\Sigma, \bar\Sigma}}
+ \end{equation}
+ where $\bar\Sigma = \E{\hat\Sigma}$ is the expected value of the estimate. 
+
+ The unbiased estimator $\hat\Sigma_0$ makes $\bar\Sigma=\Sigma$ and thereby minimizes the approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
+
+ The estimator risk can be reduced by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}. A regularized estimator solves the bias-variance tradeoff to produce a biased but less variable estimates aiming to minimize the estimator's risk.  Various regularization schemes focus on the dimensionality reduction part \TODO{rephrase} by selecting the optimal target estimate from a family of estimates with reduced dimensionality \cite{findit}.  Other estimators only shrink the sample covariance matrix toward a single target estimator \cite{Schafer:2005}. Yet other regularizers effectively combine shrinkage and dimensionality reduction \cite{findit}.

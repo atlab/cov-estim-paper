@@ -56,7 +56,7 @@ The covariance matrix estimate is then
 -\hat\Sigma_\rho^{-1} =\arg\min\limits_S \loss{-S^{-1},\hat\Sigma_0}  \quad \mbox{such that} \quad  \|S_\rho\|_0 = \rho
 \end{equation}
 where $S_\rho$ is a sparse matrix with $\rho$ non-zero coefficients. $\|S\|_0$ denotes the number of non-zero elements of matrix $S$.
-Solving this approximation in this form is computationally challenging. The problem can be made computationally tractable by replacing the $L_0$ norm with the $L_1$ norm, which converts the problem into one of convex optimization \cite{Donoho:2000}.  The resulting algorithm, known as \emph{graphical lasso} or \emph{GLASSO}  \cite{Meinshausen:2006,Banerjee:2008,Friedman:2008}, produces the following estimator  
+Solving this approximation in this form is computationally challenging. The problem can be made computationally tractable by replacing the $L_0$ norm with the $L_1$ norm, which converts the problem into one of convex optimization \cite{Donoho:2000}.  The resulting algorithm, known as \emph{graphical lasso} or \emph{GLASSO}  \cite{Meinshausen:2006,Yuan:2007,Banerjee:2008,Friedman:2008}, produces the following estimator  
 \begin{equation}
 -\hat\Sigma_\lambda^{-1} = \arg\min\limits_S \loss{-S^{-1},\hat\Sigma_0} + \lambda \|S\|_1
 \end{equation}
