@@ -64,7 +64,7 @@
 \newcommand{\cond}{\,\vert\,}
 \newcommand{\loss}[1]{\mathcal L\left(#1\right)} 
 \newcommand{\T}{\intercal}
-\newcommand{\E}[1]{\mathbb E\left[ #1\right]}
+\newcommand{\E}[2][]{\mathbb E_{#1}\left[ #2\right]}    % expected value
 \newcommand{\TODO}[1]{\emph{\small\color{blue}$\langle\langle$#1$\rangle\rangle$}}
 \newcommand*\dif{\mathop{}\,d}
 \DeclareMathOperator{\rank}{rank}
@@ -113,6 +113,7 @@ $\ast$ E-mail: yatsenko@cns.bcm.edu
 \section*{Results}
 \input{sections/Acquisition.tex}
 \input{sections/Theory.tex}
+\input{sections/Regularization.tex}
 \input{sections/Estimators.tex}
 \input{sections/Simulation.tex}
 \input{sections/Findings.tex}

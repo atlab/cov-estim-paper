@@ -11,58 +11,41 @@ where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity i
 
 The sample covariance matrix is constructed to be unbiased, such that $\E{\hat\Sigma_0} = \Sigma$. 
 
-\subsection*{Evaluation of covariance matrix estimates}
+\subsection*{Evaluation of covariance matrix estimators}
 The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  The loss function quantifies the deviation of $\hat\Sigma$ from $\Sigma$ and attains its minimum  when $\hat\Sigma = \Sigma$. 
 
 For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function:
 \begin{equation}\label{eq:loss}
 \loss{\hat\Sigma,\Sigma} = \frac 1 p\left[\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma)\right]
 \end{equation}
-This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\hat\Sigma-\Sigma$, Stein's entropy loss, and quadratic loss \cite{James:1961,Ledoit:2004,Schafer:2005,Fan:2008}.  We assert that the main conclusions of our study are unlikely to change drastically other well behaved loss functions.
+This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\hat\Sigma-\Sigma$, Stein's entropy loss, and quadratic loss \cite{James:1961,Ledoit:2004,Schafer:2005,Fan:2008}.  We expect that the main conclusions of our study will not change qualitatively under other well behaved loss functions.
 
-The aim of our project is produce covariance matrix estimates that minimize the expected loss.  The expected loss of an estimator is known as its \emph{risk}: 
+The aim of our project is to produce covariance matrix estimates that minimize the expected loss 
 \begin{equation}
 r = \E{\loss{\hat\Sigma, \Sigma}}
 \end{equation}
+which is know as the \emph{risk} of $\hat\Sigma$.
 
-In practice, the true value $\Sigma$ is not accessible and estimators' risks must be estimated from the data.  This may be accomplished through validation: 
-Let $\hat\Sigma_0^\prime$ denote a sample covariance matrix measured from an independent sample that was not used included in the computation of $\hat\Sigma$. Then \emph{empirical loss} is 
+In practice, the true value $\Sigma$ is not accessible and estimators' risks must be estimated from the data.  This may be accomplished through \emph{validation}. 
+Let $\hat\Sigma_0^\prime$ denote a sample covariance matrix measured from an independent sample that was not used included in the computation of $\hat\Sigma$. 
+
+$\loss{\cdot,\cdot}$ is additive in its second argument such that
+ \begin{equation}\label{eq:additivity}
+ \loss{\hat\Sigma,X_1} + \loss{\hat\Sigma,X_2} \equiv \loss{\hat\Sigma,X_1+X_2}
+ \end{equation}
+Then \emph{validation loss}  \TODO{check appropriate term}
 \begin{equation}
 \hat \ell = \loss{\hat\Sigma,\hat\Sigma_0^\prime}
 \end{equation}
- and its expected value or \emph{empirical risk} is
+is an unbiased estimate of the risk:
  \begin{equation}\label{eq:empiricalRisk}
- \hat r = \E{\hat\ell} = \mathbb E_{\hat\Sigma} \left[ \mathbb E_{\hat\Sigma_0^\prime} \left[ {\loss{\hat\Sigma,\hat\Sigma_0^\prime}} \right] \right]
+\E[(\hat\Sigma, \hat\Sigma_0^\prime)] {\hat\ell} 
+= \E[(\hat\Sigma, \hat\Sigma_0^\prime)]{\loss{\hat\Sigma,\hat\Sigma_0^\prime}}
+= \E{\loss{\hat\Sigma,\E{\hat\Sigma_0^\prime}}}
+= \E{\loss{\hat\Sigma,\Sigma}} = r
  \end{equation}
- Because the chosen loss function is linear in its second argument in the sense that
- \begin{equation}
- \loss{\hat\Sigma,X_1} + \loss{\hat\Sigma,X_2} \equiv \loss{\hat\Sigma,X_1+X_2}
- \end{equation}
- the expection on the second argument in Eq.~\ref{eq:empiricalRisk} may be taken inside the loss function:
- \begin{equation}
- \hat r = \E{\loss{\hat\Sigma,\E{\hat\Sigma_0^\prime}}}  = \E{\loss{\hat\Sigma,\Sigma}} = r
- \end{equation}
- Thus the empirical loss $\loss{\hat \Sigma,\hat \Sigma_0^\prime}$ serves as an unbiased estimate of risk $r$. 
+Therefore, estimators resulting in consistently lower validation loss can be inferred to produce estimates that are closer to truth than estimators with higher validation loss.
 
- Because the loss function is equivalent to the negative normal log likelihood, the above derivation led us to the familiar criterion that the optimal covariance matrix estimator is one that consistently maximizes the normal log likelihood of the validation dataset.
+Other popular loss functions such as entropy loss do not comply with Eq.~\ref{eq:additivity} and their validation loss is not an unbiased estimate of risk.
 
- \subsection*{Regularization}
- Under many loss functions\footnote{
- The strict equality in Eq.~\ref{eq:bias-variance} does not hold under the loss function in Eq.~\ref{eq:loss}. However, the equality does hold for its close cousin, Stein's \emph{entropy loss},  which only differs by the order of its arguments and a constant offset: $\mathcal L_s(\hat\Sigma,\Sigma) \equiv \loss{\Sigma,\hat\Sigma} - \loss{\Sigma,\Sigma}$. This defficiency presents no difficulty because we minimize the risk directly, without assessing the two error components individually. The bias-variance decomposition is presented here to motivate the use of regularization.}, 
- the estimator's risk can be decomposed as the sum
- \begin{equation}\label{eq:bias-variance}
- r = b + \varepsilon
- \end{equation}
- of \emph{approximation error} (``bias'' or systematic error)
- \begin{equation}
- b = \loss{\bar\Sigma,\Sigma}
- \end{equation}
- and \emph{estimation error} (``variance'') 
- \begin{equation}
- \varepsilon = \E{\loss{\hat\Sigma, \bar\Sigma}}
- \end{equation}
- where $\bar\Sigma = \E{\hat\Sigma}$ is the expected value of the estimate. 
-
- The unbiased estimator $\hat\Sigma_0$ makes $\bar\Sigma=\Sigma$ and thereby minimizes the approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
-
- The estimator risk can be reduced by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}. A regularized estimator solves the bias-variance tradeoff to produce a biased but less variable estimates aiming to minimize the estimator's risk.  Various regularization schemes focus on the dimensionality reduction part \TODO{rephrase} by selecting the optimal target estimate from a family of estimates with reduced dimensionality \cite{findit}.  Other estimators only shrink the sample covariance matrix toward a single target estimator \cite{Schafer:2005}. Yet other regularizers effectively combine shrinkage and dimensionality reduction \cite{findit}.
+Since $\loss{\cdot,\cdot}$ is equivalent to negative normal log likelihood, the above derivation leads to the familiar criterion that the optimal covariance matrix estimator is one that consistently maximizes cross-validated normal log likelihood.
