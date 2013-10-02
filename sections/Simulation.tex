@@ -1,5 +1,9 @@
-\subsection*{In simulation, estimator selection `recognizes' the covariance structure}
+\subsection*{Simulation: estimators perform better when their target matches the low-dimensional structure of the true covariance matrix}
 \input{sections/Figure3.tex}
+
+A common misconception about regularization is that its effect depends on accurate prior knowlege about the structure of the data. However, substantial improvement can be attained by shrinking the unbiased estimate toward an arbitrary target as long as the target is less variable than the unbiased estimator.  This unintuitive phenomenon is known as \emph{Stein's paradox} \cite{Efron:1977}.  The more accurate description of regularization is the as the optimal tradeoff between estimation and approximation error, the so-called ``bias-variance tradeoff'' as described above.
+
+Therefore, taken in isolation, the fact that a given regularized estimator improved the estimate should not be interpreted to suggest that its target estimate has the same low-dimensional structure as the data generating process.   However, when multiple estimators are compared against each other, the ones whose target estimate can closely approximate the true value with the smallest number of parameters will be able to reduce the estimation error with mininimum increases in approximation error when compared against other estimators whose targets cannot consistenly approximate the true covariance matrix.
 
 Sample covariance matrices such as E,F,G,H are computed from samples of 1000 independent observations from multivariate normal distributions with true covariance matrices in A,B,C,D, respectively.  However, the true covariance matrices have various low-dimensional structures. 
 

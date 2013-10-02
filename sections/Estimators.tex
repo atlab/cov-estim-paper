@@ -99,3 +99,4 @@ Again, in this formulation, the problem is computationally intractible.  The pro
 (\hat S_\lambda, \hat L_d) &= \arg\min\limits_{S,L} \loss{-(S+L),\Sigma_0} + \lambda \| S \|_1 \quad \mbox{such that}  \quad \rank(L) = d
 \end{split}
 \end{equation}
+The optimal values of hyperparameters $\lambda$ and $d$ are found cross-validation within the training dataset.
