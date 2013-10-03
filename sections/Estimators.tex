@@ -38,7 +38,7 @@ The target estimate is then
 \end{equation}
 where $\hat L_d$ is a $p\times p$ matrix of rank $d$ and $\hat \Psi$ is a $p\times p$ diagonal matrix. The value of $\hat T_d$ is found by minimizing $\loss{\hat T_d, \hat\Sigma_0}$.
 
-Just as in estimator A, $\hat\Sigma_0$ is shrunk toward $\hat T_d$ by linear mixing controlled by shrinkage intensity $\lambda\in[0,1]$.
+Just as in estimator $\mathcal A$, $\hat\Sigma_0$ is shrunk toward $\hat T_d$ by linear mixing controlled by shrinkage intensity $\lambda\in[0,1]$.
 \begin{equation}
 \hat\Sigma_{d,\lambda}^\mathcal{B} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_d
 \end{equation}
