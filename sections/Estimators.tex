@@ -23,7 +23,7 @@ The equal-variance target in Eq.~\ref{eq:equalVariance} has only one degree of f
 \end{equation}
 Then the estimator $\hat\Sigma_{\alpha,\lambda}$ is the linear shrinkage of the sample covariance matrix $\hat\Sigma_0$ toward $\hat T_\alpha$ controlled by the mixing proportion $\lambda\in[0,1]$:
 \begin{equation}
-\hat\Sigma_{\alpha,\lambda} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_\alpha 
+\hat\Sigma_{\alpha,\lambda}^\mathcal{A} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_\alpha 
 \end{equation}
 This covariance matrix estimator is implemented by R's {\tt corpcor} package \cite{Schaefer:2010} and enjoys widespread use in many applications \cite{Schafer:2005}.
 
@@ -40,7 +40,7 @@ where $\hat L_d$ is a $p\times p$ matrix of rank $d$ and $\hat \Psi$ is a $p\tim
 
 Just as in estimator A, $\hat\Sigma_0$ is shrunk toward $\hat T_d$ by linear mixing controlled by shrinkage intensity $\lambda\in[0,1]$.
 \begin{equation}
-\hat\Sigma_{d,\lambda} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_d
+\hat\Sigma_{d,\lambda}^\mathcal{B} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_d
 \end{equation}
 and the optimal values of $d$ and $\lambda$ are found by cross-validation within the training set.
 
@@ -53,12 +53,16 @@ For Gaussian Graphical Models, zeros in the inverse covariance matrix indicate s
 
 The covariance matrix estimate is then 
 \begin{equation}
--\hat\Sigma_\rho^{-1} =\arg\min\limits_S \loss{-S^{-1},\hat\Sigma_0}  \quad \mbox{such that} \quad  \|S_\rho\|_0 = \rho
+\hat\Sigma_\rho = \hat S^{-1}
+\quad\mbox{with}\quad
+\hat S = \argmin\limits_{\substack{S\succ 0 \\ \|S\|_0 = \rho}} \loss{S^{-1},\hat\Sigma_0}   
 \end{equation}
-where $S_\rho$ is a sparse matrix with $\rho$ non-zero coefficients. $\|S\|_0$ denotes the number of non-zero elements of matrix $S$.
-Solving this approximation in this form is computationally challenging. The problem can be made computationally tractable by replacing the $L_0$ norm with the $L_1$ norm, which converts the problem into one of convex optimization \cite{Donoho:2000}.  The resulting algorithm, known as \emph{graphical lasso} or \emph{GLASSO}  \cite{Meinshausen:2006,Yuan:2007,Banerjee:2008,Friedman:2008}, produces the following estimator  
+where $S\succ 0$ signifies the constraint that $S$ be positive-definite. $\|S\|_0=\rho$ signifies the constraint  that matrix $S$ have $\rho$ non-zero coefficients.
+Solving this approximation in this form is computationally challenging. The problem can be made computationally tractable by relaxing the $L_0$ norm to the $L_1$ norm, which converts the problem into one of convex optimization \cite{Donoho:2000}.  The resulting algorithm, known as \emph{graphical lasso} or \emph{GLASSO}  \cite{Meinshausen:2006,Yuan:2007,Banerjee:2008,Friedman:2008}, produces the following estimator  
 \begin{equation}
--\hat\Sigma_\lambda^{-1} = \arg\min\limits_S \loss{-S^{-1},\hat\Sigma_0} + \lambda \|S\|_1
+\hat\Sigma_\lambda^\mathcal{C} = \hat S^{-1}
+\quad\mbox{with}\quad
+\hat S = \argmin\limits_{S\succ 0} \loss{S^{-1},\hat\Sigma_0} + \lambda \|S\|_1
 \end{equation}
 where $\lambda \|S\|_1$ is the $L_1$ norm of the matrix. \TODO{clarify}.
 
@@ -67,7 +71,7 @@ Just as in the previous estimators, the optimal value of the regularization para
 \subsubsection*{Estimator $\mathcal D$: Sparse inverse + low-rank}
 \emph{Estimator $\mathcal D$} produces a low-dimensional estimate by finding an apprxomation of $\hat\Sigma_0$ approximating the sample covariance matrix such that its inverse is the sum of a spase matrix and a low-rank matrix. Covariance matrices of this form correspond to Gaussian graphical models of the form depicted in Fig.~\ref{fig:02}D.
 
-The inverse $S=-\Sigma^{-1}$ of the covariance matrix of a GGM constitutes the graph of conditional dependencies (interactions) between the units.  With the assumption of sparse organization of interactions in the network, $S$ is assumed to be sparse.  When the observed units are part of a larger GGM that includes other latent units, let the negative inverse $S^*$ of the joint distribution of both observed and latent units be composed of four partitions
+The inverse $S=\Sigma^{-1}$ of the covariance matrix of a GGM constitutes the graph of conditional dependencies (interactions) between the units.  With the assumption of sparse organization of interactions in the network, $S$ is assumed to be sparse.  When the observed units are part of a larger GGM that includes other latent units, let the negative inverse $S^*$ of the joint distribution of both observed and latent units be composed of four partitions
 \begin{equation}
 S^* = 
 \begin{pmatrix}
@@ -78,25 +82,21 @@ S_{12}^\T & S_{22}
 where partition $S_{11}$ describes the interactions between the visible units, $S_{12}$ describe the interactions between visible and latent units, and $S_{22}$ describes the interactions between the latent units. 
 Then the covariance matrix of between the observed unit is 
 \begin{equation}
-\Sigma = -\left(S_{11} - S_{12}S_{22}^{-1}S_{12}^\T\right)^{-1}
+\Sigma = \left(S_{11} - S_{12}S_{22}^{-1}S_{12}^\T\right)^{-1}
 \end{equation} 
-The rank of matrix $S_{12}S_{22}^{-1}S_{12}$ equals the number of latent units. Rather than solving for the precise dependency structure with and between latent units in matrices $S_{12}$ and $S_{22}$, we simply replace the matrix $- S_{12}S_{22}^{-1}S_{12}$ with on low-rank matrix $L_d=- S_{12}S_{22}^{-1}S_{12}$ with rank $d$.
+The rank of matrix $S_{12}S_{22}^{-1}S_{12}$ equals the number of latent units. Rather than solving for the precise dependency structure with and between latent units in matrices $S_{12}$ and $S_{22}$, we simply replace the matrix $ S_{12}S_{22}^{-1}S_{12}$ with on low-rank matrix $L_d= S_{12}S_{22}^{-1}S_{12}$ with rank $d$.
 
 Then we obtain estimator $\hat\Sigma_{d,\rho}$, parameterized by the sparsity parameter $\rho$ and  the number of latent units $d$:
 \begin{equation}
-\begin{split}
--\hat\Sigma_{d,\rho}^{-1} &= \hat S_\rho + \hat L_d
-\\
-(\hat S_\rho, \hat L_d) &= \arg\min\limits_{S,L} \loss{-(S+L),\Sigma_0} \quad \mbox{such that} \quad \|S\|_0=\rho \quad \mbox{and} \quad \rank(L) = d
-\end{split}
+\hat\Sigma_{d,\rho} = \left(\hat L-\hat S\right)^{-1}
+\quad\mbox{where}\quad
+(\hat S, \hat L) = \argmin\limits_{\substack{S,L\\ (L-S)\succ 0 \\ \|S\|_0=\rho \\ L\succeq 0 \\ \rank(L) \le d}} \loss{(L-S)^{-1},\Sigma_0}
 \end{equation}
 
-Again, in this formulation, the problem is computationally intractible.  The problem can be made convex by replacing the $L_0$ norm with $L_1$ norm. The resulting algorith, known as \emph{latent-variable graphical lasso} or \emph{LV-GLASSO} \cite{Chandrasekaran:2010,Ma:2013}, produces estimator $\hat\Sigma_{d,\lambda}$:
+Again, in this formulation, the problem is computationally intractible.  The problem can be made convex by replacing the $L_0$ norm with $L_1$ norm. The resulting algorith, known as \emph{latent-variable graphical lasso} or \emph{LV-GLASSO} \cite{Chandrasekaran:2010,Ma:2013}, produces estimator $\hat\Sigma_{d,\lambda}^{\mathcal D}$:
 \begin{equation}
-\begin{split}
--\hat\Sigma_{d,\lambda}^{-1} &= \hat S_\lambda + \hat L_d
-\\
-(\hat S_\lambda, \hat L_d) &= \arg\min\limits_{S,L} \loss{-(S+L),\Sigma_0} + \lambda \| S \|_1 \quad \mbox{such that}  \quad \rank(L) = d
-\end{split}
+\hat\Sigma_{d,\lambda} ^{\mathcal D} = \left(\hat L-\hat S\right)^{-1}
+\quad\mbox{where}\quad
+(\hat S, \hat L) = \argmin\limits_{\substack{ S,L \\ (L-S)\succ 0 \\ L\succeq 0 \\ \rank(L) \le d}} \loss{(L-S)^{-1},\Sigma_0} + \lambda \| S \|_1 
 \end{equation}
 The optimal values of hyperparameters $\lambda$ and $d$ are found cross-validation within the training dataset.
