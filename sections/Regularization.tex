@@ -18,10 +18,12 @@ and \emph{estimation error} (``variance'')
 \end{equation}
 where $\bar\Sigma = \E{\hat\Sigma}$ is the expected value of the estimate. 
 
-The unbiased estimator $\hat\Sigma_0$ makes $\bar\Sigma=\Sigma$ and thereby minimizes approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
+An unbiased estimator, such as the sample covariance,  $\hat\Sigma_0,$ makes $\bar\Sigma=\Sigma$ and thereby minimizes approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
 
-The estimator risk can be reduced by \emph{regularization}. Regularization is the deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}. 
-A regularized estimator solves the bias-variance tradeoff to produce a biased but less variable estimates aiming to minimize the estimator's risk.  
+The estimator risk can be reduced by \emph{regularization} -- a deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}. 
+A regularized estimator solves the bias-variance tradeoff to produce a biased but less variable estimate to minimize the estimator's risk.  
 Various regularization schemes focus on the dimensionality reduction part \TODO{rephrase} by selecting the optimal target estimate from a family of estimates with reduced dimensionality \cite{findit}.  
 Other estimators only shrink the sample covariance matrix toward a single target estimator \cite{Schafer:2005}. 
 Yet other regularizers effectively combine shrinkage and dimensionality reduction \cite{findit}.
+
+
