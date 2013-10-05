@@ -18,7 +18,7 @@ For the purposes of this study, we adopted the \emph{negative normal log-likelih
 \begin{equation}\label{eq:loss}
 \loss{\hat\Sigma,\Sigma} = \frac 1 p\left[\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma)\right]
 \end{equation}
-This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\hat\Sigma-\Sigma$, Stein's entropy loss, and quadratic loss \cite{James:1961,Ledoit:2004,Schafer:2005,Fan:2008}.  We expect that the main conclusions of our study will not change qualitatively under other well behaved loss functions.
+This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\hat\Sigma-\Sigma$ \cite{Ledoit:2004,Schafer:2005}, Stein's entropy loss, and quadratic loss \cite{James:1961,Fan:2008}.  We expect that the main conclusions of our study will not change qualitatively under other well behaved loss functions.
 
 The aim of our project is to produce covariance matrix estimates that minimize the expected loss 
 \begin{equation}
