@@ -1,7 +1,7 @@
 \subsection*{The sample covariance matrix}
 We aim to estimate the true covariance matrix $\Sigma = \E{(x-\mu)(x-\mu)^\T}$ of the instantaneous activity vector $x$ of a population of $p$ neurons. Here $\E{\cdot}$ denotes expectation \TODO{for the true data generating process} and $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates discretized into bins of duration $\Delta t$ and $\mu = \E{x}$.  
 
-For more rigorous notation, definitions, and derivations, see Appendix. 
+For detailed explanation of the notation, definitions, and derivations, see Appendix. 
 
 The usual estimator of $\Sigma$ is the sample covariance matrix
 \begin{equation}
@@ -9,10 +9,10 @@ The usual estimator of $\Sigma$ is the sample covariance matrix
 \end{equation}
 where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals; $\nu$ is the number of degrees of freedom. For independent observations $\nu=n-1$ because estimation of the mean $\mu$ accounts for one degree of freedom. When observations are correlated, as is the case with calcium signals, $\nu < n-1$ and may be estimated from the signal. 
 
-The sample covariance matrix is constructed to be unbiased, such that $\E{\hat\Sigma_0} = \Sigma$. 
+The sample covariance matrix is constructed to be unbiased, so that $\E{\hat\Sigma_0} = \Sigma$. 
 
 \subsection*{Evaluation of covariance matrix estimators}
-The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  The loss function quantifies the deviation of $\hat\Sigma$ from $\Sigma$ and attains its minimum  when $\hat\Sigma = \Sigma$. 
+The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  The loss function quantifies the deviation of $\hat\Sigma$ from $\Sigma$ and attains its minimum  when $\hat\Sigma = \Sigma$.  \Kcomment{Could we say that it quantifies the error in the estimate?}
 
 For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function:
 \begin{equation}\label{eq:loss}
@@ -24,12 +24,12 @@ The aim of our project is to produce covariance matrix estimates that minimize t
 \begin{equation}
 r = \E{\loss{\hat\Sigma, \Sigma}}
 \end{equation}
-which is know as the \emph{risk} of $\hat\Sigma$.
+which is known as the \emph{risk} of $\hat\Sigma$.
 
-In practice, the true value $\Sigma$ is not accessible and estimators' risks must be estimated from the data.  This may be accomplished through \emph{validation}. 
+In practice, the true value $\Sigma$ is not accessible and an estimators' risks must be estimated from the data.  This may be accomplished through \emph{validation}.  \Kcomment{If you will discuss validation later, point to it.}
 Let $\hat\Sigma_0^\prime$ denote a sample covariance matrix measured from an independent sample that was not used included in the computation of $\hat\Sigma$. 
 
-$\loss{\cdot,\cdot}$ is additive in its second argument such that
+$\loss{\cdot,\cdot}$ is additive in its second argument so that \Kcomment{You frequently use ``such that'' instead of ``so that''}
  \begin{equation}\label{eq:additivity}
  \loss{\hat\Sigma,X_1} + \loss{\hat\Sigma,X_2} \equiv \loss{\hat\Sigma,X_1+X_2}
  \end{equation}
@@ -45,7 +45,10 @@ is an unbiased estimate of the risk:
 = \E{\loss{\hat\Sigma,\Sigma}} = r
  \end{equation}
 Therefore, estimators resulting in consistently lower validation loss can be inferred to produce estimates that are closer to truth than estimators with higher validation loss.
+\Kcomment{This is probably not a very insightful question -- but why do we assume that the sample covariance
+is what we compare $\hat\Sigma$ when we validate the results.  Our point is that this estimate is not very good.}
 
 Other popular loss functions such as entropy loss do not comply with Eq.~\ref{eq:additivity} and their validation loss is not an unbiased estimate of risk.
 
 Since $\loss{\cdot,\cdot}$ is equivalent to negative normal log likelihood, the above derivation has led to the familiar criterion that the optimal covariance matrix estimator is one that consistently maximizes cross-validated normal log likelihood.
+

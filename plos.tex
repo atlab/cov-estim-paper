@@ -48,6 +48,7 @@
 \renewcommand{\@biblabel}[1]{\quad#1.}
 \makeatother
 
+
 % Leave date blank
 \date{}
 
@@ -58,8 +59,9 @@
 %% ** EDIT HERE **
 %% PLEASE INCLUDE ALL MACROS BELOW
 
+\newcommand{\Kcomment}[1]{{\color{blue}{[KJ: #1]}}}
+
 \DeclareMathOperator{\Tr}{tr}
-\DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\mcond}{\,\middle\vert\,}
 \newcommand{\cond}{\,\vert\,}
 \newcommand{\loss}[1]{\mathcal L\left(#1\right)} 
@@ -67,6 +69,7 @@
 \newcommand{\E}[2][]{\mathbb E_{#1}\left[ #2\right]}    % expected value
 \newcommand{\TODO}[1]{\emph{\small\color{blue}$\langle\langle$#1$\rangle\rangle$}}
 \newcommand*\dif{\mathop{}\,d}
+\DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator{\rank}{rank}
 
 %% END MACROS SECTION
@@ -153,4 +156,3 @@ $\ast$ E-mail: yatsenko@cns.bcm.edu
 % \end{table}
 
 \end{document}
-
