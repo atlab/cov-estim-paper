@@ -1,9 +1,15 @@
 \begin{figure}[htp]
 \centering
-\includegraphics[width=1.0\textwidth]{figures/Figure5.pdf}
+\includegraphics[width=0.5\textwidth]{figures/Figure5.pdf}
 \caption{
 Example of covariance structure revealed by the sparse+low-rank estimator and its relationship to the circuit arcitecture.
-{\bf A} The correlation matrix corresponding to the sample covariance matrix in Fig.~\ref{fig:01}D. {\bf B} The inverse of the sample covariance matrix (sample concentration matrix). {\bf D} shows the result of covariance matrix estimation by estimator $\mathcal D$ and {\bf E} show its inverse. The sparse ({\bf C}) and low-rank ({\bf F}) components of the inverse.  {\bf G} depicts the spatial and functional organization of the connections represented by the sparse component of the estimated concentration matrix. 
+{\bf A:} The correlation matrix from Fig.~\ref{fig:01}D. 
+{\bf B:} Optimal cross-validated sparse+low-rank estimate of the corrleation matrix from the same dataset. 
+{\bf C:} Scaled negative inverse of the correlation matrix in {\bf A} (partial pairwise correlations). 
+{\bf D:} Negative inverse of the sparse+low-rank estimate in {\bf B}. 
+{\bf E:} The sparse component of {\bf D} with 96.5\% off-diagonal coefficients set to zero.
+{\bf F:} The low-rank component of {\bf D}, rank=7.
+{\bf G:} The spatial arrangement of cells used in the analysis, connected by edges that correspond to the non-zero elements of the sparse component in {\bf E}. Green edges denote positive weights, red edges denote negative weights.  Color-filled cells are significantly tuned to grating orientation as indicated by the color code in the legend.
 }
 \label{fig:05}
 \end{figure}
