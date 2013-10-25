@@ -1,0 +1,89 @@
+
+\subsection*{Covariance estimation}
+
+Our goal is to estimate the covariance matrix, $\Sigma$, of a population of $n$ neurons. For small populations or in the limit of infinite data this can be done in a straightforward manner by using the sample covariance estimator
+\begin{equation}
+\hat \Sigma_0 = \frac 1 \nu \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T, 
+\end{equation}
+where $x(t)$ are sequential observations of population activity and $\nu$ is the number of degrees of freedom ($\nu=n-1$ if observations are independent).
+
+However, for large population sizes and limited data this approach becomes ineffective at capturing the true structure of the covariance matrix (REFS). The number of parameters to be estimated grows quadratically with the population size. Thus, to obtain a "good" estimate of the true covariance, we need to rely on regularization -- the deliberate biasing of the estimate toward a low-dimensional, less variable target estimate \cite{Bickel:2006,Ledoit:2004}. Various such targets exist, each expressing a different idea about what a parsimonious model would look like. 
+
+We considered four different estimators, based on a few simple concepts for regularizing the covariance: independence, low-rank structure and sparse interactions. We optimized all four estimators with respect to Gaussian log-likelihood (see Discussion for a more in-depth justification of this loss function) and used cross-validation to determine hyper-parameters.
+
+The first and probably simplest regularized estimator is shrinkage towards a diagonal matrix
+\begin{equation}
+\hat \Sigma_{\rm diag} = (1-\lambda) \hat \Sigma_0 + \lambda D,
+\end{equation}
+where $D$ is a diagonal matrix and the mixing proportion, $\lambda$, is determined by cross-validation. This estimator expresses the idea that in the absence of evidence for strong correlations between cells we assume they are independent (Fig.~1A). This approach is sometimes also referred to as ridge regression. 
+
+The second estimator we consider is shrinkage towards a low-rank matrix
+\begin{equation}
+\hat \Sigma_{\rm low-rank} = (1-\lambda) \hat \Sigma_0 + \lambda T,
+\end{equation}
+where $T = LL^\T + \Psi$ is a factor analysis model (REFS) consisting of a low-rank component $L$ with rank $d < n$ and a diagonal matrix $\Psi$. This estimator expresses the idea that the fluctuations in population activity are driven by a small number of unobserved sources that affect many cells (Fig.~1B). 
+
+The third estimator is based on sparsifying the inverse covariance (precision) matrix. It expresses the idea that, similar to synaptic connections, interactions between neurons are sparse (Fig.~1C). The estimator produces a low-dimensional approximation to the covariance that has many zeros in its inverse. This approximation problem is also known as covariance selection. The covariance matrix estimate is given by
+\begin{equation}
+\hat\Sigma = \hat S^{-1}
+\quad\mbox{with}\quad
+\hat S = \argmin\limits_{\|S\|_0 \le \rho} \loss{S^{-1},\hat\Sigma_0}   
+\end{equation}
+where $\mathcal L$ is a loss function (see below) and $\|S\|_0\le\rho$ signifies the constraint that $S$ has at most $\rho$ non-zero coefficients. While solving the problem in this form is computationally challenging, relaxing the $L_0$ norm to the $L_1$ norm converts it into one of convex optimization \cite{Donoho:2000}, which is computationally much more tractable. The resulting algorithm, which is known as graphical lasso \cite{Meinshausen:2006,Yuan:2007,Banerjee:2008,Friedman:2008}, produces the following estimator  
+\begin{equation}
+\hat\Sigma_{\rm sparse}^\mathcal{C} = \hat S^{-1}
+\quad\mbox{with}\quad
+\hat S = \argmin \loss{S^{-1},\hat\Sigma_0} + \lambda \|S\|_1,
+\end{equation}
+where $\|S\|_1$ is the $L_1$ norm of the precision matrix (see Methods for details) and $\lambda$ is again determined by cross-validation.
+
+Finally, we consider a fourth estimator, which combines common inputs with sparse interactions (Fig.~1D). For this estimator the covariance is
+\begin{equation}
+\hat\Sigma_{\rm combined} = (S + LL^\T)^{-1},
+\end{equation}
+where, as above, $S$ is sparsified using $L_1$ norm and $L$ is a low-rank matrix with the rank determined by cross-validation.
+
+
+
+\subsection*{Simulation using toy data}
+
+To verify our approach and to illustrate the performance of our four regularized estimators and the sample covariance estimator, we constructed five model populations with different underlying structures. Each population contained 100~neurons. The first four populations matched the low-dimensional structure of our four estimators: independent (Fig.~2\,A), low-rank (Fig.~2\,B), sparse inverse (Fig.~2\,C) and low-rank combined with sparse inverse (Fig.~2\,D). \Acomment{Integrate schematics from Fig.~1 into this figure (make it the first row) for better correspondence} In addition, we considered a fifth population that had no low-dimensional structure (Fig.~2\,E).
+
+To evaluate the performance of the different estimators, we computed the excess loss for all combinations of model populations and estimators, including the sample covariance. The first striking observation is that in all cases all four regularized estimators performed substantially better than the sample covariance (Fig.~2, fourth row). In particular, this is even true for the case where the population did not have any low-dimensional structure at all (Fig.~2\,E). While it may appear surprising at first sight, this counter-intuitive phenomenon is known as \emph{Stein's phenomenon} or \emph{Stein's paradox} \cite{Efron:1977}, named after its discoverer Charles Stein \cite{Stein:1956}. A common misconception about regularization is that its effect depends on accurate prior knowledge about the structure of the data. However, substantial improvement can be attained by shrinking the unbiased estimate toward an arbitrary target as long as the target is less variable than the unbiased estimator. The more accurate description of regularization is as of the optimal tradeoff between estimation and approximation error -- the so-called ``bias-variance tradeoff''.
+
+Thus, if taken in isolation a regularized estimator improves the estimate we should not interpret this result to suggest that the estimator's target has the same low-dimensional structure as the data-generating process. However, when comparing multiple estimators against each other, the one whose target estimate most closely matches the true value with the smallest number of parameters will reduce the estimation error with the least increase in approximation error. Indeed, in all four toy examples with a low-dimensional structure, the estimator with the matching regularization target performed best (Fig.~2\,A--D, fourth row). Since the estimator combining low-rank and sparse interactions combines to low-dimensional targets and includes the simpler estimators as special cases, it performed almost as well even when the low-dimensional structure did not include either a low-rank component or sparse interactions (Fig.~2\,B,\,C). \Acomment{May want to include a smaller sample size as well since here the more reduced estimators (B, C) may actually outperform estimator D when the population structure matches their target and there is little data (say, 1.5x number of neurons)} 
+
+Since the above evaluations of excess loss require knowledge of ground truth, this analysis can be done only on toy data. However, an unbiased empirical estimate of the excess loss exists (see Methods, Eq.~\ref{eq:validationLoss} \Acomment{This may need a brief sentence about the intuition what's the difference, or a reference to the relevant methods section}).  To verify that our approach should also work in a realistic situation without access to ground truth, we also computed the empirical loss. Indeed, without access to ground truth, this analysis revealed a pattern of results that reproduced the results obtained with access to ground truth above (Fig.~2, last row). Because validation loss is computed by comparing estimates to noisy sample covariance matrices from smaller validation sets, empirical loss is a much noisier measurement than excess loss. In addition, it does not converge to zero with increasing sample size as excess loss does.
+
+
+
+
+\subsection*{Covariance estimation on neural data}
+
+
+We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}. We presented numerous repetitions of full-field drifting gratings (Fig. 1A and 1B) to the eye contralateral to the imaged site. This technique allowed us to record from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. We deconvolved somatic calcium signals using sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig.\;1C and 1D) and subtracted the average stimulus response to remove effects of the stimulus. From this residual response we computed the sample noise covariance matrix (Fig.\;1E).
+
+In such highly localized populations both direct interactions between cells and common diffuse inputs are likely to contribute to the overall population variability. At the same time, most correlations are relatively small (Fig.~1\,E), suggesting that a simple shrinkage towards independence may provide a sufficiently well regularized estimate. By comparing the performance of our differently regularized estimators we can gain insights into which of these aspects are important in our data.
+
+As expected, all regularized estimators outperformed the sample covariance estimator substantially (Fig.~4) \Acomment{I think we should show that}. Say something about how shrinkage, low-rank and sparse inverse relate \Acomment{Why do we do pairwise comparisons instead of just showing median (across sites) log loss relative to the combined estimator? I've seen many people do this and it provides an ordering. I feel like we should come up with a way of ordering them somehow, even if it's under certain assumptions that may not be entirely correct. I'm pretty sure if we don't do it the reviewers will bring it up anyway...}. Finally, the combined sparse and low-rank estimator dominated all others significantly (Fig.~4), showing that both hidden units and direct interactions are important in our data. The improvement from the low-rank estimator to the combined one is much larger than that from the sparse inverse to the combined one, suggesting that in this dataset direct interactions contribute more strongly to the correlation structure than hidden units do.
+
+
+
+\subsection*{Relationship between functional covariance structure and circuit architecture}
+
+
+\begin{itemize}
+\item Linear and partial correlations versus spatial separation (lateral and vertical). Discuss whether to include or remove thresholded correlations.
+\item Magnitude of common input versus spatial location in the volume (lateral and vertical separation from center).
+\item Linear and partial correlations versus orientation preference
+\item Distribution of sparsity over sites
+\item Distribution of number of hidden units over sites
+\item Distribution of eigenvalues for sample covariance versus combined estimator
+\item etc. etc. 
+
+\end{itemize}
+
+
+
+
+

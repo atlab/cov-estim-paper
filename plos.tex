@@ -60,12 +60,13 @@
 %% PLEASE INCLUDE ALL MACROS BELOW
 
 \newcommand{\Kcomment}[1]{{\color{blue}{[KJ: #1]}}}
+\newcommand{\Acomment}[1]{{\color{red}{[AE: #1]}}}
 
 \DeclareMathOperator{\Tr}{tr}
 \newcommand{\mcond}{\,\middle\vert\,}
 \newcommand{\cond}{\,\vert\,}
 \newcommand{\loss}[1]{\mathcal L\left(#1\right)} 
-\newcommand{\T}{\intercal}
+\newcommand{\T}{{\rm T}}
 \newcommand{\E}[2][]{\mathbb E_{#1}\left[ #2\right]}    % expected value
 \newcommand{\TODO}[1]{\emph{\small\color{blue}$\langle\langle$#1$\rangle\rangle$}}
 \newcommand*\dif{\mathop{}\,d}
@@ -83,19 +84,23 @@ Improved estimates of neural correlations suggest detailed interactions in visua
 }
 % Insert Author names, affiliations and corresponding author email.
 \\
-Dimitri Yatsenko$^{1,\ast}$, 
+Dimitri Yatsenko,$^{1,\ast}$, 
 Kre\v{s}imir Josi\'{c}$^{2}$,
-Alexander Ecker$^{3,1}$,
-Emmanouil Foudarakis$^{1}$,
+Alexander S.~Ecker$^{1,3,4}$,
+Emmanouil Froudarakis$^{1}$,
 R.~James Cotton$^{1}$,
-Andreas S.~Tolias$^{1}$
+Andreas S.~Tolias$^{1,5}$
 \\
 \bf{1} Department of Neuroscience, Baylor College of Medicine, Houston, TX, USA
 \\
 \bf{2} Department of Mathematics and Department of Biology and Biochemistry, University of Houston, Houston, TX, USA
 \\
-\bf{3} Max Planck Institute of Biological Cybernetics, T\"ubingen, Germany
+\bf{3}  Werner Reichardt Center for Integrative Neuroscience and Institute for Theoretical Physics, University of T\"ubingen, Germany
 \\
+\bf{4} Bernstein Center for Computational Neuroscience, T\"ubingen, Germany
+\\
+\bf{5} Department of Computational and Applied Mathematics, Rice University, Houston, TX, USA
+
 $\ast$ E-mail: yatsenko@cns.bcm.edu
 \end{flushleft}
 
@@ -114,13 +119,18 @@ $\ast$ E-mail: yatsenko@cns.bcm.edu
 
 % Results and Discussion can be combined.
 \section*{Results}
-\input{sections/Acquisition.tex}
-\input{sections/Theory.tex}
-\input{sections/Regularization.tex}
-\input{sections/Estimators.tex}
-\input{sections/Simulation.tex}
-\input{sections/Findings.tex}
-\input{sections/Structure.tex}
+
+
+
+\input{sections/Results.tex}
+
+%\input{sections/Acquisition.tex}
+%\input{sections/Theory.tex}
+%\input{sections/Regularization.tex}
+%\input{sections/Estimators.tex}
+%\input{sections/Simulation.tex}
+%\input{sections/Findings.tex}
+%\input{sections/Structure.tex}
 
 \section*{Discussion}
 \input{sections/Discussion.tex}
