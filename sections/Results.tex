@@ -1,27 +1,38 @@
 
 \subsection*{Covariance estimation}
+We aim to estimate the true covariance matrix 
+\begin{equation}
+\Sigma = \E{(x-\mu)(x-\mu)^\T}
+\end{equation}
+where $\E{\cdot}$ denotes expectation  and $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates discretized into bins of duration $\Delta t$ and $\mu = \E{x}$.  
 
-Our goal is to estimate the covariance matrix, $\Sigma$, of a population of $n$ neurons. For small populations or in the limit of infinite data this can be done in a straightforward manner by using the sample covariance estimator
+The usual estimator of the covariance matrix is the \emph{sample covariance matrix} computed from the empirical sample  $x(1),\ldots,x(n)$:
 \begin{equation}
 \hat \Sigma_0 = \frac 1 \nu \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T, 
 \end{equation}
 where $x(t)$ are sequential observations of population activity and $\nu$ is the number of degrees of freedom ($\nu=n-1$ if observations are independent).
 
-However, for large population sizes and limited data this approach becomes ineffective at capturing the true structure of the covariance matrix (REFS). The number of parameters to be estimated grows quadratically with the population size. Thus, to obtain a "good" estimate of the true covariance, we need to rely on regularization -- the deliberate biasing of the estimate toward a low-dimensional, less variable target estimate \cite{Bickel:2006,Ledoit:2004}. Various such targets exist, each expressing a different idea about what a parsimonious model would look like. 
+The sample covariance matrix is unbiased i.e.\;$\E{\hat\Sigma_0}-\Sigma=0$.  For finite sample sizes, however, $\hat\Sigma_0$ is not as close to $\Sigma$ as a number of biased estimators that rely on \emph{regularization}. Regularization is the deliberate biasing of the estimate toward a low-dimensional, less variable \emph{target estimate} to strike a favorable balance between bias and variability of the estimate \cite{Bickel:2006,Ledoit:2004}.  The estimator whose target estimate most closely matches the true low-dimensional structure of the data is likely to outperform other estimators.
 
-We considered four different estimators, based on a few simple concepts for regularizing the covariance: independence, low-rank structure and sparse interactions. We optimized all four estimators with respect to Gaussian log-likelihood (see Discussion for a more in-depth justification of this loss function) and used cross-validation to determine hyper-parameters.
+We considered four regularized estimators based on distinct families of low-dimensional target estimates: independent, latent factors, sparse partial correlations, and sparse partial correlations with latent factors. These target estimates are depicted graphically in Fig.~\ref{fig:02}.  
 
-The first and probably simplest regularized estimator is shrinkage towards a diagonal matrix
+\input{sections/Figure2.tex}
+
+The relative performance of the four estimators on synthetic and empirical data was evaluated by cross-validated multivariate normal log-likelihood (see Methods for detailed justification).  
+Each estimator has one or two \emph{hyperparameters}, which are estimated within training datasets by nested cross-validation (See Methods). 
+
+In the first regularized estimator, the target estimate is a diagonal matrix $\hat D$.  The optimized estimate $\hat\Sigma_{\rm diag}$ is obtained by the linear \emph{shrinkage} of the unbiased estimate $\hat\Sigma_0$ toward $\hat D$ as regulated by scalar \emph{shrinkage intensity} $\lambda \in [0, 1]$:
 \begin{equation}
-\hat \Sigma_{\rm diag} = (1-\lambda) \hat \Sigma_0 + \lambda D,
+\hat \Sigma_{\rm diag} = (1-\lambda) \hat \Sigma_0 + \lambda \hat D
 \end{equation}
-where $D$ is a diagonal matrix and the mixing proportion, $\lambda$, is determined by cross-validation. This estimator expresses the idea that in the absence of evidence for strong correlations between cells we assume they are independent (Fig.~1A). This approach is sometimes also referred to as ridge regression. 
+The diagonal target estimate expresses the idea of lack of dependence (or of linear association) between the activity of observed neurons (Fig.~\ref{fig:02}A).  If this assumption aptly describes recorded data, then strong shrinkage toward $\hat D$ will add little bias while strongly reducing the variability of the estimate. 
 
-The second estimator we consider is shrinkage towards a low-rank matrix
+In the second regularized estimator, the target estimate is the factor model $\hat F = LL^\T + \Psi$ with $d$ factors so that $L$ is the $p\times d$ matrix of \emph{factor loadings} and the diagonal matrix $\Psi$ contains the indvidual variances of each neuron.
+Then the estimate is 
 \begin{equation}
-\hat \Sigma_{\rm low-rank} = (1-\lambda) \hat \Sigma_0 + \lambda T,
+\hat \Sigma_{\rm factor} = (1-\lambda) \hat \Sigma_0 + \lambda \hat F,
 \end{equation}
-where $T = LL^\T + \Psi$ is a factor analysis model (REFS) consisting of a low-rank component $L$ with rank $d < n$ and a diagonal matrix $\Psi$. This estimator expresses the idea that the fluctuations in population activity are driven by a small number of unobserved sources that affect many cells (Fig.~1B). 
+This estiamtor has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $\hat F$ expresses the idea that the fluctuations in population activity must be driven by relatively small number of unobserved sources that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:02}B).   
 
 The third estimator is based on sparsifying the inverse covariance (precision) matrix. It expresses the idea that, similar to synaptic connections, interactions between neurons are sparse (Fig.~1C). The estimator produces a low-dimensional approximation to the covariance that has many zeros in its inverse. This approximation problem is also known as covariance selection. The covariance matrix estimate is given by
 \begin{equation}

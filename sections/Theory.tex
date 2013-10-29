@@ -1,18 +1,5 @@
-\subsection*{The sample covariance matrix}
-We aim to estimate the true covariance matrix $\Sigma = \E{(x-\mu)(x-\mu)^\T}$ of the instantaneous activity vector $x$ of a population of $p$ neurons. Here $\E{\cdot}$ denotes expectation \TODO{for the true data generating process} and $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates discretized into bins of duration $\Delta t$ and $\mu = \E{x}$.  
-
-For detailed explanation of the notation, definitions, and derivations, see Appendix. 
-
-The usual estimator of $\Sigma$ is the sample covariance matrix
-\begin{equation}
-\hat \Sigma_0 = \frac 1 \nu \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T 
-\end{equation}
-where $x(t),\;t=1,\ldots,n$ are sequential observations of population activity inferred from calcium signals; $\nu$ is the number of degrees of freedom. For independent observations $\nu=n-1$ because estimation of the mean $\mu$ accounts for one degree of freedom. When observations are correlated, as is the case with calcium signals, $\nu < n-1$ and may be estimated from the signal. 
-
-The sample covariance matrix is constructed to be unbiased, so that $\E{\hat\Sigma_0} = \Sigma$. 
-
 \subsection*{Evaluation of covariance matrix estimators}
-The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  The loss function quantifies the deviation of $\hat\Sigma$ from $\Sigma$ and attains its minimum  when $\hat\Sigma = \Sigma$.  \Kcomment{Could we say that it quantifies the error in the estimate?}
+The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  The loss function quantifies the error of the estimate, \emph{i.e}.~the deviation of $\hat\Sigma$ from $\Sigma$. The loss function must attain its minimum  when $\hat\Sigma = \Sigma$.  
 
 For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function:
 \begin{equation}\label{eq:loss}
@@ -20,7 +7,7 @@ For the purposes of this study, we adopted the \emph{negative normal log-likelih
 \end{equation}
 This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\hat\Sigma-\Sigma$ \cite{Ledoit:2004,Schafer:2005}, Stein's entropy loss, and quadratic loss \cite{James:1961,Fan:2008}.  We expect that the main conclusions of our study will not change qualitatively under other well behaved loss functions.
 
-The aim of our project is to produce covariance matrix estimates that minimize the expected loss 
+The aim of our project is to identify which covariance matrix estimator minimizes the expected loss 
 \begin{equation}
 r = \E{\loss{\hat\Sigma, \Sigma}}
 \end{equation}
