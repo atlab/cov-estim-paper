@@ -23,40 +23,32 @@ Each estimator has one or two \emph{hyperparameters}, which are estimated within
 
 In the first regularized estimator, the target estimate is a diagonal matrix $\hat D$.  The optimized estimate $\hat\Sigma_{\rm diag}$ is obtained by the linear \emph{shrinkage} of the unbiased estimate $\hat\Sigma_0$ toward $\hat D$ as regulated by scalar \emph{shrinkage intensity} $\lambda \in [0, 1]$:
 \begin{equation}
-\hat \Sigma_{\rm diag} = (1-\lambda) \hat \Sigma_0 + \lambda \hat D
+\hat \Sigma_{\sf diag} = (1-\lambda) \hat \Sigma_0 + \lambda \hat D
 \end{equation}
 The diagonal target estimate expresses the idea of lack of dependence (or of linear association) between the activity of observed neurons (Fig.~\ref{fig:02}A).  If this assumption aptly describes recorded data, then strong shrinkage toward $\hat D$ will add little bias while strongly reducing the variability of the estimate. 
 
-In the second regularized estimator, the target estimate is the factor model $\hat F = LL^\T + \Psi$ with $d$ factors so that $L$ is the $p\times d$ matrix of \emph{factor loadings} and the diagonal matrix $\Psi$ contains the indvidual variances of each neuron.
+In the second regularized estimator, the target estimate is the factor model $\hat F = \hat L \hat L^\T + \hat \Psi$ with $d$ factors so that $\hat L$ is the $p\times d$ matrix of \emph{factor loadings} and the diagonal matrix $\hat \Psi$ contains the independent variances of each neuron.
 Then the estimate is 
 \begin{equation}
-\hat \Sigma_{\rm factor} = (1-\lambda) \hat \Sigma_0 + \lambda \hat F,
+\hat \Sigma_{\sf factor} = (1-\lambda) \hat \Sigma_0 + \lambda \hat F,
 \end{equation}
-This estiamtor has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $\hat F$ expresses the idea that the fluctuations in population activity must be driven by relatively small number of unobserved sources that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:02}B).   
+This estiamtor has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $\hat F$ expresses the assumption that the fluctuations in population activity are driven by relatively small number of latent factors that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:02}B).   
 
-The third estimator is based on sparsifying the inverse covariance (precision) matrix. It expresses the idea that, similar to synaptic connections, interactions between neurons are sparse (Fig.~1C). The estimator produces a low-dimensional approximation to the covariance that has many zeros in its inverse. This approximation problem is also known as covariance selection. The covariance matrix estimate is given by
+The third estimator is based on the assumption that only a small fraction of pairs of neurons should have nonzero partial correlations.  While usual correlations are calculated from the marginal distribution without conditioning on all the other neurons, the partial correlation between a pair of neurons expresses the correlation of their activity conditioned on the activity of all the other cells.  If cells only exert linear effects on each other and all neurons are visible, partial correlations express the direct interactions between neurons. Therefore, this estimator is biased toward the assumption that correlations arise due to interactions between a subset of pairs of recorded neurons (Fig.~\ref{fig:02}C). When the partial correlation between a pair of neurons is zero, then the corresponding element of the inverse of the covariance matrix (often referred to as the \emph{precision matrix} or \emph{concentration matrix}) must be zero as well. Then the estimator is 
 \begin{equation}
-\hat\Sigma = \hat S^{-1}
-\quad\mbox{with}\quad
-\hat S = \argmin\limits_{\|S\|_0 \le \rho} \loss{S^{-1},\hat\Sigma_0}   
+\hat\Sigma_{\sf sparse} = \hat S_\rho^{-1}
 \end{equation}
-where $\mathcal L$ is a loss function (see below) and $\|S\|_0\le\rho$ signifies the constraint that $S$ has at most $\rho$ non-zero coefficients. While solving the problem in this form is computationally challenging, relaxing the $L_0$ norm to the $L_1$ norm converts it into one of convex optimization \cite{Donoho:2000}, which is computationally much more tractable. The resulting algorithm, which is known as graphical lasso \cite{Meinshausen:2006,Yuan:2007,Banerjee:2008,Friedman:2008}, produces the following estimator  
+where $\hat S\rho$ is a sparse matrix with a large fraction of zeros in its off-diagonal elements. The  one hyperparameter $\rho$ expresses the sparsity (fraction of off-diagonal zeros) in $\hat\Sigma_\rho$.
+
+
+Finally, we consider a fourth estimator, which allows for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:02}D). This estimator has the form
 \begin{equation}
-\hat\Sigma_{\rm sparse}^\mathcal{C} = \hat S^{-1}
-\quad\mbox{with}\quad
-\hat S = \argmin \loss{S^{-1},\hat\Sigma_0} + \lambda \|S\|_1,
+\hat\Sigma_{\sf sparse+latent} = (\hat S_\rho + \hat L\hat L^\T)^{-1},
 \end{equation}
-where $\|S\|_1$ is the $L_1$ norm of the precision matrix (see Methods for details) and $\lambda$ is again determined by cross-validation.
-
-Finally, we consider a fourth estimator, which combines common inputs with sparse interactions (Fig.~1D). For this estimator the covariance is
-\begin{equation}
-\hat\Sigma_{\rm combined} = (S + LL^\T)^{-1},
-\end{equation}
-where, as above, $S$ is sparsified using $L_1$ norm and $L$ is a low-rank matrix with the rank determined by cross-validation.
+where, as above, $\hat S_\rho$ is a sparse matrix and $\hat L$ is a $d\times p$ matrix of factor loadings. The estimator has two hyperparameters: the number of latent units $d$ and the sparsity of the sparsity of local interactions $\rho$.
 
 
-
-\subsection*{Simulation using toy data}
+\subsection*{Simulation}
 
 To verify our approach and to illustrate the performance of our four regularized estimators and the sample covariance estimator, we constructed five model populations with different underlying structures. Each population contained 100~neurons. The first four populations matched the low-dimensional structure of our four estimators: independent (Fig.~2\,A), low-rank (Fig.~2\,B), sparse inverse (Fig.~2\,C) and low-rank combined with sparse inverse (Fig.~2\,D). \Acomment{Integrate schematics from Fig.~1 into this figure (make it the first row) for better correspondence} In addition, we considered a fifth population that had no low-dimensional structure (Fig.~2\,E).
 
