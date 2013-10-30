@@ -14,9 +14,7 @@ where $x(t)$ are sequential observations of population activity and $\nu$ is the
 
 The sample covariance matrix is unbiased i.e.\;$\E{\hat\Sigma_0}-\Sigma=0$.  For finite sample sizes, however, $\hat\Sigma_0$ is not as close to $\Sigma$ as a number of biased estimators that rely on \emph{regularization}. Regularization is the deliberate biasing of the estimate toward a low-dimensional, less variable \emph{target estimate} to strike a favorable balance between bias and variability of the estimate \cite{Bickel:2006,Ledoit:2004}.  The estimator whose target estimate most closely matches the true low-dimensional structure of the data is likely to outperform other estimators.
 
-We considered four regularized estimators based on distinct families of low-dimensional target estimates: independent, latent factors, sparse partial correlations, and sparse partial correlations with latent factors. These target estimates are depicted graphically in Fig.~\ref{fig:02}.  
-
-\input{sections/Figure2.tex}
+We considered four regularized estimators based on distinct families of low-dimensional target estimates: independent, latent factors, sparse partial correlations, and sparse partial correlations with latent factors. These target estimates are depicted graphically in Fig.~\ref{fig:03}A-D.  
 
 The relative performance of the four estimators on synthetic and empirical data was evaluated by cross-validated multivariate normal log-likelihood (see Methods for detailed justification).  
 Each estimator has one or two \emph{hyperparameters}, which are estimated within training datasets by nested cross-validation (See Methods). 
@@ -25,27 +23,27 @@ In the first regularized estimator, the target estimate is a diagonal matrix $\h
 \begin{equation}
 \hat \Sigma_{\sf diag} = (1-\lambda) \hat \Sigma_0 + \lambda \hat D
 \end{equation}
-The diagonal target estimate expresses the idea of lack of dependence (or of linear association) between the activity of observed neurons (Fig.~\ref{fig:02}A).  If this assumption aptly describes recorded data, then strong shrinkage toward $\hat D$ will add little bias while strongly reducing the variability of the estimate. 
+The diagonal target estimate expresses the idea of lack of dependence (or of linear association) between the activity of observed neurons (Fig.~\ref{fig:03}A).  If this assumption aptly describes recorded data, then strong shrinkage toward $\hat D$ will add little bias while strongly reducing the variability of the estimate. 
 
 In the second regularized estimator, the target estimate is the factor model $\hat F = \hat L \hat L^\T + \hat \Psi$ with $d$ factors so that $\hat L$ is the $p\times d$ matrix of \emph{factor loadings} and the diagonal matrix $\hat \Psi$ contains the independent variances of each neuron.
 Then the estimate is 
 \begin{equation}
 \hat \Sigma_{\sf factor} = (1-\lambda) \hat \Sigma_0 + \lambda \hat F,
 \end{equation}
-This estiamtor has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $\hat F$ expresses the assumption that the fluctuations in population activity are driven by relatively small number of latent factors that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:02}B).   
+This estiamtor has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $\hat F$ expresses the assumption that the fluctuations in population activity are driven by relatively small number of latent factors that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:03}B).   
 
-The third estimator is based on the assumption that only a small fraction of pairs of neurons should have nonzero partial correlations.  While usual correlations are calculated from the marginal distribution without conditioning on all the other neurons, the partial correlation between a pair of neurons expresses the correlation of their activity conditioned on the activity of all the other cells.  If cells only exert linear effects on each other and all neurons are visible, partial correlations express the direct interactions between neurons. Therefore, this estimator is biased toward the assumption that correlations arise due to interactions between a subset of pairs of recorded neurons (Fig.~\ref{fig:02}C). When the partial correlation between a pair of neurons is zero, then the corresponding element of the inverse of the covariance matrix (often referred to as the \emph{precision matrix} or \emph{concentration matrix}) must be zero as well. Then the estimator is 
+The third estimator is based on the assumption that all correlations are the result of direct linear interactions between a fraction of observed cell pairs.  This assumption is enforced by reducing to zero the majority of pairwise \emph{partial correlations} in the recorded population. While usual correlations are calculated from the marginal distribution without conditioning on all the other neurons, the partial correlation expresses the pairwise correlation conditioned on the activity of all the other cells.  If cells only exert linear effects on each other and all neurons are visible, partial correlations express the direct interactions between neurons. Therefore, this estimator is biased toward the assumption that correlations arise due to interactions between a subset of pairs of recorded neurons (Fig.~\ref{fig:03}C). When the partial correlation between a pair of neurons is zero, then the corresponding element of the inverse of the covariance matrix (often referred to as the \emph{precision matrix} or \emph{concentration matrix}) must be zero as well. Then the estimator is 
 \begin{equation}
-\hat\Sigma_{\sf sparse} = \hat S_\rho^{-1}
+\hat\Sigma_{\sf sparse} = \hat S^{-1}
 \end{equation}
-where $\hat S\rho$ is a sparse matrix with a large fraction of zeros in its off-diagonal elements. The  one hyperparameter $\rho$ expresses the sparsity (fraction of off-diagonal zeros) in $\hat\Sigma_\rho$.
+where $\hat S$ is a sparse matrix with a large fraction of zeros in its off-diagonal elements. The  one hyperparameter $\rho$ expresses the sparsity (fraction of off-diagonal zeros) in $\hat\Sigma$.
 
 
-Finally, we consider a fourth estimator, which allows for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:02}D). This estimator has the form
+Finally, we consider a fourth estimator, which allows for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:03}D). This estimator has the form
 \begin{equation}
-\hat\Sigma_{\sf sparse+latent} = (\hat S_\rho + \hat L\hat L^\T)^{-1},
+\hat\Sigma_{\sf sparse+latent} = (\hat S - \hat L\hat L^\T)^{-1},
 \end{equation}
-where, as above, $\hat S_\rho$ is a sparse matrix and $\hat L$ is a $d\times p$ matrix of factor loadings. The estimator has two hyperparameters: the number of latent units $d$ and the sparsity of the sparsity of local interactions $\rho$.
+where, as above, $\hat S$ is a sparse matrix and $\hat L$ is a $d\times p$ matrix of factor loadings. The estimator has two hyperparameters: the number of latent units $d$ and the sparsity of the sparsity of local interactions $\rho$.
 
 
 \subsection*{Simulation}
@@ -69,6 +67,7 @@ Since the above evaluations of excess loss require knowledge of ground truth, th
 We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}. We presented numerous repetitions of full-field drifting gratings (Fig.~\ref{fig:01}A and \ref{fig:01}B) to the eye contralateral to the imaged site. This technique allowed us to record from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. We deconvolved somatic calcium signals using sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig.~\ref{fig:01}C and \ref{fig:01}D) and subtracted the average stimulus response to remove effects of the stimulus. From this residual response we computed the sample noise covariance matrix (Fig.~\ref{fig:01}E).
 
 \input{sections/Figure1.tex}
+
 
 In such highly localized populations both direct interactions between cells and common diffuse inputs are likely to contribute to the overall population variability. At the same time, most correlations are relatively small (Fig.~\ref{fig:01}E), suggesting that a simple shrinkage towards independence may provide a sufficiently well regularized estimate. By comparing the performance of our differently regularized estimators we can gain insights into which of these aspects are important in our data.
 
