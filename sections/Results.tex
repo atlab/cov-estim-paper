@@ -43,9 +43,9 @@ where $\hat S\rho$ is a sparse matrix with a large fraction of zeros in its off-
 
 Finally, we consider a fourth estimator, which allows for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:02}D). This estimator has the form
 \begin{equation}
-\hat\Sigma_{\sf sparse+latent} = (\hat S_\rho + \hat L\hat L^\T)^{-1},
+\hat\Sigma_{\sf sparse+latent} = (\hat S_\rho - \hat L\hat L^\T)^{-1},
 \end{equation}
-where, as above, $\hat S_\rho$ is a sparse matrix and $\hat L$ is a $d\times p$ matrix of factor loadings. The estimator has two hyperparameters: the number of latent units $d$ and the sparsity of the sparsity of local interactions $\rho$.
+where, as above, $\hat S_\rho$ is a sparse matrix and $\hat L$ is a $d\times p$ matrix of factor loadings. The estimator has two hyperparameters: the number of latent units $d$ and the sparsity of local interactions $\rho$.
 
 
 \subsection*{Simulation}
