@@ -4,7 +4,7 @@ We aim to estimate the true covariance matrix
 \begin{equation}
 \Sigma = \E{(x-\mu)(x-\mu)^\T}
 \end{equation}
-where $\E{\cdot}$ denotes expectation  and $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates discretized into bins of duration $\Delta t$ and $\mu = \E{x}$.  
+where $\E{\cdot}$ denotes expectation; $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates in bins of duration $\Delta t$. The vector of mean firing rates is $\mu = \E{x}$.  
 
 The usual estimator of the covariance matrix is the \emph{sample covariance matrix} computed from the empirical sample  $x(1),\ldots,x(n)$:
 \begin{equation}
@@ -12,14 +12,16 @@ The usual estimator of the covariance matrix is the \emph{sample covariance matr
 \end{equation}
 where $x(t)$ are sequential observations of population activity and $\nu$ is the number of degrees of freedom ($\nu=n-1$ if observations are independent).
 
-The sample covariance matrix is unbiased i.e.\;$\E{\hat\Sigma_0}-\Sigma=0$.  For finite sample sizes, however, $\hat\Sigma_0$ is not as close to $\Sigma$ as a number of biased estimators that rely on \emph{regularization}. Regularization is the deliberate biasing of the estimate toward a low-dimensional, less variable \emph{target estimate} to strike a favorable balance between bias and variability of the estimate \cite{Bickel:2006,Ledoit:2004}.  The estimator whose target estimate most closely matches the true low-dimensional structure of the data is likely to outperform other estimators.
+The sample covariance matrix is unbiased i.e.\;$\E{\hat\Sigma_0}-\Sigma=0$.  For finite sample sizes, however, $\hat\Sigma_0$ is not as close to $\Sigma$ as a number of biased estimators that rely on \emph{regularization}. Regularization is the deliberate biasing of the estimate toward a low-dimensional, less variable \emph{target estimate} to strike a favorable balance between bias and variability of the estimate \cite{Bickel:2006,Ledoit:2004}.  
+
+The estimator whose target estimate most closely matches the true low-dimensional structure of the data is likely to outperform other estimators. This principle provides the logic of this study. 
 
 We considered four regularized estimators based on distinct families of low-dimensional target estimates: independent, latent factors, sparse partial correlations, and sparse partial correlations with latent factors. These target estimates are depicted graphically in Fig.~\ref{fig:03}A-D.  
 
 The relative performance of the four estimators on synthetic and empirical data was evaluated by cross-validated multivariate normal log-likelihood (see Methods for detailed justification).  
 Each estimator has one or two \emph{hyperparameters}, which are estimated within training datasets by nested cross-validation (See Methods). 
 
-In the first regularized estimator, the target estimate is a diagonal matrix $\hat D$.  The optimized estimate $\hat\Sigma_{\rm diag}$ is obtained by the linear \emph{shrinkage} of the unbiased estimate $\hat\Sigma_0$ toward $\hat D$ as regulated by scalar \emph{shrinkage intensity} $\lambda \in [0, 1]$:
+In the first regularized estimator, the target estimate is the diagonal matrix $\hat D$ containing on its diagonal estimates of the variances for each neuron.  The optimized estimate $\hat\Sigma_{\rm diag}$ is obtained by the linear \emph{shrinkage} of the unbiased estimate $\hat\Sigma_0$ toward $\hat D$ as regulated by scalar \emph{shrinkage intensity} $\lambda \in [0, 1]$:
 \begin{equation}
 \hat \Sigma_{\sf diag} = (1-\lambda) \hat \Sigma_0 + \lambda \hat D
 \end{equation}
@@ -36,7 +38,7 @@ The third estimator is based on the assumption that all correlations are the res
 \begin{equation}
 \hat\Sigma_{\sf sparse} = \hat S^{-1}
 \end{equation}
-where $\hat S$ is a sparse matrix with a large fraction of zeros in its off-diagonal elements. The  one hyperparameter $\rho$ expresses the sparsity (fraction of off-diagonal zeros) in $\hat\Sigma$.
+where $\hat S$ is a sparse matrix with a large fraction of zeros in its off-diagonal elements. The estimate has one hyperparameter to regulate the sparsity (fraction of off-diagonal zeros) in $\hat\Sigma$.
 
 
 Finally, we consider a fourth estimator, which allows for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:03}D). This estimator has the form
