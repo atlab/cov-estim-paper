@@ -62,7 +62,7 @@
 	<array>
 		<dict>
 			<key>Bounds</key>
-			<string>{{39.68496036529541, 549.92017102241516}, {79.369918823242188, 10}}</string>
+			<string>{{34.015680313110352, 515.90449070930481}, {79.369918823242188, 10}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -1551,13 +1551,13 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{0, 357.16464328765869}, {235.27583312988281, 208.61568206700653}}</string>
+			<string>{{0, 357.16464328765869}, {235, 208}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
-			<integer>164</integer>
+			<integer>165</integer>
 			<key>ImageID</key>
-			<integer>127</integer>
+			<integer>128</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -1604,7 +1604,7 @@
 		<real>357.16464233398438</real>
 	</array>
 	<key>ImageCounter</key>
-	<integer>128</integer>
+	<integer>129</integer>
 	<key>ImageLinkBack</key>
 	<array>
 		<dict/>
@@ -2677,7 +2677,7 @@
 	</array>
 	<key>ImageList</key>
 	<array>
-		<string>image127.png</string>
+		<string>image128.pdf</string>
 		<string>image126.eps</string>
 		<string>image124.eps</string>
 		<string>image121.pdf</string>
@@ -2728,7 +2728,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-11-10 03:20:36 +0000</string>
+	<string>2013-11-11 18:48:02 +0000</string>
 	<key>Modifier</key>
 	<string>Dimitri Yatsenko</string>
 	<key>NotesVisible</key>
@@ -2813,7 +2813,7 @@
 			</dict>
 		</array>
 		<key>Frame</key>
-		<string>{{-12, 10}, {1093, 1038}}</string>
+		<string>{{743, 0}, {1093, 1038}}</string>
 		<key>ListView</key>
 		<true/>
 		<key>OutlineWidth</key>
