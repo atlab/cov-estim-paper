@@ -482,8 +482,8 @@
 			<integer>261</integer>
 			<key>Points</key>
 			<array>
-				<string>{484.51477718353271, 134.01870441436768}</string>
-				<string>{488.63977718353271, 134.01870441436768}</string>
+				<string>{484.51477718353271, 133.76870441436768}</string>
+				<string>{488.63977718353271, 133.76870441436768}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -514,8 +514,8 @@
 			<integer>260</integer>
 			<key>Points</key>
 			<array>
-				<string>{331.44390678405762, 134.01870441436768}</string>
-				<string>{335.56890678405762, 134.01870441436768}</string>
+				<string>{331.44390678405762, 133.76870441436768}</string>
+				<string>{335.56890678405762, 133.76870441436768}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -546,8 +546,8 @@
 			<integer>259</integer>
 			<key>Points</key>
 			<array>
-				<string>{178.37303638458252, 134.01870441436768}</string>
-				<string>{182.49803638458252, 134.01870441436768}</string>
+				<string>{178.37303638458252, 133.76870441436768}</string>
+				<string>{182.49803638458252, 133.76870441436768}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -2032,6 +2032,7 @@
 	<key>HorizontalGuides</key>
 	<array>
 		<real>158.74015808105469</real>
+		<real>283.46456909179688</real>
 	</array>
 	<key>ImageCounter</key>
 	<integer>126</integer>
@@ -2100,7 +2101,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-11-24 23:29:42 +0000</string>
+	<string>2013-11-25 15:26:50 +0000</string>
 	<key>Modifier</key>
 	<string>Dimitri Yatsenko</string>
 	<key>NotesVisible</key>
@@ -2190,7 +2191,7 @@
 			</dict>
 		</array>
 		<key>Frame</key>
-		<string>{{436, 23}, {1188, 1035}}</string>
+		<string>{{436, 23}, {1484, 1035}}</string>
 		<key>ListView</key>
 		<true/>
 		<key>OutlineWidth</key>
@@ -2204,15 +2205,15 @@
 		<key>SidebarWidth</key>
 		<integer>120</integer>
 		<key>VisibleRegion</key>
-		<string>{{-13, 119}, {519.5, 448}}</string>
+		<string>{{159.25, 346.75}, {333.75, 220.25}}</string>
 		<key>Zoom</key>
-		<real>2</real>
+		<real>4</real>
 		<key>ZoomValues</key>
 		<array>
 			<array>
 				<string>Canvas 1</string>
+				<real>4</real>
 				<real>2</real>
-				<real>1</real>
 			</array>
 		</array>
 	</dict>
