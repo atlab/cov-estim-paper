@@ -106,7 +106,7 @@ Optimal regularization must be determined empirically since its effect depends o
 For example, we can use low-rank parameterizations of the covariance matrix to account for common fluctuations across the recorded population.
 Conversely, if correlations are strongly influenced by a small fraction of pairwise linear associations between the observed neurons, we can impose sparsity on the inverse covariance matrix.
 
-We can also use a \lq sparse+low rank\rq inverse covariance representation to account for both common fluctuations and pairwise interactions.  
+We can also use a `sparse+low' rank inverse covariance representation to account for both common fluctuations and pairwise interactions.  
 To select the optimal structure of neural correlations in a local neural circuit, we compared the performance of several covariance estimators on the activity of 100--300 neurons in mouse visual cortex: sample covariance, covariance shrinkage, factor analysis, sparse inverse covariance, and sparse+low-rank inverse covariance. We inferred instantaneous firing rates in 200 ms bins from the somatic calcium signals acquired with fast 3D random-access two-photon microscopy.  Each covariance estimator was optimized and evaluated by cross-validation. As expected, covariance shrinkage reliably outperformed the sample covariance estimate. In turn, factor analysis-based estimates significantly outperformed covariance shrinkage. Yet sparse inverse covariance with or without an additional low-rank component significantly outperformed both factor analysis and shrinkage estimators. The superior performance of the sparse inverse covariance estimator suggests the relative importance of detailed network interactions over common diffuse input in the circuit we studied.
 
 % Please keep the Author Summary between 150 and 200 words
@@ -166,7 +166,7 @@ The usual estimator of the covariance matrix is the \emph{sample covariance matr
 C_0 = \frac 1 \nu \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T, 
 \end{equation}
 where $\nu$ is the number of degrees of freedom per neuron in the sample ($\nu=n-1$ if observations are independent).  
-The sample covariance matrix is unbiased, \emph{i.e.} $\E{C_0}-\Sigma=0$.
+The sample covariance matrix is unbiased, \emph{i.e.} $\E{C_0}=\Sigma$.
 For finite sample sizes, however, $C_0$ is not as close to $\Sigma$ as a number of biased estimators.
 
 Regularization is the deliberate biasing of the estimate toward a low-dimensional, less variable \emph{target estimate} to strike a favorable balance between bias and variability of the estimate \cite{Bickel:2006,Ledoit:2004}.  
@@ -254,10 +254,213 @@ As expected, all regularized estimators outperformed the sample covariance estim
 % You may title this section "Methods" or "Models". 
 % "Models" is not a valid title for PLoS ONE authors. However, PLoS ONE
 % authors may use "Analysis" 
+Fundamental questions in systems neuroscience concern the relationship between the function of neural microcircuits and their cytoarchitecture: circuit topology, cell types, and patterns of synaptic connectivity. 
+
+Considerable progress has been made in sensory areas where the functional characterizations of cells are defined by their reproducible responses to external stimuli (reviewed in \cite{Reid:2012}). 
+
+Many key questions in neuroscience revolve around the relationship between the cytoarchitecture of neural microcircuits and the functional organization of their activity \cite{Reid:2012}.  Investigators in this line of inquiry aim to construct networks of functional associations within groups of neurons inferred from observations of their activity under a variety of conditions.  The inferred functional network  could then related to the synaptic connectivity patterns, cell types, cell properties, or the cells' spatial arrangment in the attempt to uncover organizational principles of neural computation. In addition, the network itself can serve as subtrate for subsequent graph-theoretical analysis \cite{Feldt:2011}
+
+Advances in electrophysiology and optical imaging have enabled simultaneous recordings from dozens to hundreds or thousands of cells. 
+In particular, recent advances in two-photon imaging of calcium signals have allowed in vivo recordings from nearly every neuron brain-wide in zebrafish \cite{Leung:2013,Ahrens:2013} and in a 3D volume of a few hundred microns in diameter in mouse neocortex \cite{Katona:2012,Cotton:2013}.    
+Ambitious projects currently under way aim to record the spiking activity of large fractions of cells from entire circuits and systems in behaving animals \cite{Alivisatos:2012}.  Direct observations of the population activity  of entire circuits open new possibilities for incisive statistical descriptions of the functional connectivity in the circuit.  
+
+One general approach is to construct statistical models reflecting hypothesized models of neural circuit function, including temporal dynamics, nonlinear interactions between neurons, and background network activity \cite{Pillow:2008,Buonomano:2009,Yu:2009}. 
+Another general approach is to search for alternative statistics that best describe the population activity without assuming a specific model.  Such evaluations rely on constructing surrogate datasets \cite{Okun:2012} or maximum-entropy distributions that reproduce the statistic of interest \cite{Ganmor:2011,Tkacik:2012} with subsequent testing of how well such constructs can reproduce other observed properties of population activity.
+
+Such more sophisticated statistical descriptions are unlikely to entirely replace neural correlations as the initial descriptive statistic of population activity in experimental neuroscience. Neural correlations have several strengths that will ensure their continued prominence: (a) correlations are well established, familiar, and intuitive to most researchers in biological sciences, (b) correlations are easy to estimate as they are less susceptible to the curse of dimensionality than more sophisticated models, (c) correlations make relatively weak mechanistic assumptions (at the cost of not revealing many potentially important aspects), and (d) correlations serve as input into other models of population activity or decoding algorithms. 
+
+Linear correlations between pairs of neurons are among the most common and familiar descriptions of functional associations in networks and of the collective activity of neuronal populations.  For example, it is tempting to consider the network constructed from the highest correlations in the recorded population (e.g.~\cite{Malmersjo:2013}) for subsequent graph-theoretical analysis \cite{Feldt:2011}.  In functional genomics, networks constructed from highest correlations are called \emph{relevance networks}.
+
+However, pairwise correlations unreliable proxies of direct functional association such as direct synaptic connectivity as they can arise due to a wide variety of physiological interactions including direct synaptic interactions, indirect chains of synaptic connections, common inputs, correlations in inputs, synchrony, fluctuations in global network states, and others \cite{Shadlen:1998,Ostojic:2009,Pernice:2011,Schneidman:2006}.
+
+Other experimental evidence suggests that detailed interactions in local microcircuits have only weak effects on overall population activity, which is then best characterized by collective features such as global population dynamics or population synchrony \cite{Okun:2012,Tkacik:2012,Tkacik:2013}.  From this point of view, the imporant aspects of the correlation structure lie it its global aspects, such as the eigenspectrum, while the individual pairwise correlations are not particularly meaningful.
+
 \section*{Methods}
+\subsection*{Evaluation of covariance matrix estimators}
+The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  
+The loss function quantifies the error of the estimate, \emph{i.e.}~the deviation of $\hat\Sigma$ from $\Sigma$. The loss function must attain its minimum  when $\hat\Sigma = \Sigma$.  
+
+For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function:
+\begin{equation}\label{eq:loss}
+\loss{\hat\Sigma,\Sigma} = \frac 1 p\left[\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma)\right]
+\end{equation}
+This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\hat\Sigma-\Sigma$ \cite{Ledoit:2004,Schafer:2005}, Stein's entropy loss, and quadratic loss \cite{James:1961,Fan:2008}.  We expect that the main conclusions of our study will not change qualitatively under other well behaved loss functions.
+
+The aim of our project is to identify which covariance matrix estimator minimizes the expected loss 
+\begin{equation}
+r = \E{\loss{\hat\Sigma, \Sigma}}
+\end{equation}
+which is known as the \emph{risk} of $\hat\Sigma$.
+
+In practice, the true value $\Sigma$ is not accessible and an estimators' risks must be estimated from the data.  This may be accomplished through \emph{validation}.  \Kcomment{If you will discuss validation later, point to it.}
+Let $\hat\Sigma_0^\prime$ denote a sample covariance matrix measured from an independent sample that was not used included in the computation of $\hat\Sigma$. 
+
+$\loss{\cdot,\cdot}$ is additive in its second argument so that \Kcomment{You frequently use ``such that'' instead of ``so that''}
+ \begin{equation}\label{eq:additivity}
+ \loss{\hat\Sigma,X_1} + \loss{\hat\Sigma,X_2} \equiv \loss{\hat\Sigma,X_1+X_2}
+ \end{equation}
+Then \emph{validation loss}  \TODO{check appropriate term}
+\begin{equation}\label{eq:validationLoss}
+\hat \ell = \loss{\hat\Sigma,\hat\Sigma_0^\prime}
+\end{equation}
+is an unbiased estimate of the risk:
+ \begin{equation}\label{eq:empiricalRisk}
+\E[(\hat\Sigma, \hat\Sigma_0^\prime)] {\hat\ell} 
+= \E[(\hat\Sigma, \hat\Sigma_0^\prime)]{\loss{\hat\Sigma,\hat\Sigma_0^\prime}}
+= \E{\loss{\hat\Sigma,\E{\hat\Sigma_0^\prime}}}
+= \E{\loss{\hat\Sigma,\Sigma}} = r
+ \end{equation}
+Therefore, estimators resulting in consistently lower validation loss can be inferred to produce estimates that are closer to truth than estimators with higher validation loss.
+\Kcomment{This is probably not a very insightful question -- but why do we assume that the sample covariance
+is what we compare $\hat\Sigma$ when we validate the results.  Our point is that this estimate is not very good.}
+
+Other popular loss functions such as entropy loss do not comply with Eq.~\ref{eq:additivity} and their validation loss is not an unbiased estimate of risk.
+
+Since $\loss{\cdot,\cdot}$ is equivalent to negative normal log likelihood, the above derivation has led to the familiar criterion that the optimal covariance matrix estimator is one that consistently maximizes cross-validated normal log likelihood.
+
+ 
+\subsection*{Regularization}
+Under many loss functions\footnote{
+The strict equality in Eq.~\ref{eq:bias-variance} does not hold under the loss function in Eq.~\ref{eq:loss}. 
+However, the equality does hold for its close cousin, Stein's \emph{entropy loss}, which only differs by the order of its arguments and a constant offset: $\mathcal L_s(\hat\Sigma,\Sigma) \equiv \loss{\Sigma,\hat\Sigma} - \loss{\Sigma,\Sigma}$. 
+This deficiency presents no difficulty because we minimize the risk directly, without assessing the two error components individually. 
+The bias-variance decomposition is presented here to motivate the use of regularization.}, 
+the risk can be decomposed as the sum
+\begin{equation}\label{eq:bias-variance}
+    r = b + \varepsilon
+\end{equation}
+of \emph{approximation error} (``bias'' or systematic error)
+\begin{equation}
+   b = \loss{\bar\Sigma,\Sigma}
+\end{equation}
+and \emph{estimation error} (``variance'') 
+\begin{equation}
+   \varepsilon = \E[\hat\Sigma]{\loss{\hat\Sigma, \bar\Sigma}}
+\end{equation}
+where $\bar\Sigma = \E{\hat\Sigma}$ is the expected value of the estimate. 
+
+An unbiased estimator, such as the sample covariance,  $\hat\Sigma_0,$ makes $\bar\Sigma=\Sigma$ and thereby minimizes approximation error, but may be excessively susceptible to sample noise and result in high estimation error.
+
+The estimator risk can be reduced by \emph{regularization} -- a deliberate biasing (\emph{``shrinkage''}) of the estimate toward a low-dimensional, less variable \emph{target estimate} \cite{Bickel:2006,Ledoit:2004}. 
+A regularized estimator solves the bias-variance tradeoff to produce a biased but less variable estimate to minimize the estimator's risk.  
+Various regularization schemes focus on the dimensionality reduction part \TODO{rephrase} by selecting the optimal target estimate from a family of estimates with reduced dimensionality \cite{findit}.  
+Other estimators only shrink the sample covariance matrix toward a single target estimator \cite{Schafer:2005}. 
+Yet other regularizers effectively combine shrinkage and dimensionality reduction \cite{findit}.
+
+\subsection*{Estimators}
+We evaluated four regularized estimators denoted here as A, B, C, and D.  Their target estimates correspond to covariance matrices of Gaussian graphical models depicted in Figure 2 where green spheres represent the recorded neurons,  light-colored spheres represent latent units of the graphical model, and edges connecting them represent conditional dependencies or interactions.
+
+A \emph{graphical model} is a multivarate probability distribution with a specified graph of conditional dependencies between its variables \cite{Koller:2009}.  When this distribution is a multivariate normal distribution, the model becomes a \emph{Gaussian graphical model} (GGM) or, equivalently, a \emph{Gaussian Markov Random Field}.  Gaussian graphical models have a straightforward relationship to their covariance matrix $\Sigma$:  Zero elements in the inverse of $\Sigma$ indicate conditional independence between the corresponding pair of variables.  
+\Kcomment{It may be important to note that we are not fitting Gaussian graphical models, however.}
+
+
+Fitting a graphical model to data involves two tasks: (1) the selection of the set of non-zero covariances or \emph{covariance selection} \cite{Dempster:1972} and (b) the fitting of the non-zero elements.
+
+\subsubsection*{Estimator $\mathcal A$: Shrinkage toward diagonal.}
+\emph{Estimator $\mathcal A$} shrinks the sample covariance matrix $\hat\Sigma_0$ toward that of the independent model shown in Fig.~\ref{fig:02}A.  The covariance matrix of a GGM in which all units are independent will be diagonal.  
+For example, we  could leave the sample variances on the diagonal set the off-diagonal terms to zero. The target estimate
+is then 
+\begin{equation}\label{eq:sampleVariance}
+\hat T= \hat\Sigma_0\circ I
+\end{equation}
+where $\circ$ denotes the entrywise matrix product (Hadamard product). 
+Alternatively, the target could be a diagonal matrix with all variances equal to the average sample variance, $v = \frac 1 p \Tr(\hat\Sigma_0)$, so that
+\begin{equation}\label{eq:equalVariance}
+\hat T=\frac 1 p \Tr(\hat\Sigma_0) I
+\end{equation}
+The equal-variance target in Eq.~\ref{eq:equalVariance} has only one degree of freedom and thus lower estimation error but higher bias than the target with sample variances in Eq.~\ref{eq:sampleVariance}. It is not immediately clear which target is better in a particular application. We therefore use the linear mixture of the two targets paramaterized by the mixing coefficient $\alpha\in[0,1]$,
+\begin{equation}
+\hat T_\alpha = (1-\alpha)(\hat\Sigma_0 \circ I) + \frac \alpha p \mbox{tr}(\hat \Sigma_0)I.
+\end{equation}
+The estimator $\hat\Sigma_{\alpha,\lambda}$ is the linear shrinkage of the sample covariance matrix $\hat\Sigma_0$ toward $\hat T_\alpha$ controlled by the mixing proportion $\lambda\in[0,1]$,
+\begin{equation}
+\hat\Sigma_{\alpha,\lambda}^\mathcal{A} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_\alpha.
+\end{equation}
+This covariance matrix estimator is implemented by R's {\tt corpcor} package \cite{Schaefer:2010} and is used widely~\cite{Schafer:2005}.
+
+We estimated the optimal values of hyperparameters $ \alpha$ and $ \lambda$  by  cross-validation within the training dataset. \TODO{more detail?} \TODO{discuss analytic optimization of shrinkage intensities.}
+
+\Kcomment{Yes -- you give no details about the cross-validation.  You should provide some details at least in 
+one case, or have a separate section that discusses how you implemented it.}
+
+\subsubsection*{Estimate $\mathcal B$: Shrinkage toward a factor model}
+\emph{Estimator $\mathcal B$} shrinks the sample covariance matrix $\hat\Sigma_0$ toward a target estimated by \emph{factor analysis} with $d$ factors, which corresponds to graphical models of the kind in Fig.~\ref{fig:02}B. For multivariate normal distributions, factor analysis estimates a graphical model in which the observed units do not interact directly but are influenced by $d$ common inputs.
+
+The target estimate is then 
+\begin{equation}
+\hat T_d = \hat L_d + \hat \Psi
+\end{equation}
+where $\hat L_d$ is a $p\times p$ matrix of rank $d$ and $\hat \Psi$ is a $p\times p$ diagonal matrix. The value of $\hat T_d$ is found by minimizing $\loss{\hat T_d, \hat\Sigma_0}$. 
+\Kcomment{I would give a more explicit representation of $\hat L_d$ as a product to show that the factors can be understood as common input.}
+
+Just as with estimator $\mathcal A$, $\hat\Sigma_0$ is shrunk toward $\hat T_d$ by linear mixing controlled by shrinkage intensity $\lambda\in[0,1]$,
+\begin{equation}
+\hat\Sigma_{d,\lambda}^\mathcal{B} = (1-\lambda)\hat\Sigma_0 + \lambda\hat T_d,
+\end{equation}
+and the optimal values of $d$ and $\lambda$ are found by cross-validation within the training set.
+
+Factor analysis has long been used in natural sciences to infer the influence of a one or several latent variables exerting linear effects on a larger population of observed variables \cite{Jvreskog:1996}.  In neuroscience, the hypothesis that the population activity in small local circuits is largely driven by a few latent factors has been investigated \cite{Yu:2009,Ecker:2013}.  Estimation of covariance matrices by shrinkage toward a factor model has been used in finance for portfolio risk assessment \cite{Ledoit:2003,Fan:2008}.
+
+\subsubsection*{Estimator $\mathcal C$: Spare inverse}
+\emph{Estimator $\mathcal C$} produces a low-dimensional estimate by finding an approximation of $\hat\Sigma_0$ that has many zeros in its inverse. This approximation problem is known as \emph{covariance selection} \cite{Dempster:1972}.  Covariance matrices of this family correspond to graphical models of the type depicted in Fig.~\ref{fig:02}C.
+
+For Gaussian Graphical Models, zeros in the inverse covariance matrix indicate statistical independence between the corresponding pairs. Thus the inverse covariance matrix $S=-\Sigma^{-1}$ is also the adjacency matrix of the GGM, indicating which pairs are conditionally dependent. \TODO{discuss how quickly (or slowly) this breaks down with deviations from gaussianity, e.g.~MaxEnt models, Ising models.} \TODO{Also, motivate this from the perpsective of linear regression as in \cite{Varoquaux:2012}.}  \Kcomment{This is a bit confusing -- in the first sentence, you have statistical independence, in the second, you talk about conditional independence.  You want to emphasize that a 0 inverse means that -- in the GGM -- the two nodes only ``talk'' indirectly through other nodes.} The off-diagonal elements of $S$ are proportional to partial pairwise correlations between corresponding pairs of neurons. \TODO{Expand.} Regularization of covariance matrix estimation by sparsifying the inverse of the estimate has been using in functional genomics \cite{Schafer:2005,Peng:2009} and fMRI functional connectivity \cite{Varoquaux:2012,Ryali:2012}. 
+
+The covariance matrix estimate is then 
+\begin{equation}
+\hat\Sigma_\rho = \hat S^{-1}
+\quad\mbox{with}\quad
+\hat S = \argmin\limits_{\substack{S\succ 0 \\ \|S\|_0 \le \rho}} \loss{S^{-1},\hat\Sigma_0}   
+\end{equation}
+where $S\succ 0$ signifies the constraint that $S$ be positive-definite. $\|S\|_0\le\rho$ signifies the constraint  that matrix $S$ have at most $\rho$ non-zero coefficients.
+Solving this approximation in this form is computationally challenging. The problem can be made computationally tractable by relaxing \TODO{use "complex relaxation"} the $L_0$ norm to the $L_1$ norm, which converts the problem into one of convex optimization \cite{Donoho:2000}.  The resulting algorithm, known as \emph{graphical lasso} or \emph{GLASSO}  \cite{Meinshausen:2006,Yuan:2007,Banerjee:2008,Friedman:2008}, produces the following estimator  
+\begin{equation}
+\hat\Sigma_\lambda^\mathcal{C} = \hat S^{-1}
+\quad\mbox{with}\quad
+\hat S = \argmin\limits_{S\succ 0} \loss{S^{-1},\hat\Sigma_0} + \lambda \|S\|_1
+\end{equation}
+where $\lambda \|S\|_1$ is the $L_1$ norm of the matrix. \TODO{clarify}. \Kcomment{Yes - at least define the norm, if you are already taking about it. No need to expand a lot more, though.}
+
+Just as in the previous estimators, the optimal value of the regularization parameter $\lambda$ is found from training data by cross-validation. \Kcomment{I would say this up front, so you don't have to repeat it.  Again, I think more details about cross-validation should be given.}
+
+\subsubsection*{Estimator $\mathcal D$: Sparse + low-rank inverse}
+\emph{Estimator $\mathcal D$} produces a low-dimensional estimate by approximating $\hat\Sigma_0$ with a matrix whose inverse is the sum of a spase matrix and a low-rank matrix. Covariance matrices of this form correspond to Gaussian graphical models of the form depicted in Fig.~\ref{fig:02}D.
+
+The inverse $S=\Sigma^{-1}$ of the covariance matrix of a GGM constitutes the graph of conditional dependencies (interactions) between the units.  With the assumption of sparse organization of interactions in the network, $S$ is assumed to be sparse.  When the observed units are part of a larger GGM that includes other latent units, let the negative inverse $S^*$ of the joint distribution of both observed and latent units be composed of four partitions
+\begin{equation}
+S^* = 
+\begin{pmatrix}
+S_{11} & S_{12} \\
+S_{12}^\T & S_{22} 
+\end{pmatrix}
+\end{equation}
+where partition $S_{11}$ describes the interactions between the visible units, $S_{12}$ describe the interactions between visible and latent units, and $S_{22}$ describes the interactions between the latent units. 
+Then the covariance matrix of between the observed unit is 
+\begin{equation}
+\Sigma = \left(S_{11} - S_{12}S_{22}^{-1}S_{12}^\T\right)^{-1}
+\end{equation} 
+The rank of matrix $S_{12}S_{22}^{-1}S_{12}$ equals the number of latent units. Rather than solving for the precise dependency structure with and between latent units in matrices $S_{12}$ and $S_{22}$, we simply replace the matrix $ S_{12}S_{22}^{-1}S_{12}$ with a low-rank matrix $L= S_{12}S_{22}^{-1}S_{12}$.
+
+Then we obtain estimator $\hat\Sigma_{d,\rho}$, parameterized by the sparsity parameter $\rho$ and  the number of latent units $d$:
+\begin{equation}
+\hat\Sigma_{d,\rho} = \left(\hat S-\hat L\right)^{-1}
+\quad\mbox{where}\quad
+(\hat S, \hat L) = \argmin\limits_{\substack{S,L\\ (S-L)\succ 0 \\ \|S\|_0\le\rho \\ L\succeq 0 \\ \rank(L) \le d}} \loss{(S-L)^{-1},\Sigma_0}
+\end{equation}
+
+Again, in this formulation, the approximation problem is computationally intractible.  The problem can be made convex by replacing the $L_0$ norm with $L_1$ norm. The resulting algorith, known as \emph{latent-variable graphical lasso} or \emph{LV-GLASSO} \cite{Chandrasekaran:2010,Ma:2013}, produces estimator $\hat\Sigma_{d,\lambda}^{\mathcal D}$:
+\begin{equation}
+\hat\Sigma_{d,\lambda} ^{\mathcal D} = \left(\hat S-\hat L\right)^{-1}
+\quad\mbox{where}\quad
+(\hat S, \hat L) = \argmin\limits_{\substack{ S,L \\ (S-L)\succ 0 \\ L\succeq 0 \\ \rank(L) \le d}} \loss{(S-L)^{-1},\Sigma_0} + \lambda \| S \|_1 
+\end{equation}
+The optimal values of hyperparameters $\lambda$ and $d$ are found cross-validation within the training dataset.
 
 % Do NOT remove this, even if you are not including acknowledgments
 \section*{Acknowledgments}
+Genevera Allen
+
+Eftychios Pnevmatikakis 
 
 % The bibtex filename
 \bibliography{references.bib}
@@ -267,7 +470,7 @@ As expected, all regularized estimators outperformed the sample covariance estim
 
 \begin{figure}[!ht]
     \begin{center}
-        %\includegraphics[width=8.3cm]{Figure01.pdf}
+        %\includegraphics[width=8.3cm]{./figures/Figure01.pdf}
     \end{center}
     \caption{{\bf Illustration of regularized estimation of partial correlations.}
         {\bf A}. The sample correlation matrix of unprocessed somatic calcium signals from a population of cells in mouse visual cortex.
@@ -284,14 +487,14 @@ As expected, all regularized estimators outperformed the sample covariance estim
     \end{center}
     \caption{{\bf Estimators whose low-dimensional regularization targets can represent the structure of the true covariance matrix outperform other estimators.}
         {\bf Row 1.} Graphical representations of four types of low-dimensional structures of interactions between observed neurons (green spheres) and latent units (light-shaded spheres).
-        In the \lq independent model\rq\;({\bf A}), observed neurons exert no linear effects on one another neither directly nor through interactions with common latent units. 
-        In \lq latent factors\rq\;({\bf B}), the correlated activity of observed cells is driven by several latent units. 
-        In \lq sparse interactions\rq\;({\bf C}), the correlation matrix is defined by a set of linear interactions between observed neurons. 
-        In \lq sparse+latent\rq\;({\bf D}), correlations arise through direct linear interactions between some pairs of observed neurons and through interactions with common latent units. 
+        In the `independent model' ({\bf A}), observed neurons exert no linear effects on one another neither directly nor through interactions with common latent units. 
+        In `latent factors' ({\bf B}), the correlated activity of observed cells is driven by several latent units. 
+        In `sparse interactions' ({\bf C}), the correlation matrix is defined by a set of linear interactions between observed neurons. 
+        In `sparse+latent' ({\bf D}), correlations arise through direct linear interactions between some pairs of observed neurons and through interactions with common latent units. 
         {\bf Row 2.} Examples of $50\times 50$ correlation matrices corresponding to each type of low-dimensional structure. 
         The factor model ({\bf B}) has three latent units. 
         The partial correlation matrix of the sparse model ({\bf C}) is 73\% sparse.
-        The \lq sparse+latent\rq\;matrix has one latent unit and its direct interactions are 78\% sparse.
+        The `sparse+latent' matrix has one latent unit and its direct interactions are 78\% sparse.
         {\bf Row 3.} Examples of sample correlation matrices calculated from samples of 1000 observations taken from simulated random processes with corresponding correlation matrices from row 2.
         {\bf Row 4.} Average normalized Gaussian log-likelihood \emph{excess loss} (\ref{eq:excess-loss}) attained by each of the five estimators as a function of sample size. The error bars indicate the standard error of the mean based on 30 samples.
         {\bf Row 5.} Average normalized Gaussian log-likelihood \emph{validation loss} (\ref{eq:validation-loss}) attained by each of the five estimators. The values are relative to the validation loss of the estimator that matches the low-dimensional structure of the true covariance matrix. The error bars indicate the standard error of the mean based on 30 samples.
@@ -301,7 +504,7 @@ As expected, all regularized estimators outperformed the sample covariance estim
 
 \begin{figure}[!ht]
     \begin{center}
-        %\includegraphics[width=8.3cm]{Figure03.pdf}
+        %\includegraphics[width=8.3cm]{figures/Figure03.pdf}
     \end{center}
     \caption{{\bf Acquisition of neural signals for the estimation of noise correlations.}
     Visual stimuli comprising full-field drifting gratings interleaved with blank screens ({\bf A}) were presented to anesthetized mice while two-photon recordings of somatic calcium signals were collected using fast 3D random-access microscopy ({\bf B}). The visual stimulus included an initial period with 16 directions of motion for orientation tuning followed by a longer (15--20 min) period of stimulation with only 2 or 5 directions of motion for the computation of the noise correlation matrix. 
