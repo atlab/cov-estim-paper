@@ -59,6 +59,7 @@
 \newcommand{\mcond}{\,\middle\vert\,}
 \newcommand{\cond}{\,\vert\,}
 \newcommand{\loss}[1]{\mathcal L\left(#1\right)} 
+\newcommand{\eloss}[1]{\mathcal L_0\left(#1\right)}
 \newcommand{\T}{{\sf T}}
 \newcommand{\E}[2][]{\mathbb E_{#1}\left[ #2\right]}    % expected value
 \newcommand{\TODO}[1]{\emph{\small\color{blue}$\langle\langle$#1$\rangle\rangle$}}
@@ -118,17 +119,17 @@ Multineuronal recordings also present major challenges for the estimation and in
 
 In this study, we pursued two related aims: (a)~improved estimation of neural correlation matrices and (b)~discovery of low-dimensional structure of correlations in recordings of multineuronal activity to facilitate their interpretation.
 
-Estimation of the correlation matrix relies on estimating the means and variances of the activity of individual cells.  To estimate the mean activity, we resort to the usual \emph{sample mean} without attempting to improve it. An estimate of the \emph{covariance matrix}  combined estimate of the variances and correlations constitutes an estimate covariance matrix. The problem can then be formulated as finding the optimal estimation of the covariance matrix given the estimate of the mean firing rates.
+Estimation of the correlation matrix relies on estimating the means and variances of the activity of individual cells.  To estimate the mean activity, we resort to the usual \emph{sample mean} without attempting to improve it. Estimation of a \emph{covariance matrix} is equivalent to estimating both  variances and correlations. Therefore, we rephrase the problem as one of optimal estimation of the covariance matrix given an estimate of the mean firing rates.
 
-Estimation can be improved through \emph{regularization}: the deliberate biasing of the estimate toward one of several possible low-dimensional approximations called here \emph{target estimates} \cite{Schafer:2005,Bickel:2006}.  The usual estimate, the \emph{sample covariance matrix} has the advantage of being unbiased but, on average, it falls far from the true covariance matrix because of its sensitivity to sampling noise in the data.  Low-dimensional estimates of various forms are less susceptible to sampling noise but are also liable to introduce their respective biases away from the true covariance matrix.  Regularization works by striking a favorable balance between bias and variability. Regularization can produce \emph{some} improvement even with an arbitrary target estimate that has no relation to the true covariance structure in the data.  Yet, when the target estimate is well suited for capturing the important features of the true covariance matrix with few terms, it will introduce minimal bias and outperform other estimators. 
+Estimation can be improved through \emph{regularization}: the deliberate biasing of the estimate toward one of several possible low-dimensional approximations referred to here as \emph{target estimates} \cite{Schafer:2005,Bickel:2006}.  The usual estimate, the \emph{sample covariance matrix} has the advantage of being unbiased but, on average, it falls far from the true covariance matrix due to its sensitivity to sampling noise in the data.  Low-dimensional estimates of various forms are typically less susceptible to sampling noise but are also liable to introduce their respective biases away from the true covariance matrix.  Regularization works by striking a favorable balance between bias and variability. Regularization can produce \emph{some} improvement even with an arbitrary target estimate that has no relation to the true covariance structure in the data.  Yet, when the target estimate is well suited for capturing the important features of the true covariance matrix with few terms, it will introduce minimal bias and outperform other estimators. 
 
-To illustrate key concepts, Figure \ref{fig:01} illustrates a regularization scheme based on \emph{covariance selection} \cite{Dempster:1972}}. In covariance selection, the estimate is produced by fitting only an optimally selected subset of the coefficients of the \emph{precision matrix} (the inverse of the covariance matrix) while setting the remaining coefficients to zero. Scaling the precision matrix so that its diagonal is composed of all $-1$ produces the matrix of partial correlations. Thus zeros in the precision matrix produce zero partial correlations between the corresponding pairs of neurons.  Panel \ref{fig:01}\,A depicts the sample correlation matrix of a period of somatic calcium signals of a group of 298 neurons in mouse visual cortex.  Due to the low-pass filtration effect of calcium dye kinetics, correlations in unprocessed calcium signals are much higher than typical firing rate correlations on shorter temporal scales. Panel \ref{fig:01}\,B magnifies the fragment of the sample correlation matrix outlined in \ref{fig:01}\,A whereas \ref{fig:01}\,C shows the corresponding fragment of the regularized estimate. The regularized estimate is produced from the same data by zeroing the optimal set of 31501 (71.2\%) of off-diagonal coefficients of the precision matrix and fitting the remaining coefficients. Panels \ref{fig:01}\,D and E show the same fragments of the respective estimates of the partial correlation matrix. The apparent similarity of the two estimates of the correlation matrix belies the utterly different partial correlation structure. The regularized estimate is less sensitive to sample noise in the data, is likely to be closer to truth in most cases than the unbiased estimate, which may be ascertained by cross-validation studies.
+To illustrate key concepts, Figure \ref{fig:01} illustrates a regularization scheme based on \emph{covariance selection} \cite{Dempster:1972}. In covariance selection, the estimate is produced by fitting only an optimal subset of the coefficients of the \emph{precision matrix} (the inverse of the covariance matrix) while setting the remaining coefficients to zero. Scaling the precision matrix so that its diagonal is composed of all $-1$'s produces the matrix of partial correlations. Thus zeros in the precision matrix produce zero partial correlations between the corresponding pairs of neurons.  Panel \ref{fig:01}\,A depicts the sample correlation matrix of a period of somatic calcium signals of a group of 298 neurons in mouse visual cortex.  Due to the low-pass filtration effect of calcium dye kinetics, correlations in unprocessed calcium signals are much higher than typical firing rate correlations on shorter temporal scales. Panel \ref{fig:01}\,B magnifies the fragment of the sample correlation matrix outlined in \ref{fig:01}\,A whereas \ref{fig:01}\,C shows the corresponding fragment of the regularized estimate. The regularized estimate is produced from the same data by zeroing the optimal set of 31501 (71.2\%) of off-diagonal coefficients of the precision matrix and fitting the remaining coefficients. Panels \ref{fig:01}\,D and E show the same fragments of the respective estimates of the partial correlation matrix. The apparent similarity of the two estimates of the correlation matrix belies the utterly different partial correlation structure. The regularized estimate is less sensitive to sample noise in the data, is likely to be closer to truth in most cases than the unbiased estimate, which may be ascertained by cross-validation studies.
 
-It may be tempting to interpret the regularized estimates of partial correlations as a more accurate representation of the functional connectivity than the original correlation coefficients: after all, the regularized solution consistently produces better estimates and has fewer parameters which are easier to interpret. However, an alternative regularization scheme using 43 latent factors interacting linearly with all neurons while having about the same number of parameters, perform even better than covariance selection on this dataset.
+It may be tempting to interpret the regularized sparse estimate of partial correlations as a more accurate representation of the functional connectivity than the original correlation coefficients: after all, the regularized solution consistently produces better estimates and has fewer parameters which are easier to interpret. However, an alternative regularization scheme using 43 latent factors interacting linearly with all neurons while having about the same number of parameters, performed even better than covariance selection on this dataset.
 
-It is therefore important to compare multiple families of regularized estimators on the system under investigation. The family that consistently outperforms the others may be proposed as candidate low-dimensional representation of the correlation structure. 
+It is therefore important to compare multiple families of regularized estimators on the system under investigation. The family that consistently outperforms the others may be proposed as candidate low-dimensional representation of the correlation structure. The greater efficiency of one estimator over another is not a mathematical necessity but an empirical finding depending on the prevalent types of correlation structure in the investigated system.
 
-In this study, we compared four families of regularized combining partial interactions and latent units: `shrinkage toward diagonal', `shrinkage toward a multifactor model', `sparse partial correlations', and 'sparse+latent partial correlations'.  First, in simulation with known low-dimensional structure of correlations, we demonstrate that regularized estimators from matching families of low-dimensional targets generally outperform all other estimators. We then repeat this study on neural data from dense groups of neurons in mouse visual cortex under visual stimulation. We find that optimal estimation was achieved by modeling correlations with a combination of sparse partial correlations and interactions with several latent units. Finally, we analyze the relationship between the elements of these regularized estimates and other properties of the circuit such as physical distances between neurons and their preferred orientations. 
+In this study, we compared four families of regularized combining partial interactions and latent units: `shrinkage toward diagonal', `shrinkage toward a multifactor model', `sparse partial correlations', and 'sparse+latent partial correlations'.  First, in simulation with known low-dimensional structure of correlations, we demonstrate that regularized estimators from matching families of low-dimensional targets generally outperform all other estimators. We then repeat this study on neural data from dense groups of neurons in mouse visual cortex under visual stimulation. We find that most efficient estimation was achieved by modeling correlations as a sparse network of partial correlations combined with several latent units interacting with the entire population. Finally, we analyze the relationship between the elements of such estimates and other properties of the circuit such as physical distances between neurons and their preferred orientations. 
 
 
 \section*{Results}
@@ -149,10 +150,6 @@ where $\nu$ is the number of degrees of freedom per neuron in the sample ($\nu=n
 The sample covariance matrix is unbiased, \emph{i.e.} $\E{C_0}=\Sigma$.
 For finite sample sizes, however, $C_0$ is not as close to $\Sigma$ as a number of biased estimators.
 
-Regularization is the deliberate biasing of the estimate toward a low-dimensional, less variable \emph{target estimate} to strike a favorable balance between bias and variability of the estimate \cite{Bickel:2006,Ledoit:2004}.  
-
-The estimator whose target estimate most closely matches the true low-dimensional structure of the data is likely to outperform other estimators. This principle provides the logic of this study. 
-
 We considered four regularized estimators based on distinct families of low-dimensional target estimates: `independent', `latent factors', `sparse interactions', and `sparse+latent' (Fig.~\ref{fig:02}\;row 1).  
 
 In the first regularized estimator $C_{\sf diag}$, the target estimate is the diagonal matrix $D$ containing on its diagonal estimates of the variances.
@@ -168,7 +165,7 @@ Then the estimate is
 \begin{equation}
 C_{\sf factor} = (1-\lambda) C_0 + \lambda F
 \end{equation}
-This estimator has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $F$ expresses the assumption that correlated fluctuations in population activity are driven by a small number of latent factors that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:02}\,B).   
+This estimator has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $F$ expresses the assumption that correlated fluctuations in the population activity are driven by a small number of latent factors that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:02}\,B).   
 
 The third estimator $C_{\sf sparse}$ is based on the assumption that all correlations are the result of direct linear interactions between pairs of observed cells and that such interactions occur only between a fraction of such pairs (Fig.~\ref{fig:02}\,C).
 This assumption is enforced by reducing to zero the majority of pairwise \emph{partial correlations} in the recorded population. 
@@ -178,7 +175,7 @@ Therefore, this estimator is biased toward the assumption that correlations aris
 \begin{equation}
 C_{\sf sparse} = S^{-1}
 \end{equation}
-where $\hat S$ is a sparse matrix with a large fraction of zeros in its off-diagonal elements. The estimate has one hyperparameter to regulate the sparsity (fraction of off-diagonal zeros) in $S$.
+where $S$ is a sparse matrix with a large fraction of zeros in its off-diagonal elements. The estimate has one hyperparameter to regulate the sparsity (fraction of off-diagonal zeros) in $S$.
 
 Finally, we consider the fourth estimator $C_{\sf sparse+lowrank}$, which provides for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:02}\,D). This estimator has the form
 \begin{equation}
@@ -187,93 +184,40 @@ C_{\sf sparse+latent} = (S - LL^\T)^{-1},
 where, as above, $S$ is a sparse matrix and $L$ is a $d\times p$ matrix of factor loadings. The estimator has two hyperparameters: the number of latent units $d$ and the sparsity of $S$.
 
 \subsection*{Simulation}
-To verify our approach and to illustrate the performance of the four regularized estimators, we constructed five model populations with different covariance structures. Each population contained 50~neurons. 
-The first four populations matched the low-dimensional structure of our four estimators: independent (Fig.~\ref{fig:03}A), latent factors (Fig.~\ref{fig:03}B), sparse partial correlations (Fig.~\ref{fig:03}C) and low-rank combined with sparse inverse (Fig.~\ref{fig:03}D).  
-In addition, we considered a fifth population that had no low-dimensional structure (Fig.~\ref{fig:03}\,E).
+To verify our approach and to illustrate the performance of the four regularized estimators, we constructed four model populations of size $p=50$~neurons each with correlation structures of the same type as the target estimates of the first (Fig.~\ref{fig:02} Row 2). Panel A2 contains a diagonal correlation matrix matching the target of $C_{\sf diag}$. Panel B2 is a factor model with 3 factors conforming to the family of target estimates of $C_{\sf factor}$. Panel B3 is a correlation matrix with sparse partial correlations (76\% off diagonal zeros in the precision matrix). Finally, Panel B4 is a correlation matrix whose inverse is composed the sum of a sparse matrix (82\% sparse) and a low-rank component (rank=1).
+Row 3 contains sample correlation matrices calculated from samples of size $n=1000$ from a multivariate normal distributions with the respective correlation matrices from Row 2.
 
-To evaluate the performance of the different estimators, we computed the excess loss for all combinations of model populations and estimators, including the sample covariance. The first striking observation is that in all cases all four regularized estimators performed substantially better than the sample covariance (Fig.~2, fourth row). In particular, this is even true for the case where the population did not have any low-dimensional structure at all (Fig.~2\,E). While it may appear surprising at first sight, this counter-intuitive phenomenon is known as \emph{Stein's phenomenon} or \emph{Stein's paradox} \cite{Efron:1977}, named after its discoverer Charles Stein \cite{Stein:1956}. A common misconception about regularization is that its effect depends on accurate prior knowledge about the structure of the data. However, substantial improvement can be attained by shrinking the unbiased estimate toward an arbitrary target as long as the target is less variable than the unbiased estimator. The more accurate description of regularization is as of the optimal tradeoff between estimation and approximation error -- the so-called ``bias-variance tradeoff''.
+To evaluate the performance of a covariance matrix $C$, we define a real-valued \emph{loss function} $\loss{C,\Sigma}$ such that it attains its minimum when $C=\Sigma$.  The loss function quantifies the error of the estimate, \emph{i.e.}~the deviation of the estimate $C$ from truth $\Sigma$.
 
-Thus, if taken in isolation a regularized estimator improves the estimate we should not interpret this result to suggest that the estimator's target has the same low-dimensional structure as the data-generating process. However, when comparing multiple estimators against each other, the one whose target estimate most closely matches the true value with the smallest number of parameters will reduce the estimation error with the least increase in approximation error. Indeed, in all four toy examples with a low-dimensional structure, the estimator with the matching regularization target performed best (Fig.~\ref{fig:03}\,A--D, fourth row). 
-Since the estimator combining low-rank and sparse interactions combines to low-dimensional targets and includes the simpler estimators as special cases, it performed almost as well even when the low-dimensional structure did not include either a low-rank component or sparse interactions (Fig.~\ref{fig:03}\,B,\,C). 
-
-Since the above evaluations of excess loss require knowledge of ground truth, this analysis can be done only on simulated data. However, \emph{validation loss} can be used as an unbiased empirical estimate of loss  (see Methods, Eq.~\ref{eq:validation-loss}. Validation loss uses an independent validation sample to estimate the value of loss without access to ground truth.   Indeed, this analysis revealed a pattern of results that reproduced the results obtained with access to ground truth above (Fig.~\ref{fig:03}, last row). Because validation loss is computed by comparing estimates to noisy sample covariance matrices from smaller validation sets, validation loss has higher variance than excess loss. Under our chosen loss function, validation loss does not converge to zero. 
-
-\subsection*{Covariance estimation in neural data}
-
-
-We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}. We presented numerous repetitions of full-field drifting gratings (Fig.~\ref{fig:01}A and \ref{fig:01}B) to the eye contralateral to the imaged site. This technique allowed us to record from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. We deconvolved somatic calcium signals using sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig.~\ref{fig:01}C and \ref{fig:01}D) and subtracted the average stimulus response to remove averaged linear effects of the stimulus. From this residual response we computed the sample noise covariance matrix (Fig.~\ref{fig:01}E).
-
-
-In such highly localized populations both direct interactions between cells and common diffuse inputs are likely to contribute to the overall population variability. At the same time, most correlations are relatively small (Fig.~\ref{fig:01}E), suggesting that a simple shrinkage towards independence may provide a sufficiently well regularized estimate. By comparing the performance of our differently regularized estimators we can gain insights into which of these aspects are important in our data.
-
-As expected, all regularized estimators outperformed the sample covariance estimator substantially (Fig.~\ref{fig:04}) Say something about how shrinkage, low-rank and sparse inverse relate. Finally, the combined sparse and low-rank estimator dominated all others significantly (Fig.~4), showing that both hidden units and direct interactions are important in our data. The improvement from the low-rank estimator to the combined one is much larger than that from the sparse inverse to the combined one, suggesting that in this dataset direct interactions contribute more strongly to the correlation structure than hidden units do.
-
-
-
-\subsection*{Relationship between functional covariance structure and circuit architecture}
-
-\begin{itemize}
-\item Linear and partial correlations versus spatial separation (lateral and vertical). Discuss whether to include or remove thresholded correlations.
-\item Magnitude of common input versus spatial location in the volume (lateral and vertical separation from center).
-\item Linear and partial correlations versus orientation preference
-\item Distribution of sparsity over sites
-\item Distribution of number of hidden units over sites
-\item Distribution of eigenvalues for sample covariance versus combined estimator
-\item etc. etc. 
-
-\end{itemize}
-
-
-
-
-
-
-
-\section*{Discussion}
-
-% You may title this section "Methods" or "Models". 
-% "Models" is not a valid title for PLoS ONE authors. However, PLoS ONE
-% authors may use "Analysis" 
-Fundamental questions in systems neuroscience concern the relationship between the function of neural microcircuits and their cytoarchitecture: circuit topology, cell types, and patterns of synaptic connectivity. 
-
-Considerable progress has been made in sensory areas where the functional characterizations of cells are defined by their reproducible responses to external stimuli (reviewed in \cite{Reid:2012}). 
-
-Many key questions in neuroscience revolve around the relationship between the cytoarchitecture of neural microcircuits and the functional organization of their activity \cite{Reid:2012}.  Investigators in this line of inquiry aim to construct networks of functional associations within groups of neurons inferred from observations of their activity under a variety of conditions.  The inferred functional network  could then related to the synaptic connectivity patterns, cell types, cell properties, or the cells' spatial arrangment in the attempt to uncover organizational principles of neural computation. In addition, the network itself can serve as subtrate for subsequent graph-theoretical analysis \cite{Feldt:2011}
-
-Advances in electrophysiology and optical imaging have enabled simultaneous recordings from dozens to hundreds or thousands of cells. 
-In particular, recent advances in two-photon imaging of calcium signals have allowed in vivo recordings from nearly every neuron brain-wide in zebrafish \cite{Leung:2013,Ahrens:2013} and in a 3D volume of a few hundred microns in diameter in mouse neocortex \cite{Katona:2012,Cotton:2013}.    
-Ambitious projects currently under way aim to record the spiking activity of large fractions of cells from entire circuits and systems in behaving animals \cite{Alivisatos:2012}.  Direct observations of the population activity  of entire circuits open new possibilities for incisive statistical descriptions of the functional connectivity in the circuit.  
-
-One general approach is to construct statistical models reflecting hypothesized models of neural circuit function, including temporal dynamics, nonlinear interactions between neurons, and background network activity \cite{Pillow:2008,Buonomano:2009,Yu:2009}. 
-Another general approach is to search for alternative statistics that best describe the population activity without assuming a specific model.  Such evaluations rely on constructing surrogate datasets \cite{Okun:2012} or maximum-entropy distributions that reproduce the statistic of interest \cite{Ganmor:2011,Tkacik:2012} with subsequent testing of how well such constructs can reproduce other observed properties of population activity.
-
-Such more sophisticated statistical descriptions are unlikely to entirely replace neural correlations as the initial descriptive statistic of population activity in experimental neuroscience. Neural correlations have several strengths that will ensure their continued prominence: (a) correlations are well established, familiar, and intuitive to most researchers in biological sciences, (b) correlations are easy to estimate as they are less susceptible to the curse of dimensionality than more sophisticated models, (c) correlations make relatively weak mechanistic assumptions (at the cost of not revealing many potentially important aspects), and (d) correlations serve as input into other models of population activity or decoding algorithms. 
-
-Linear correlations between pairs of neurons are among the most common and familiar descriptions of functional associations in networks and of the collective activity of neuronal populations.  For example, it is tempting to consider the network constructed from the highest correlations in the recorded population (e.g.~\cite{Malmersjo:2013}) for subsequent graph-theoretical analysis \cite{Feldt:2011}.  In functional genomics, networks constructed from highest correlations are called \emph{relevance networks}.
-
-However, pairwise correlations unreliable proxies of direct functional association such as direct synaptic connectivity as they can arise due to a wide variety of physiological interactions including direct synaptic interactions, indirect chains of synaptic connections, common inputs, correlations in inputs, synchrony, fluctuations in global network states, and others \cite{Shadlen:1998,Ostojic:2009,Pernice:2011,Schneidman:2006}.
-
-Other experimental evidence suggests that detailed interactions in local microcircuits have only weak effects on overall population activity, which is then best characterized by collective features such as global population dynamics or population synchrony \cite{Okun:2012,Tkacik:2012,Tkacik:2013}.  From this point of view, the imporant aspects of the correlation structure lie it its global aspects, such as the eigenspectrum, while the individual pairwise correlations are not particularly meaningful.
-
-\section*{Methods}
-\subsection*{Evaluation of covariance matrix estimators}
-The quality of a covariance matrix estimate $\hat\Sigma$ is measured by a real-valued \emph{loss function} $\loss{\hat\Sigma,\Sigma}$.  
-The loss function quantifies the error of the estimate, \emph{i.e.}~the deviation of $\hat\Sigma$ from $\Sigma$. The loss function must attain its minimum  when $\hat\Sigma = \Sigma$.  
-
-For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss} function:
-\begin{equation}\label{eq:loss}
-\loss{\hat\Sigma,\Sigma} = \frac 1 p\left[\ln \det \hat \Sigma + \Tr(\hat \Sigma^{-1}\Sigma)\right]
-\end{equation}
-This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\hat\Sigma-\Sigma$ \cite{Ledoit:2004,Schafer:2005}, Stein's entropy loss, and quadratic loss \cite{James:1961,Fan:2008}.  We expect that the main conclusions of our study will not change qualitatively under other well behaved loss functions.
-
-The aim of our project is to identify which covariance matrix estimator minimizes the expected loss 
+For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss}\footnote{
+The loss function $\loss(C,\Sigma)$ is related to the multivariate log-likelihood function $L(\Sigma|C_0)$ as 
 \begin{equation}
-r = \E{\loss{\hat\Sigma, \Sigma}}
+    L(\Sigma|C_0) = -\frac p 2 \ln(2\pi) -\frac p 2 \loss{\Sigma,C_0}
 \end{equation}
-which is known as the \emph{risk} of $\hat\Sigma$.
+}
+defined as:
+\begin{equation}\label{eq:loss}
+    \loss{C,\Sigma} = \frac 1 p\left[\ln \det C + \Tr(C^{-1}\Sigma)\right]
+\end{equation}
 
-In practice, the true value $\Sigma$ is not accessible and an estimators' risks must be estimated from the data.  This may be accomplished through \emph{validation}.  
-Let $\hat\Sigma_0^\prime$ denote a sample covariance matrix measured from an independent sample that was not used included in the computation of $\hat\Sigma$. 
+We normalized the loss function  by $\frac 1 p$ to make its value less sensitive population size (For independent neurons, the log likelihood scales linearly with $p$).
+
+This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $C-\Sigma$ \cite{Ledoit:2004,Schafer:2005}, Stein's entropy loss, and quadratic loss \cite{James:1961,Fan:2008}.  We expect that the main conclusions of our study will not change qualitatively under other well behaved loss functions.
+
+To make a loss function that assume zero at its minimum when $C=\Sigma$, we define \emph{excess loss} as
+\begin{equation}\label{eq:excess-loss}
+    \eloss{C,\Sigma} = \loss{C,\Sigma}-\loss{\Sigma,\Sigma}
+\end{equation}
+
+In Figure \ref{fig:02}, row 4 shows the mean excess losses and their standard errors calculated from 30 samples of sizes n=250, 500, 1000, 2000, and 4000 for each estimator and each kind of ground truth. For each estimator, its hyperparameters were estimated by nested cross-validation (See Methods for more details.)
+
+As expected, estimators with matching low-dimensional structures typically outperformed the other estimators. There were two exceptions to this observation. For small sample sizes, before the data were sufficient to reveal the true correlation structure and to  allow the correct model to dominate, estimates with simpler targets often outperformed the more matching estimate.
+
+With empirical data, the truth $\Sigma$ is not accessible and the relative values of loss must be estimated solely from the data. This may be accomplished through \emph{validation}.  In validation, the data are split into a training subset from which the estimate is obtained and a validation subset. We then compute the \emph{validation loss} 
+
+\begin{equation}\label{eq:validation-loss}
+    \loss{C,C^\prime_0}
+\end{equation}
 
 $\loss{\cdot,\cdot}$ is additive in its second argument so that 
  \begin{equation}\label{eq:additivity}
@@ -296,6 +240,29 @@ Other popular loss functions such as entropy loss do not comply with Eq.~\ref{eq
 
 Since $\loss{\cdot,\cdot}$ is equivalent to negative normal log likelihood, the above derivation has led to the familiar criterion that the optimal covariance matrix estimator is one that consistently maximizes cross-validated normal log likelihood.
 
+
+To evaluate the performance of the different estimators, we computed the excess loss for all combinations of model populations and estimators, including the sample covariance. The first striking observation is that in all cases all four regularized estimators performed substantially better than the sample covariance (Fig.~2, fourth row). In particular, this is even true for the case where the population did not have any low-dimensional structure at all (Fig.~2\,E). While it may appear surprising at first sight, this counter-intuitive phenomenon is known as \emph{Stein's phenomenon} or \emph{Stein's paradox} \cite{Efron:1977}, named after its discoverer Charles Stein \cite{Stein:1956}. A common misconception about regularization is that its effect depends on accurate prior knowledge about the structure of the data. However, substantial improvement can be attained by shrinking the unbiased estimate toward an arbitrary target as long as the target is less variable than the unbiased estimator. The more accurate description of regularization is as of the optimal tradeoff between estimation and approximation error -- the so-called ``bias-variance tradeoff''.
+
+Thus, if taken in isolation a regularized estimator improves the estimate we should not interpret this result to suggest that the estimator's target has the same low-dimensional structure as the data-generating process. However, when comparing multiple estimators against each other, the one whose target estimate most closely matches the true value with the smallest number of parameters will reduce the estimation error with the least increase in approximation error. Indeed, in all four toy examples with a low-dimensional structure, the estimator with the matching regularization target performed best (Fig.~\ref{fig:03}\,A--D, fourth row). 
+Since the estimator combining low-rank and sparse interactions combines to low-dimensional targets and includes the simpler estimators as special cases, it performed almost as well even when the low-dimensional structure did not include either a low-rank component or sparse interactions (Fig.~\ref{fig:03}\,B,\,C). 
+
+Since the above evaluations of excess loss require knowledge of ground truth, this analysis can be done only on simulated data. However, \emph{validation loss} can be used as an unbiased empirical estimate of loss  (see Methods, Eq.~\ref{eq:validation-loss}. Validation loss uses an independent validation sample to estimate the value of loss without access to ground truth.   Indeed, this analysis revealed a pattern of results that reproduced the results obtained with access to ground truth above (Fig.~\ref{fig:03}, last row). Because validation loss is computed by comparing estimates to noisy sample covariance matrices from smaller validation sets, validation loss has higher variance than excess loss. Under our chosen loss function, validation loss does not converge to zero. 
+
+\subsection*{Covariance estimation in neural data}
+
+We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}. We presented numerous repetitions of full-field drifting gratings (Fig.~\ref{fig:01}A and \ref{fig:01}B) to the eye contralateral to the imaged site. This technique allowed us to record from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. We deconvolved somatic calcium signals using sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig.~\ref{fig:01}C and \ref{fig:01}D) and subtracted the average stimulus response to remove averaged linear effects of the stimulus. From this residual response we computed the sample noise covariance matrix (Fig.~\ref{fig:01}E).
+
+
+In such highly localized populations both direct interactions between cells and common diffuse inputs are likely to contribute to the overall population variability. At the same time, most correlations are relatively small (Fig.~\ref{fig:01}E), suggesting that a simple shrinkage towards independence may provide a sufficiently well regularized estimate. By comparing the performance of our differently regularized estimators we can gain insights into which of these aspects are important in our data.
+
+As expected, all regularized estimators outperformed the sample covariance estimator substantially (Fig.~\ref{fig:04}) Say something about how shrinkage, low-rank and sparse inverse relate. Finally, the combined sparse and low-rank estimator dominated all others significantly (Fig.~4), showing that both hidden units and direct interactions are important in our data. The improvement from the low-rank estimator to the combined one is much larger than that from the sparse inverse to the combined one, suggesting that in this dataset direct interactions contribute more strongly to the correlation structure than hidden units do.
+
+
+
+\subsection*{Relationship between functional covariance structure and circuit architecture}
+
+\section*{Methods}
+\subsection*{Estimation of parameters and hyperparameters of covariance estimators}
  
 \subsection*{Regularization}
 Under many loss functions\footnote{
@@ -325,13 +292,7 @@ Various regularization schemes focus on the dimensionality reduction part  by se
 Other estimators only shrink the sample covariance matrix toward a single target estimator \cite{Schafer:2005}. 
 Yet other regularizers effectively combine shrinkage and dimensionality reduction \cite{findit}.
 
-\subsection*{Estimators}
-We evaluated four regularized estimators denoted here as A, B, C, and D.  Their target estimates correspond to covariance matrices of Gaussian graphical models depicted in Figure 2 where green spheres represent the recorded neurons,  light-colored spheres represent latent units of the graphical model, and edges connecting them represent conditional dependencies or interactions.
-
-A \emph{graphical model} is a multivarate probability distribution with a specified graph of conditional dependencies between its variables \cite{Koller:2009}.  When this distribution is a multivariate normal distribution, the model becomes a \emph{Gaussian graphical model} (GGM) or, equivalently, a \emph{Gaussian Markov Random Field}.  Gaussian graphical models have a straightforward relationship to their covariance matrix $\Sigma$:  Zero elements in the inverse of $\Sigma$ indicate conditional independence between the corresponding pair of variables.  
-
-
-Fitting a graphical model to data involves two tasks: (1) the selection of the set of non-zero covariances or \emph{covariance selection} \cite{Dempster:1972} and (b) the fitting of the non-zero elements.
+\subsection*{}
 
 \subsubsection*{Estimator $\mathcal A$: Shrinkage toward diagonal.}
 \emph{Estimator $\mathcal A$} shrinks the sample covariance matrix $\hat\Sigma_0$ toward that of the independent model shown in Fig.~\ref{fig:02}A.  The covariance matrix of a GGM in which all units are independent will be diagonal.  
@@ -469,8 +430,8 @@ Eftychios Pnevmatikakis
         The partial correlation matrix of the sparse model ({\bf C}) is 73\% sparse.
         The `sparse+latent' matrix has one latent unit and its direct interactions are 78\% sparse.
         {\bf Row 3.} Examples of sample correlation matrices calculated from samples of 1000 observations taken from simulated random processes with corresponding correlation matrices from row 2.
-        {\bf Row 4.} Average normalized Gaussian log-likelihood \emph{excess loss} (\ref{eq:excess-loss}) attained by each of the five estimators as a function of sample size. The error bars indicate the standard error of the mean based on 30 samples.
-        {\bf Row 5.} Average normalized Gaussian log-likelihood \emph{validation loss} (\ref{eq:validation-loss}) attained by each of the five estimators. The values are relative to the validation loss of the estimator that matches the low-dimensional structure of the true covariance matrix. The error bars indicate the standard error of the mean based on 30 samples.
+        {\bf Row 4.} Average normalized Gaussian log-likelihood \emph{excess loss} (Eq.~\ref{eq:excess-loss}) attained by each of the five estimators as a function of sample size. The error bars indicate the standard error of the mean based on 30 samples.
+        {\bf Row 5.} Average normalized Gaussian log-likelihood \emph{validation loss} (Eq.~\ref{eq:validation-loss}) attained by each of the five estimators. The values are relative to the validation loss of the estimator that matches the low-dimensional structure of the true covariance matrix. The error bars indicate the standard error of the mean based on 30 samples.
     }
     \label{fig:02}
 \end{figure} 
