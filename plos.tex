@@ -142,20 +142,20 @@ We aim to estimate the true covariance matrix
 \end{equation}
 where $\E{\cdot}$ denotes expectation; $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates in bins of duration $\Delta t$. The vector of mean firing rates is $\mu = \E{x}$.  
 
-The usual estimator of the covariance matrix is the \emph{sample covariance matrix} $C_0$ computed from the empirical sample of observations $x(1),\ldots,x(n)$ as
+The usual estimator of the covariance matrix is the \emph{sample covariance matrix} $C_{\sf 0}$ computed from the empirical sample of observations $x(1),\ldots,x(n)$ as
 \begin{equation}
-C_0 = \frac 1 \nu \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T, 
+C_{\sf 0} = \frac 1 \nu \sum\limits_{t=1}^n (x(t)-\mu)(x(t)-\mu)^\T, 
 \end{equation}
 where $\nu$ is the number of degrees of freedom per neuron in the sample ($\nu=n-1$ if observations are independent).  
-The sample covariance matrix is unbiased, \emph{i.e.} $\E{C_0}=\Sigma$.
-For finite sample sizes, however, $C_0$ is not as close to $\Sigma$ as a number of biased estimators.
+The sample covariance matrix is unbiased, \emph{i.e.} $\E{C_{\sf 0}}=\Sigma$.
+For finite sample sizes, however, $C_{\sf 0}$ is not as close to $\Sigma$ as a number of biased estimators.
 
 We considered four regularized estimators based on distinct families of low-dimensional target estimates: `independent', `latent factors', `sparse interactions', and `sparse+latent' (Fig.~\ref{fig:02}\;row 1).  
 
 In the first regularized estimator $C_{\sf diag}$, the target estimate is the diagonal matrix $D$ containing on its diagonal estimates of the variances.
-The regularized estimate is obtained by linear \emph{shrinkage} of the unbiased estimate $C_0$ toward $D$ controlled by the scalar \emph{shrinkage intensity} parameter $\lambda \in [0, 1]$:
+The regularized estimate is obtained by linear \emph{shrinkage} of the unbiased estimate $C_{\sf 0}$ toward $D$ controlled by the scalar \emph{shrinkage intensity} parameter $\lambda \in [0, 1]$:
 \begin{equation}
-C_{\sf diag} = (1-\lambda) C_0 + \lambda D
+C_{\sf diag} = (1-\lambda) C_{\sf 0} + \lambda D
 \end{equation}
 The diagonal target estimate expresses the idea of a lack of dependence (or of linear association) between the activity of observed neurons (Fig.~\ref{fig:02}\,A).  
 If this assumption aptly describes recorded data, then strong shrinkage toward $D$ will add little bias while strongly reducing the variability of the estimate. Shrinkage allows for partial commitment to the low-dimensional representation.  
@@ -163,7 +163,7 @@ If this assumption aptly describes recorded data, then strong shrinkage toward $
 In the second regularized estimator $C_{\sf factor}$, the target estimate is the factor model $F =  L L^\T + \Psi$ with $d$ factors so that $L$ is the $p\times d$ matrix of \emph{factor loadings} and the diagonal matrix $\Psi$ contains the independent variances of each neuron.
 Then the estimate is 
 \begin{equation}
-C_{\sf factor} = (1-\lambda) C_0 + \lambda F
+C_{\sf factor} = (1-\lambda) C_{\sf 0} + \lambda F
 \end{equation}
 This estimator has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $F$ expresses the assumption that correlated fluctuations in the population activity are driven by a small number of latent factors that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:02}\,B).   
 
@@ -190,9 +190,9 @@ Row 3 contains sample correlation matrices calculated from samples of size $n=10
 To evaluate the performance of a covariance matrix $C$, we define a real-valued \emph{loss function} $\loss{C,\Sigma}$ such that it attains its minimum when $C=\Sigma$.  The loss function quantifies the error of the estimate, \emph{i.e.}~the deviation of the estimate $C$ from truth $\Sigma$.
 
 In this study, we adopted \emph{negative normal log-likelihood loss}\footnote{
-The loss function $\loss{C,\Sigma}$ is related to the multivariate log-likelihood function $L(\Sigma|C_0)$: 
+The loss function $\loss{C,\Sigma}$ is related to the multivariate log-likelihood function $L(\Sigma|C_{\sf 0})$: 
 \begin{equation*}
-    L(\Sigma|C_0) = -\frac p 2 \ln(2\pi) -\frac p 2 \loss{\Sigma,C_0}
+    L(\Sigma|C_{\sf 0}) = -\frac p 2 \ln(2\pi) -\frac p 2 \loss{\Sigma,C_{\sf 0}}
 \end{equation*}
 }
 defined as
@@ -213,43 +213,49 @@ In Figure \ref{fig:02}, row 4 shows the mean excess losses and their standard er
 
 As expected, estimators with matching low-dimensional structures typically outperformed the other estimators. There were two exceptions to this observation. For small sample sizes, before the data were sufficient to reveal the true correlation structure and to  allow the correct model to dominate, estimates with simpler targets often outperformed the matching estimator.
 
-When the ground truth $\Sigma$ is not accessible, loss can be estimated solely from the data through \emph{validation}.  In validation, an additional independent \emph{testing dataset} is used to compute an independent sample covariance estimate $C_0^\prime$.  Then \emph{validation loss} $\loss{C,C_0^\prime}$ can be used as an unbiased estimate\footnote
+When ground truth $\Sigma$ is not accessible, loss can be estimated solely from the data through \emph{validation}.  In validation, an additional independent \emph{testing sample} is used to compute an independent sample covariance estimate $C_{\sf 0}^\prime$.  Then \emph{validation loss} $\loss{C,C_{\sf 0}^\prime}$ can be used as an unbiased estimate\footnote
 {
-    Validation loss $\loss{C,C_0^\prime}$ is an unbiased estimate of loss $\loss{C,\Sigma}$ when $\loss{\cdot,\cdot}$ is \emph{additive} in its second argument so that 
+    Validation loss $\loss{C,C_{\sf 0}^\prime}$ is an unbiased estimate of loss $\loss{C,\Sigma}$ when $\loss{\cdot,\cdot}$ is \emph{additive} in its second argument so that 
  \begin{equation*}\label{eq:additivity}
  \loss{C,z_1} + \loss{C,z_2} \equiv \loss{C,z_1+z_2}
  \end{equation*}
 
-Then the absence of bias is shown:
+Then the absence of bias can be shown:
 \begin{equation*}
-    \E{\loss{C,C_0^\prime}}=\loss{C,\E{C_0^\prime}}=\loss{C,\Sigma}
+    \E{\loss{C,C_{\sf 0}^\prime}}=\loss{C,\E{C_{\sf 0}^\prime}}=\loss{C,\Sigma}
 \end{equation*}
+
+This property does not hold for some other popular losses such as Stein's entropy loss, for example, which prevents their substitution with corresponding validation losses. However, various other losses do conform to this constraints and could be used in this study.
 } 
-of loss $\loss{C,\Sigma}$.
+of loss $\loss{C,\Sigma}$.  Thus, estimators resulting in consistently lower validation loss can be inferred to produce estimates that are closer to truth than estimators with higher validation loss. 
 
-Therefore, estimators resulting in consistently lower validation loss can be inferred to produce estimates that are closer to truth than estimators with higher validation loss. 
+With empirical data, acquiring a separate testing sample is not practical. Instead, $K$-fold cross-validation is used.  In cross-validation, the sample is divided into $K$ subsets of approximately equal size. In all computations in this paper $K=10$ was used.  Then each  subset is used as the validation sample with the other $K-1$ serving as the training dataset. The validation losses from each of such `folds' are averaged to produce \emph{cross-validation loss} or \emph{CV-loss} for short.  Let $C_{\sf 0}^{\{k\}}$ denote the sample covariance matrix computed from the $k^{th}$ subset and $C^{\{\setminus k\}}$ denote the results of  estimator $C$ trained on the remaining $K-1$ subsets. Then cross-validation loss for estimator $C$ is
+\begin{equation}\label{eq:cv-loss}
+    \ell_C=\frac 1 K \sum\limits_{k=1}^K \loss{C^{\{\setminus k\}},C_{\sf 0}^{\{k\}}}
+\end{equation}
+In the present formulation, $\ell_C$ is known as the cross-validated Gaussian log-likelihood (up to a constant offset and multiplier).
 
-\noindent\rule{8cm}{4pt}
+Since we only need to compare estimators against each other, we are only interested in \emph{relative} CV-loss of estimator $C$ with respect to reference estimator $C_{\sf ref}$:
+\begin{equation}\label{eq:rel-cv-loss}
+    \ell_{C,C_{\sf ref}} = \frac 1 K \sum\limits_{k=1}^K \left[
+        \loss{C^{\{\setminus k\}},C_{\sf 0}^{\{k\}}} -
+    \loss{C_{\sf ref}^{\{\setminus k\}},C_{\sf 0}^{\{k\}}} 
+\right]
+\end{equation}
 
-Since $\loss{\cdot,\cdot}$ is equivalent to negative normal log likelihood, the above derivation has led to the familiar criterion that the optimal covariance matrix estimator is one that consistently maximizes cross-validated normal log likelihood.
+In simulation, CV-loss accurately reproduced the differences between the estimators' excess losses, although with greater variability (Figure \ref{fig:02}, Row 5). For each kind of ground truth (Row 2), relative CV-losses were computed with respect to the estimator whose regularization target matched the structure of the respective ground truth: $\ell_{C,C_{\sf diag}}$, $\ell_{C,C_{\sf factor}}$, $\ell_{C,C_{\sf sparse}}$, and $\ell_{C,C_{\sf sparse+lowrank}}$. Just as with excess loss in Row 4, the means and their standard errors were computed from 30 samples  taken for each ground truth and for each sample size.
 
-To evaluate the performance of the different estimators, we computed the excess loss for all combinations of model populations and estimators, including the sample covariance. The first striking observation is that in all cases all four regularized estimators performed substantially better than the sample covariance (Fig.~2, fourth row). In particular, this is even true for the case where the population did not have any low-dimensional structure at all (Fig.~2\,E). While it may appear surprising at first sight, this counter-intuitive phenomenon is known as \emph{Stein's phenomenon} or \emph{Stein's paradox} \cite{Efron:1977}, named after its discoverer Charles Stein \cite{Stein:1956}. A common misconception about regularization is that its effect depends on accurate prior knowledge about the structure of the data. However, substantial improvement can be attained by shrinking the unbiased estimate toward an arbitrary target as long as the target is less variable than the unbiased estimator. The more accurate description of regularization is as of the optimal tradeoff between estimation and approximation error -- the so-called ``bias-variance tradeoff''.
-
-Thus, if taken in isolation a regularized estimator improves the estimate we should not interpret this result to suggest that the estimator's target has the same low-dimensional structure as the data-generating process. However, when comparing multiple estimators against each other, the one whose target estimate most closely matches the true value with the smallest number of parameters will reduce the estimation error with the least increase in approximation error. Indeed, in all four toy examples with a low-dimensional structure, the estimator with the matching regularization target performed best (Fig.~\ref{fig:03}\,A--D, fourth row). 
-Since the estimator combining low-rank and sparse interactions combines to low-dimensional targets and includes the simpler estimators as special cases, it performed almost as well even when the low-dimensional structure did not include either a low-rank component or sparse interactions (Fig.~\ref{fig:03}\,B,\,C). 
-
-Since the above evaluations of excess loss require knowledge of ground truth, this analysis can be done only on simulated data. However, \emph{validation loss} can be used as an unbiased empirical estimate of loss  (see Methods, Eq.~\ref{eq:validation-loss}. Validation loss uses an independent validation sample to estimate the value of loss without access to ground truth.   Indeed, this analysis revealed a pattern of results that reproduced the results obtained with access to ground truth above (Fig.~\ref{fig:03}, last row). Because validation loss is computed by comparing estimates to noisy sample covariance matrices from smaller validation sets, validation loss has higher variance than excess loss. Under our chosen loss function, validation loss does not converge to zero. 
+These simulation results demonstrated that, with sufficiently large sample sizes, the selection of the most efficient of several regularized estimators could be used to infer the type of low-dimensional structure present in the data, at least when one of the regularized estimators could capture such structure.
 
 \subsection*{Covariance estimation in neural data}
 
-We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Stosiek:2003,Reddy:2005}. We presented numerous repetitions of full-field drifting gratings (Fig.~\ref{fig:01}A and \ref{fig:01}B) to the eye contralateral to the imaged site. This technique allowed us to record from a large number (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4. We deconvolved somatic calcium signals using sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig.~\ref{fig:01}C and \ref{fig:01}D) and subtracted the average stimulus response to remove averaged linear effects of the stimulus. From this residual response we computed the sample noise covariance matrix (Fig.~\ref{fig:01}E).
+We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Reddy:2005,Katona:2012,Cotton:2013}}. We presented 300 repetitions of full-field drifting gratings with two directions of motion or 150 repetitions with five directions (Fig.~\ref{fig:03}\,A) on one side of the visual field of anesthetized mice. Groups of cells loaded with a calcium-sensitive fluorescent dye were imaged and localized in 3D space (Fig.~\ref{fig:03}\,B and E) in the visual cortex on the contralateral side to the stimulus. With acousto-optic modulator (AOD) 3D steering of the laser, the located cells were imaged at high sampling rates with concurrent motion detection.  This technique allowed fast sampling (100-150 Hz) from large numbers (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4 (Fig.~\ref{fig:03}\,C). After downsampling the signal to 20 Hz, relative firing rates were inferred using sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig.~\ref{fig:03}\,C and D). Only cells that produced detectable calcium activity were included in the analysis. The average stimulus response was subtracted from each trial; the remaining signals were further downsampled into 150 ms bins to compute the noise correlation matrix (Fig.~\ref{fig:03}\,F and G). The durations of recordings dedicated to estimating the noise correlations ranged between 15--20 minutes.  Besides the high-repetition stimulus protocol for noise correlations, an orientation tuning stimulus protocol was used to map the orientation tuning of each cells (Fig.~\ref{fig:03}\,E). Overall, 31 imaged sites from 24 animals were included in the study.
 
+In such highly localized populations both direct interactions between cells and common diffuse inputs are likely to contribute to the overall population variability, leading us to hypothesize that regularized estimates capable of accommodating partial correlations between specific pairs of cells (\emph{e.g.}\;$C_{\sf sparse}$ and $C_{\sf sparse+lowrank}$) would be more efficient than others. At the same time, average correlations were relatively small (Fig.~\ref{fig:03}\,G), to the advantage of estimates biased toward independence (\emph{e.g.}\;$C_{\sf diag}$). Finally, there is the possibility that the correlations structure is best explained by common fluctuations across the entire population, to the advantage of estimates biased toward low-rank correlation structure (\emph{e.g.}\;$C_{\sf factor}$, $C_{\sf factor+lowrank}$).
 
-In such highly localized populations both direct interactions between cells and common diffuse inputs are likely to contribute to the overall population variability. At the same time, most correlations are relatively small (Fig.~\ref{fig:01}E), suggesting that a simple shrinkage towards independence may provide a sufficiently well regularized estimate. By comparing the performance of our differently regularized estimators we can gain insights into which of these aspects are important in our data.
+We found that estimator $C_{\sf sparse+lowrank}$ was more efficient than the other estimators. The median relative CV-validation loss (Eq.~\ref{eq:rel-cv-loss}) of each of the estimates $C_{\sf 0}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ with respect to $C_{\sf sparse+lowrank}$ was significantly above zero ($p<0.001$, Wilcoxon signed rank test, for each).
 
-As expected, all regularized estimators outperformed the sample covariance estimator substantially (Fig.~\ref{fig:04}) Say something about how shrinkage, low-rank and sparse inverse relate. Finally, the combined sparse and low-rank estimator dominated all others significantly (Fig.~4), showing that both hidden units and direct interactions are important in our data. The improvement from the low-rank estimator to the combined one is much larger than that from the sparse inverse to the combined one, suggesting that in this dataset direct interactions contribute more strongly to the correlation structure than hidden units do.
-
-
+\hfill\rule{8cm}{4pt}
 
 \subsection*{Relationship between functional covariance structure and circuit architecture}
 
@@ -283,8 +289,6 @@ A regularized estimator solves the bias-variance tradeoff to produce a biased bu
 Various regularization schemes focus on the dimensionality reduction part  by selecting the optimal target estimate from a family of estimates with reduced dimensionality \cite{findit}.  
 Other estimators only shrink the sample covariance matrix toward a single target estimator \cite{Schafer:2005}. 
 Yet other regularizers effectively combine shrinkage and dimensionality reduction \cite{findit}.
-
-\subsection*{}
 
 \subsubsection*{Estimator $\mathcal A$: Shrinkage toward diagonal.}
 \emph{Estimator $\mathcal A$} shrinks the sample covariance matrix $\hat\Sigma_0$ toward that of the independent model shown in Fig.~\ref{fig:02}A.  The covariance matrix of a GGM in which all units are independent will be diagonal.  
@@ -448,7 +452,7 @@ Eftychios Pnevmatikakis
         %\includegraphics[width=8.3cm]{Figure04.pdf}
     \end{center}
     \caption{{\bf The sparse+lowrank estimator $C_{\sf sparse+lowrank}$ outperforms the other estimators on neural data.}
-    {\bf A--D.} Histograms of average cross-validation loss differences of the respective estimators $C_0$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ from $C_{\sf sparse+lowrank}$. 
+    {\bf A--D.} Histograms of average cross-validation loss differences of the respective estimators $C_{\sf 0}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ from $C_{\sf sparse+lowrank}$. 
     The histograms are based on 31 imaged sites in 24 mice. 
     All medians (red dashed lines) were significantly greater than zero, indicating the dominance of $C_{\sf sparse+lowrank}$ over the other estimators. 
     The green arrows indicate the results for the site shown in Fig.~\ref{fig:03} and Fig.~\ref{fig:05}
