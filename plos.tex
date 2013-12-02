@@ -123,7 +123,7 @@ Estimation of the correlation matrix relies on estimating the means and variance
 
 Estimation can be improved through \emph{regularization}: the deliberate biasing of the estimate toward one of several possible low-dimensional approximations referred to here as \emph{target estimates} \cite{Schafer:2005,Bickel:2006}.  The usual estimate, the \emph{sample covariance matrix} has the advantage of being unbiased but, on average, it falls far from the true covariance matrix due to its sensitivity to sampling noise in the data.  Low-dimensional estimates of various forms are typically less susceptible to sampling noise but are also liable to introduce their respective biases away from the true covariance matrix.  Regularization works by striking a favorable balance between bias and variability. Regularization can produce \emph{some} improvement even with an arbitrary target estimate that has no relation to the true covariance structure in the data.  Yet, when the target estimate is well suited for capturing the important features of the true covariance matrix with few terms, it will introduce minimal bias and outperform other estimators. 
 
-To illustrate key concepts, Figure \ref{fig:01} illustrates a regularization scheme based on \emph{covariance selection} \cite{Dempster:1972}. In covariance selection, the estimate is produced by fitting only an optimal subset of the coefficients of the \emph{precision matrix} (the inverse of the covariance matrix) while setting the remaining coefficients to zero. Scaling the precision matrix so that its diagonal is composed of all $-1$'s produces the matrix of partial correlations. Thus zeros in the precision matrix produce zero partial correlations between the corresponding pairs of neurons.  Panel \ref{fig:01}\,A depicts the sample correlation matrix of a period of somatic calcium signals of a group of 298 neurons in mouse visual cortex.  Due to the low-pass filtration effect of calcium dye kinetics, correlations in unprocessed calcium signals are much higher than typical firing rate correlations on shorter temporal scales. Panel \ref{fig:01}\,B magnifies the fragment of the sample correlation matrix outlined in \ref{fig:01}\,A whereas \ref{fig:01}\,C shows the corresponding fragment of the regularized estimate. The regularized estimate is produced from the same data by zeroing the optimal set of 31501 (71.2\%) of off-diagonal coefficients of the precision matrix and fitting the remaining coefficients. Panels \ref{fig:01}\,D and E show the same fragments of the respective estimates of the partial correlation matrix. The apparent similarity of the two estimates of the correlation matrix belies the utterly different partial correlation structure. The regularized estimate is less sensitive to sample noise in the data, is likely to be closer to truth in most cases than the unbiased estimate, which may be ascertained by cross-validation studies.
+To illustrate key concepts, Figure \ref{fig:01} illustrates a regularization scheme based on \emph{covariance selection} \cite{Dempster:1972}. In covariance selection, the estimate is produced by fitting only an optimal subset of the coefficients of the \emph{precision matrix} (the inverse of the covariance matrix) while setting the remaining coefficients to zero. Scaling the precision matrix so that its diagonal is composed of all $-1$'s produces the matrix of partial correlations. Thus zeros in the precision matrix produce zero partial correlations between the corresponding pairs of neurons.  Panel \ref{fig:01}\,A depicts the sample correlation matrix of a period of somatic calcium signals of a group of 298 neurons in mouse visual cortex.  Due to the low-pass filtration effect of calcium dye kinetics, correlations in unprocessed calcium signals are much higher than typical firing rate correlations on shorter temporal scales. Panel \ref{fig:01}\,B magnifies the fragment of the sample correlation matrix outlined in \ref{fig:01}\,A whereas \ref{fig:01}\,C shows the corresponding fragment of the regularized estimate. The regularized estimate is produced from the same data by zeroing the optimal set of 31,501 (71.2\%) off-diagonal coefficients of the precision matrix and fitting the remaining coefficients. Panels \ref{fig:01}\,D and E show the same fragments of the respective estimates of the partial correlation matrix. The apparent similarity of the two estimates of the correlation matrix belies the utterly different partial correlation structure. The regularized estimate is less sensitive to sample noise in the data, is likely to be closer to truth in most cases than the unbiased estimate, which may be ascertained by cross-validation studies.
 
 It may be tempting to interpret the regularized sparse estimate of partial correlations as a more accurate representation of the functional connectivity than the original correlation coefficients: after all, the regularized solution consistently produces better estimates and has fewer parameters which are easier to interpret. However, an alternative regularization scheme using 43 latent factors interacting linearly with all neurons while having about the same number of parameters, performed even better than covariance selection on this dataset.
 
@@ -189,57 +189,49 @@ Row 3 contains sample correlation matrices calculated from samples of size $n=10
 
 To evaluate the performance of a covariance matrix $C$, we define a real-valued \emph{loss function} $\loss{C,\Sigma}$ such that it attains its minimum when $C=\Sigma$.  The loss function quantifies the error of the estimate, \emph{i.e.}~the deviation of the estimate $C$ from truth $\Sigma$.
 
-For the purposes of this study, we adopted the \emph{negative normal log-likelihood loss}\footnote{
-The loss function $\loss(C,\Sigma)$ is related to the multivariate log-likelihood function $L(\Sigma|C_0)$ as 
-\begin{equation}
+In this study, we adopted \emph{negative normal log-likelihood loss}\footnote{
+The loss function $\loss{C,\Sigma}$ is related to the multivariate log-likelihood function $L(\Sigma|C_0)$: 
+\begin{equation*}
     L(\Sigma|C_0) = -\frac p 2 \ln(2\pi) -\frac p 2 \loss{\Sigma,C_0}
-\end{equation}
+\end{equation*}
 }
-defined as:
+defined as
 \begin{equation}\label{eq:loss}
     \loss{C,\Sigma} = \frac 1 p\left[\ln \det C + \Tr(C^{-1}\Sigma)\right]
 \end{equation}
 
-We normalized the loss function  by $\frac 1 p$ to make its value less sensitive population size (For independent neurons, the log likelihood scales linearly with $p$).
+We normalized the loss function  by $\frac 1 p$ to make its value comparable across different population sizes. 
 
-This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $C-\Sigma$ \cite{Ledoit:2004,Schafer:2005}, Stein's entropy loss, and quadratic loss \cite{James:1961,Fan:2008}.  We expect that the main conclusions of our study will not change qualitatively under other well behaved loss functions.
+This choice is motivated by mathematical convenience. Other popular choices for the loss function are the Frobenius norm of the difference $\|C-\Sigma\|_F$ \cite{Ledoit:2004,Schafer:2005}, Stein's entropy loss, and quadratic loss \cite{James:1961,Fan:2008}.  We expect that the main conclusions of our study will not change qualitatively under other well behaved loss functions.
 
-To make a loss function that assume zero at its minimum when $C=\Sigma$, we define \emph{excess loss} as
+To make the loss function to assume zero at its minimum when $C=\Sigma$, we define \emph{excess loss} as
 \begin{equation}\label{eq:excess-loss}
     \eloss{C,\Sigma} = \loss{C,\Sigma}-\loss{\Sigma,\Sigma}
 \end{equation}
 
 In Figure \ref{fig:02}, row 4 shows the mean excess losses and their standard errors calculated from 30 samples of sizes n=250, 500, 1000, 2000, and 4000 for each estimator and each kind of ground truth. For each estimator, its hyperparameters were estimated by nested cross-validation (See Methods for more details.)
 
-As expected, estimators with matching low-dimensional structures typically outperformed the other estimators. There were two exceptions to this observation. For small sample sizes, before the data were sufficient to reveal the true correlation structure and to  allow the correct model to dominate, estimates with simpler targets often outperformed the more matching estimate.
+As expected, estimators with matching low-dimensional structures typically outperformed the other estimators. There were two exceptions to this observation. For small sample sizes, before the data were sufficient to reveal the true correlation structure and to  allow the correct model to dominate, estimates with simpler targets often outperformed the matching estimator.
 
-With empirical data, the truth $\Sigma$ is not accessible and the relative values of loss must be estimated solely from the data. This may be accomplished through \emph{validation}.  In validation, the data are split into a training subset from which the estimate is obtained and a validation subset. We then compute the \emph{validation loss} 
+When the ground truth $\Sigma$ is not accessible, loss can be estimated solely from the data through \emph{validation}.  In validation, an additional independent \emph{testing dataset} is used to compute an independent sample covariance estimate $C_0^\prime$.  Then \emph{validation loss} $\loss{C,C_0^\prime}$ can be used as an unbiased estimate\footnote
+{
+    Validation loss $\loss{C,C_0^\prime}$ is an unbiased estimate of loss $\loss{C,\Sigma}$ when $\loss{\cdot,\cdot}$ is \emph{additive} in its second argument so that 
+ \begin{equation*}\label{eq:additivity}
+ \loss{C,z_1} + \loss{C,z_2} \equiv \loss{C,z_1+z_2}
+ \end{equation*}
 
-\begin{equation}\label{eq:validation-loss}
-    \loss{C,C^\prime_0}
-\end{equation}
+Then the absence of bias is shown:
+\begin{equation*}
+    \E{\loss{C,C_0^\prime}}=\loss{C,\E{C_0^\prime}}=\loss{C,\Sigma}
+\end{equation*}
+} 
+of loss $\loss{C,\Sigma}$.
 
-$\loss{\cdot,\cdot}$ is additive in its second argument so that 
- \begin{equation}\label{eq:additivity}
- \loss{\hat\Sigma,X_1} + \loss{\hat\Sigma,X_2} \equiv \loss{\hat\Sigma,X_1+X_2}
- \end{equation}
-Then \emph{validation loss}  
-\begin{equation}\label{eq:validationLoss}
-\hat \ell = \loss{\hat\Sigma,\hat\Sigma_0^\prime}
-\end{equation}
-is an unbiased estimate of the risk:
- \begin{equation}\label{eq:empiricalRisk}
-\E[(\hat\Sigma, \hat\Sigma_0^\prime)] {\hat\ell} 
-= \E[(\hat\Sigma, \hat\Sigma_0^\prime)]{\loss{\hat\Sigma,\hat\Sigma_0^\prime}}
-= \E{\loss{\hat\Sigma,\E{\hat\Sigma_0^\prime}}}
-= \E{\loss{\hat\Sigma,\Sigma}} = r
- \end{equation}
-Therefore, estimators resulting in consistently lower validation loss can be inferred to produce estimates that are closer to truth than estimators with higher validation loss.
+Therefore, estimators resulting in consistently lower validation loss can be inferred to produce estimates that are closer to truth than estimators with higher validation loss. 
 
-Other popular loss functions such as entropy loss do not comply with Eq.~\ref{eq:additivity} and their validation loss is not an unbiased estimate of risk.
+\noindent\rule{8cm}{4pt}
 
 Since $\loss{\cdot,\cdot}$ is equivalent to negative normal log likelihood, the above derivation has led to the familiar criterion that the optimal covariance matrix estimator is one that consistently maximizes cross-validated normal log likelihood.
-
 
 To evaluate the performance of the different estimators, we computed the excess loss for all combinations of model populations and estimators, including the sample covariance. The first striking observation is that in all cases all four regularized estimators performed substantially better than the sample covariance (Fig.~2, fourth row). In particular, this is even true for the case where the population did not have any low-dimensional structure at all (Fig.~2\,E). While it may appear surprising at first sight, this counter-intuitive phenomenon is known as \emph{Stein's phenomenon} or \emph{Stein's paradox} \cite{Efron:1977}, named after its discoverer Charles Stein \cite{Stein:1956}. A common misconception about regularization is that its effect depends on accurate prior knowledge about the structure of the data. However, substantial improvement can be attained by shrinking the unbiased estimate toward an arbitrary target as long as the target is less variable than the unbiased estimator. The more accurate description of regularization is as of the optimal tradeoff between estimation and approximation error -- the so-called ``bias-variance tradeoff''.
 
