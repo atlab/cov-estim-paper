@@ -177,9 +177,9 @@ C_{\sf sparse} = S^{-1}
 \end{equation}
 where $S$ is a sparse matrix with a large fraction of zeros in its off-diagonal elements. The estimate has one hyperparameter to regulate the sparsity (fraction of off-diagonal zeros) in $S$.
 
-Finally, we consider the fourth estimator $C_{\sf sparse+lowrank}$, which provides for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:02}\,D). This estimator has the form
+Finally, we consider the fourth estimator $C_{\sf sparse+lowrank}$, which provides for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:02}\,D). This estimator has the form \cite{Chandrasekaran:2010,Ma:2013}
 \begin{equation}
-C_{\sf sparse+latent} = (S - LL^\T)^{-1},
+C_{\sf sparse+latent} = (S - LL^\T)^{-1}
 \end{equation}
 where, as above, $S$ is a sparse matrix and $L$ is a $d\times p$ matrix of factor loadings. The estimator has two hyperparameters: the number of latent units $d$ and the sparsity of $S$.
 
@@ -270,7 +270,10 @@ The connectivity of partial correlations in the regularized estimate had differe
 
 
 \section*{Discussion}
-TODO
+\subsection*{Big neural data}
+\subsection*{Meaning of interactions}
+\subsection*{Fitting probabilistic models (\emph{e.g.}\;GLMs) vs.\;covariance estimation.}
+\subsection*{Future directions}
 
 \section*{Methods}
 % You may title this section "Methods" or "Models". 
@@ -280,12 +283,11 @@ TODO
 Fast 3D two-photon imaging of calcium signals \emph{in vivo} was performed as described in \cite{Cotton:2013}
 \subsection*{Covariance Estimation}
 TODO
-\subsection*{Simulation}
-TODO
 \subsection*{Cross-validation}
 TODO
+\subsection*{Simulation}
+TODO
 
-\subsection*{Evaluation}
 \section*{Acknowledgments}
 Genevera Allen
 
