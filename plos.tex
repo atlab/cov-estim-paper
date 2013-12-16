@@ -114,7 +114,7 @@ Correlations of the activity of neurons have proven useful as descriptors of the
 \subsection*{Neural correlations}
 Pearson correlations between the spiking activity of pairs of neurons, or simply \emph{neural correlations}, are the most familiar descriptive statistics of neural population activity \cite{Averbeck:2006,Zohary:1994,Kohn:2005,Bair:2001,Ecker:2010}.  For example, \emph{noise correlations}, \emph{i.e.}~the correlations of stimulus response variability between pairs of neurons, have been shown to have profound theoretical implications for stimulus coding \cite{Zohary:1994,Abbott:1999,Sompolinsky:2001,Wilke:2002,Averbeck:2006,Josic:2009,Berens:2011,Ecker:2011}. In addition, neural correlations are hypothesized to reflect key features of functional connectivity in neural circuits.  Such interpretation is supported by a series of discoveries of nontrivial relationships between neural correlations and other aspects of circuit organization such as the physical distances between neurons \cite{Smith:2008,Denman:2013}, their synaptic connectivity \cite{Ko:2011},  stimulus response similarity \cite{Bair:2001,Kohn:2005,Cohen:2008,Cohen:2009,Ko:2011,Smith:2013b}, cortical layer specificity \cite{Hansen:2012,Smith:2013}, progressive changes in development and in learning \cite{Golshani:2009,Gu:2011}, changes due to sensory stimulation and global brain states \cite{Goard:2009,Kohn:2009,Ecker:2010,Renart:2010}, and others.
 
-However, neural correlations do not submit to ready or unambiguous mechanistic interpretation.  Theoretical studies and simulations have shown that neural correlations on various temporal scales may arise from combinations of multiple mechanisms including  direct synaptic interactions, common inputs or correlated inputs, chains of multiple synaptic connections, oscillations, top-down modulation, and background network fluctuations \cite{Perkel:1967b,Shadlen:1998,Salinas:2001,Ostojic:2009,Rosenbaum:2011}. 
+However, neural correlations do not submit to ready or unambiguous mechanistic interpretation.  Theoretical studies and simulations have shown that neural correlations on various temporal scales may arise from combinations of multiple mechanisms including  direct synaptic interactions, common inputs or correlated inputs, chains of multiple synaptic connections, oscillations, top-down modulation, and background network fluctuations \cite{Perkel:1967b,Moore:1970,Shadlen:1998,Salinas:2001,Ostojic:2009,Rosenbaum:2011}. 
 
 \subsection*{Additional information in neural correlation matrices}
 Yet, a complete correlation matrix provides more information than the equivalent number of isolated pairwise correlations. In early studies, the effects of correlations were extrapolated from isolated pairs to entire populations through simulation and theoretical analysis \cite{Shadlen:1998,Zohary:1994}. In contrast, modern multineuronal recordings from increasingly large and dense populations of highly interconnected neurons allow estimation of various low-dimensional representations of the entire correlation matrix, which can enable inquiry into the nature of underlying physiological mechanisms and computational principles.  
@@ -136,7 +136,7 @@ where $\E{\cdot}$ denotes expectation; $x$ is the $p\times 1$ vector of real-val
 \end{equation}
 where $\nu$ is the number of degrees of freedom per neuron in the sample ($\nu=n-1$ if observations are independent). In this study, we keep the sample mean $\bar x$ as the estimate of the true mean $\mu$, but seek a better estimate of the covariance matrix than $C_{\sf 0}$.
 
-Given a covariance matrix estimate $C$ (not necessarily sample covariance $C_{\sf 0}$), the correlation matrix $R$ is calculated by normalizing $C$ by its diagonal (variance estimates):
+Given a covariance matrix estimate $C$ (not necessarily the sample covariance $C_{\sf 0}$), the correlation matrix $R$ is calculated by normalizing $C$ by its diagonal (variance estimates):
 \begin{equation}
     R = \left(I\circ C\right)^{-\frac 1 2} C \left(I\circ C\right)^{-\frac 1 2}
 \end{equation}
@@ -144,7 +144,7 @@ Similarly, the matrix of partial correlations $P$ is computed as the negative no
 \begin{equation}
     P = -\left(I\circ C^{-1}\right)^{-\frac 1 2} C^{-1} \left(I\circ C^{-1}\right)^{-\frac 1 2}
 \end{equation}
-Here $\circ$ denotes entrywise matrix product (Hadamard product) and $I$ is the $p\times p$ identity matrix. 
+Here $\circ$ denotes entrywise matrix product (Hadamard product) and $I$ is the $p\times p$ identity matrix. Clearly, off-diagonal zeros in the precision matrix correspond to zero partial correlations. 
 
 Estimation of the covariance matrix from a large population presents a number of numerical challenges.  The amount of recorded data grows only linearly with the population size whereas the number of estimated coefficients increases quadratically.  This mismatch leads to increased opportunities for spurious correlations, to overestimation of shared activity (\emph{i.e.}\;overestimation of large eigenvalues) \cite{Ledoit:2004}, and to poorly conditioned estimates of the partial correlations \cite{Schafer:2005}.
 
@@ -180,13 +180,13 @@ C_{\sf factor} = (1-\lambda) C_{\sf 0} + \lambda F
 \end{equation}
 This estimator has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $F$ expresses the assumption that correlated fluctuations in the population activity are driven by a small number of latent factors that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:02}\,B).   
 
-The third estimator $C_{\sf sparse}$ is based on the assumption that all correlations are the result of direct linear interactions between pairs of observed cells and that such interactions occur only between a fraction of such pairs (Fig.~\ref{fig:02}\,C).  This assumption is enforced by reducing to zero the majority of pairwise \emph{partial correlations} in the recorded population.  While usual correlations are calculated from the marginal distribution without conditioning on all the other neurons, the partial correlation expresses the pairwise correlation conditioned on the activity of all the other cells.  If cells only exert linear effects on each other and all neurons are recorded, partial correlations express the direct interactions between neurons.  Therefore, this estimator is biased toward the assumption that correlations arise due to interactions between a subset of pairs of recorded neurons (Fig.~\ref{fig:03}C). When the partial correlation between a pair of neurons is zero, then the corresponding element of the inverse of the covariance matrix (often referred to as the \emph{precision matrix} or \emph{concentration matrix}) must be zero as well. Then the estimator is 
+The third estimator $C_{\sf sparse}$ is based on the assumption that all correlations are the result of direct linear interactions between pairs of observed cells and that such interactions occur only between a fraction of such pairs (Fig.~\ref{fig:02}\,C).  This assumption is enforced by setting to zero an optimal subset of the off-diagonal elements of the precision matrix.  Therefore, $C_{\sf sparse}$ is biased toward the assumption that correlations arise due to linear interactions between pairs of recorded neurons (Fig.~\ref{fig:03}C). Then the estimator is 
 \begin{equation}
 C_{\sf sparse} = S^{-1}
 \end{equation}
 where $S$ is a sparse matrix with a large fraction of zeros in its off-diagonal elements. The estimate has one hyperparameter to regulate the sparsity (fraction of off-diagonal zeros) in $S$.
 
-Finally, we consider the fourth estimator $C_{\sf sparse+latent}$, which provides for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:02}\,D). This estimator has the form \cite{Chandrasekaran:2010,Ma:2013}
+Finally, we consider the fourth estimator $C_{\sf sparse+latent}$, which provides for both common latent factors interacting with all recorded neurons and sparse interactions between the recorded neurons (Fig.~\ref{fig:02}\,D). This estimator has the form \cite{Chandrasekaran:2010,Ma:2013}:
 \begin{equation}
 C_{\sf sparse+latent} = (S - LL^\T)^{-1}
 \end{equation}
@@ -199,7 +199,7 @@ Row 3 contains sample correlation matrices calculated from samples of size $n=10
 To evaluate the performance of a covariance matrix $C$, we define a real-valued \emph{loss function} $\loss{C,\Sigma}$ such that it attains its minimum when $C=\Sigma$.  The loss function quantifies the error of the estimate, \emph{i.e.}~the deviation of the estimate $C$ from truth $\Sigma$.
 
 In this study, we adopted \emph{negative normal log-likelihood loss}\footnote{
-The loss function $\loss{C,\Sigma}$ is related to the multivariate log-likelihood function $L(\Sigma|C_{\sf 0})$: 
+The loss function $\loss{C,\Sigma}$ is related to the multivariate log-likelihood function $L(\Sigma|C_{\sf 0})$ as
 \begin{equation*}
     L(\Sigma|C_{\sf 0}) = -\frac p 2 \ln(2\pi) -\frac p 2 \loss{\Sigma,C_{\sf 0}}
 \end{equation*}
@@ -280,9 +280,10 @@ The connectivity of partial correlations in the regularized estimate had differe
 
 \section*{Discussion}
 \subsection*{Functional connectivity from big neural data}
-Transformational breakthroughs in neuroscience are anticipated to emerge from technological developments that will allow simultaneous recordings of the spiking activity of much larger subsets of neurons in functioning neural circuits than have been possible thus far. 
+Transformational breakthroughs in neuroscience are anticipated to follow technological advances that will allow simultaneous recordings of the spiking activity of much larger subsets of neurons in functioning neural circuits than have been possible thus far. It far from certain whether massively multineuronal recordings will readily reveal new principles of neural function by application of current statistical techniques. Most common analyses of the functional connectivity rely on analyzing pairwise correlation coefficients, t-tests, ANCOVA, principal component analysis of correlated activity, and cross-correlations.  Traditionally, functional connectivity between regions has been defined as the level of correlation or synchronization between regions or cells. Without targeted stimulation and intracellular signals, synaptic connectivity could be inferred with some degree of confidence from the presence of sharp peaks or troughs in the cross-correlograms at offsets corresponding to typical synaptic transmission delays. However, even such effects can be explained by multiple effects besides monosynaptic connections while some strong synaptic connections do not necessarily produce a clear spike in the cross-correlogram. The situations is a bit more complicated in recording modalities, such as calcium imaging, in which only firing rates at lower temporal resolutions can be inferred and cross-correlograms with millisecond precision cannot be obtained. Therefore, some researchers have resorted to using simple correlations as proxies of functional connectivity. Yet, correlations are the end product of multiple cell interactions and, which do not always correspond to 
 
 
+\subsection*{Comparison with other uses of neural correlations}
 \subsection*{Meaning of interactions}
 \subsection*{Fitting probabilistic models (\emph{e.g.}\;GLMs) vs.\;covariance estimation.}
 \subsection*{Future directions}
