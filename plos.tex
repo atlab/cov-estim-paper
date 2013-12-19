@@ -16,7 +16,8 @@
 \usepackage{cite}
 
 \usepackage{color} 
-
+\usepackage[CaptionAfterwards]{fltpage}
+\usepackage{floatrow}
 % Use doublespacing - comment out for single spacing
 %\usepackage{setspace} 
 %\doublespacing
@@ -130,7 +131,7 @@ The true correlation matrix is the normalized version of the true covariance mat
 \begin{equation}\label{eq:true-covariance}
     \Sigma = \E{(x-\mu)(x-\mu)^\T},\quad \mu = \E{x}
 \end{equation}
-where $\E{\cdot}$ denotes expectation; $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates in bins of duration $\Delta t$; and $\mu$ is the vector of mean firing rates.  The usual estimator of the covariance matrix is the \emph{sample covariance matrix} $C_{\sf 0}$ computed from the empirical sample of observations $x(t),\; t=n(1,\ldots,n)$ as
+where $\E{\cdot}$ denotes expectation; $x$ is the $p\times 1$ vector of real-valued instantaneous firing rates in bins of duration $\Delta t$; and $\mu$ is the vector of mean firing rates. In the case of noise correlations, $\mu$ depends on the stimulus condition.  The usual estimator of the covariance matrix is the \emph{sample covariance matrix} $C_{\sf 0}$ computed from the empirical sample of observations $x(t),\; t=n(1,\ldots,n)$ as
 \begin{equation}
     C_{\sf 0} = \frac 1 \nu \sum\limits_{t=1}^n (x(t)-\bar x)(x(t)-\bar x)^\T,\quad \bar x= \frac 1 n \sum\limits_{t=1}^n x(t)
 \end{equation}
@@ -150,10 +151,23 @@ Estimation of the covariance matrix from a large population presents a number of
 
 Estimation can be improved through \emph{regularization}: the deliberate biasing of the estimate toward a low-dimensional approximation \cite{Schafer:2005,Bickel:2006}.  The usual estimate $C_{\sf 0}$ has the advantage of being unbiased ($\E{C_0}=\Sigma$) but, on average, it falls far from $\Sigma$ due to its sensitivity to sampling noise in training sample.  Low-dimensional estimates of various forms are typically less susceptible to sampling noise but are also liable to introduce their respective biases away from truth $\Sigma$.  Regularization works by striking a favorable balance between bias and variability. Regularization can produce \emph{some} improvement even with an arbitrary target estimate that has no relation to the true dependencies in the data.  Yet, when the target estimate is well suited for capturing the important features of the true covariance matrix with few terms, it will introduce minimal bias and outperform other estimators. 
 
-To illustrate challenges of estimating the correlation matrix from a finite sample, we briefly consider a regularization scheme based on \emph{covariance selection} (Figure \ref{fig:01}) \cite{Dempster:1972}. In covariance selection, the estimate is produced by fitting only an optimal subset of the coefficients of the precision matrix while setting the rest to zero. We estimated the covariance matrix of a period of a somatic calcium signals of a group of 298 neurons in mouse visual cortex using both the sample covariance matrix (Fig.\;\ref{fig:01}\,A, B) and covariance selection (Fig.\;\ref{fig:01}\,C). Due to the low-pass filtration effect of calcium dye kinetics, correlations in unprocessed calcium signals are higher than typical firing rate correlations on shorter temporal scales. The apparent similarity of the two estimates belies the utterly different partial correlation structure (Fig.\;\ref{fig:01}\,D, E): the regularized estimate is produced from the same data by zeroing the optimal set of 31,501 (71.2\%) of the off-diagonal coefficients of the precision matrix and fitting the remaining 12,752 coefficients. Estimation by covariance selection is attractive for several reasons: First, it has fewer free parameters and is therefore less susceptible to sampling noise, yielding estimates that are, on average, closer to truth $\Sigma$. Additionally, if we assume that partial correlations do indeed reflect elements of the functional connectivity in the circuit, the second estimate also appears more plausible: in neural circuits, each neuron only interacts with a fraction of the entire population.
+\subsection*{Illustration of estimation of a neural correlation matrix}
+To illustrate challenges of estimating the correlation matrix from a finite sample, we briefly consider a regularization scheme based on \emph{covariance selection} (Figure \ref{fig:01}) \cite{Dempster:1972}. In covariance selection, the estimate is produced by fitting only an optimal subset of the coefficients of the precision matrix while setting the rest to zero. We estimated the covariance matrix of a period of a somatic calcium signals of a group of 298 neurons in mouse visual cortex using both the sample covariance matrix (Fig.\;\ref{fig:01}\,A, B) and covariance selection (Fig.\;\ref{fig:01}\,C). Due to the low-pass filtration effect of calcium dye kinetics, correlations in unprocessed calcium signals are higher than typical firing rate correlations on shorter temporal scales. The close similarity of the two estimates (Fig.\;\ref{fig:01}\,B and C) belies the utterly different partial correlation structure (Fig.\;\ref{fig:01}\,D, E): the regularized estimate is produced from the same data by zeroing the optimal set of 31,501 (71.2\%) of the off-diagonal coefficients of the precision matrix and fitting the remaining 12,752 coefficients. Estimation by covariance selection is attractive for several reasons: First, it has fewer free parameters and is therefore less susceptible to sampling noise, yielding estimates that are, on average, closer to truth $\Sigma$. Additionally, if we assume that partial correlations do indeed reflect elements of the functional connectivity in the circuit, the second estimate also appears more plausible: in neural circuits, each neuron only interacts with a fraction of the entire population.
+
+\begin{figure}[!ht]
+    \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=8.3cm}}]{figure}[\FBwidth]
+    {\caption{{\bf Illustration of regularized estimation of partial correlations.}
+        {\bf A}. The sample correlation matrix of unprocessed somatic calcium signals from a population of cells in mouse visual cortex.
+        The outlined square fragment is magnified in {\bf B}.
+        {\bf C}. The same fragment of another estimate of the correlation matrix regularized to yield sparse partial correlations.
+        Corresponding fragments of partial correlations matrices of the unregularized and regularized estimated are shown in {\bf D} and {\bf E}, respectively.
+    }
+    \label{fig:01}}
+    {\includegraphics[width=8.3cm]{./figures/Figure01.pdf}}
+\end{figure}
 
 \subsection*{Model selection}
-However, covariance selection is but one of numerous possible low-dimensional approximations of the covariance matrix. Indeed any probabilistic model of the joint population activity regularized toward a small number of parameters automatically defines a low-dimensional approximation of the covariance matrix. Models that accurately reflect the dominant functional dependencies in the circuit, its so-called `functional connectivity', will tend to produce estimates that are nearest to the true value of the covariance matrix and are said to be more \emph{efficient} than the other estimators or to \emph{dominate} the other estimators. An estimator's superior efficiency can be ascertained by cross-validation.  Because different types of neural circuits are governed by different types of dependencies, different probabilistic models and covariance matrix estimators may dominate in each case. The estimator that is shown to dominate all others for a specific type of neural circuit may be proposed as the best descriptor of the low-dimensional representation of the correlation structure of the system of interest. Its structure may then be analyzed and related to the circuits anatomical organization.  
+Covariance selection is but one of many conceivable low-dimensional approximations of the covariance matrix. Indeed any probabilistic model of the joint population activity regularized toward a small number of parameters automatically defines a low-dimensional approximation of the covariance matrix. Models that accurately reflect the dominant functional dependencies in the circuit, its so-called `functional connectivity', will tend to produce estimates that are nearest to the true value of the covariance matrix and are said to be more \emph{efficient} than the other estimators or to \emph{dominate} the other estimators. An estimator's superior efficiency can be ascertained by cross-validation.  Because different types of neural circuits are governed by different types of dependencies, different probabilistic models and covariance matrix estimators may dominate in each case. The estimator that is shown to dominate all others for a specific type of neural circuit may be proposed as the best descriptor of the low-dimensional representation of the correlation structure of the system of interest. Its structure may then be analyzed and related to the circuit's anatomical organization.  
 
 \subsection*{Summary of findings}
 In this study, we compared four regularized covariance matrix estimators biased toward different respective low-dimensional correlation structures: `shrinkage toward diagonal' or $C_{\sf diag}$, `shrinkage toward a multifactor model' or $C_{\sf factor}$, `sparse partial correlations' or $C_{\sf sparse}$, and `sparse partial correlations with latent units' or $C_{\sf sparse+latent}$.  First, we demonstrated that, in simulations with known true low-dimensional correlation structures, regularized estimators with matching types of low-dimensional structure generally dominated over the other estimators. We then used cross-validation to determine the most efficient estimator for the population activity of dense groups of neurons in mouse primary visual cortex. We found that $C_{\sf sparse+latent}$ consistently dominated the other estimators.  Estimate produced by $C_{\sf sparse+latent}$ revealed networks of interactions that differed substantially from networks of strongest correlations and depended strongly on the physical distance separating pairs of cells and on the differences in their preferred orientations. 
@@ -164,6 +178,27 @@ In this study, we compared four regularized covariance matrix estimators biased 
 
 \subsection*{Covariance estimation}
 We considered four regularized estimators based on distinct families of low-dimensional target estimates: `independent', `latent factors', `sparse interactions', and `sparse+latent' (Fig.~\ref{fig:02}\;row 1).  
+
+\begin{FPfigure}
+    \begin{center}
+        \includegraphics{./figures/Figure02.pdf}
+    \end{center}
+    \caption{{\bf Estimators whose low-dimensional regularization targets can represent the structure of the true covariance matrix outperform other estimators.}
+        {\bf Row 1.} Graphical representations of four types of low-dimensional structures of interactions between observed neurons (green spheres) and latent units (light-shaded spheres).
+        In the `independent model' ({\bf A}), observed neurons exert no linear effects on one another neither directly nor through interactions with common latent units. 
+        In `latent factors' ({\bf B}), the correlated activity of observed cells is driven by several latent units. 
+        In `sparse interactions' ({\bf C}), the correlation matrix is defined by a set of linear interactions between observed neurons. 
+        In `sparse+latent' ({\bf D}), correlations arise through direct linear interactions between some pairs of observed neurons and through interactions with common latent units. 
+        {\bf Row 2.} Examples of $50\times 50$ correlation matrices corresponding to each type of low-dimensional structure. 
+        The factor model ({\bf B}) has three latent units. 
+        The partial correlation matrix of the sparse model ({\bf C}) is 73\% sparse.
+        The `sparse+latent' matrix has one latent unit and its direct interactions are 78\% sparse.
+        {\bf Row 3.} Examples of sample correlation matrices calculated from samples of 1000 observations taken from simulated random processes with corresponding correlation matrices from row 2.
+        {\bf Row 4.} Mean \emph{excess loss} (Eq.~\ref{eq:excess-loss}) attained by each of the five estimators as a function of sample size. The error bars indicate the standard error of the mean based on 30 samples.
+        {\bf Row 5.} Mean \emph{cross-validation loss} (Eq.~\ref{eq:rel-cv-loss}) of covariance estimators with respect to the matching estimator . The values are relative to the validation loss of the estimator that matches the low-dimensional structure of the true covariance matrix. The error bars indicate the standard error of the mean based on 30 samples.
+    }
+    \label{fig:02}
+\end{FPfigure} 
 
 In the first regularized estimator $C_{\sf diag}$, the target estimate is the diagonal matrix $D$ containing on its diagonal estimates of the variances.
 The regularized estimate is obtained by linear \emph{shrinkage} of the unbiased estimate $C_{\sf 0}$ toward $D$ controlled by the scalar \emph{shrinkage intensity} parameter $\lambda \in [0, 1]$:
@@ -180,7 +215,7 @@ C_{\sf factor} = (1-\lambda) C_{\sf 0} + \lambda F
 \end{equation}
 This estimator has two hyperparameters: the number of factors $d$ and shrinkage intensity $\lambda$. The target estimate $F$ expresses the assumption that correlated fluctuations in the population activity are driven by a small number of latent factors that affect many cells while direct interactions between cells are insignificant (Fig.~\ref{fig:02}\,B).   
 
-The third estimator $C_{\sf sparse}$ is based on the assumption that all correlations are the result of direct linear interactions between pairs of observed cells and that such interactions occur only between a fraction of such pairs (Fig.~\ref{fig:02}\,C).  This assumption is enforced by setting to zero an optimal subset of the off-diagonal elements of the precision matrix.  Therefore, $C_{\sf sparse}$ is biased toward the assumption that correlations arise due to linear interactions between pairs of recorded neurons (Fig.~\ref{fig:03}C). Then the estimator is 
+The third estimator $C_{\sf sparse}$ is based on the assumption that all correlations are the result of direct linear interactions between pairs of observed cells and that such interactions occur only between a fraction of such pairs (Fig.~\ref{fig:02}\,C).  This assumption is enforced by setting to zero an optimal subset of the off-diagonal elements of the precision matrix.  Therefore, $C_{\sf sparse}$ is biased toward the assumption that correlations arise due to linear interactions between pairs of recorded neurons (Fig.~\ref{fig:02}\,C). Then the estimator is 
 \begin{equation}
 C_{\sf sparse} = S^{-1}
 \end{equation}
@@ -260,60 +295,131 @@ These simulation results demonstrated that, with sufficiently large sample sizes
 
 We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy \cite{Reddy:2005,Katona:2012,Cotton:2013}. We presented 300 repetitions of full-field drifting gratings with two directions of motion or 150 repetitions with five directions (Fig.~\ref{fig:03}\,A) on one side of the visual field of anesthetized mice. Groups of cells loaded with a calcium-sensitive fluorescent dye were imaged and localized in 3D space (Fig.~\ref{fig:03}\,B and E) in the visual cortex on the contralateral side to the stimulus. With acousto-optic modulator (AOD) 3D steering of the laser, the located cells were imaged at high sampling rates with concurrent motion detection.  This technique allowed fast sampling (100--150 Hz) from large numbers (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4 (Fig.~\ref{fig:03}\,C). After downsampling the signal to 20 Hz, relative firing rates were inferred using sparse nonnegative deconvolution \cite{Vogelstein:2010} (Fig.~\ref{fig:03}\,C and D). Only cells that produced detectable calcium activity were included in the analysis. The average stimulus response was subtracted from each trial; the remaining signals were further downsampled into 150 ms bins to compute the noise correlation matrix (Fig.~\ref{fig:03}\,F and G). The durations of recordings dedicated to estimating the noise correlations ranged between 15--20 minutes.  Besides the high-repetition stimulus protocol for noise correlations, an orientation tuning stimulus protocol was used to map the orientation tuning of each cells (Fig.~\ref{fig:03}\,E). Overall, 31 imaged sites from 24 animals were included in the study.
 
+\begin{figure}
+    \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=8.3cm}}]{figure}[\FBwidth]
+    {\caption{{\bf Acquisition of neural signals for the estimation of noise correlations.}
+    Visual stimuli comprising full-field drifting gratings interleaved with blank screens ({\bf A}) were presented to anesthetized mice while two-photon recordings of somatic calcium signals were collected using fast 3D random-access microscopy ({\bf B}). The visual stimulus included an initial period with 16 directions of motion for orientation tuning followed by a longer (15--20 min) period of stimulation with only 2 or 5 directions of motion for the computation of the noise correlation matrix. 
+    {\bf C.} Representative calcium signals from eight cells out of 298 cells downsampled to 20 Hz. The inferred firing rate binned in 150 ms intervals are indicated by red ticks below each trace.
+    {\bf D.} The raster plot of the inferred firing rates, binned in 150 ms intervals, from the entire population from the first (left) and last (right) minute of the entire recording.  The traces from {\bf C} are highlighted in red.
+    {\bf E.} The spatial arrangement and orientation tuning of the 298 cells from the imaged site.
+    {\bf F.} The noise correlation matrix of the activity of the neural population. 
+    {\bf G.} Histogram of noise correlation coefficients. The red line indicates the mean.
+} \label{fig:03}}
+    {\includegraphics[width=8.3cm]{figures/Figure03.pdf}}
+\end{figure}
+
 In these highly localized populations both direct interactions between cells and common diffuse inputs are likely to contribute to the overall population variability, leading us to hypothesize that regularized estimates capable of accommodating partial correlations between specific pairs of cells (\emph{e.g.}\;$C_{\sf sparse}$ and $C_{\sf sparse+latent}$) would be more efficient than others. At the same time, average correlations were relatively small (Fig.~\ref{fig:03}\,G), to the advantage of estimates biased toward independence (\emph{e.g.}\;$C_{\sf diag}$). Finally, there is the possibility that the correlations structure is best explained by common fluctuations across the entire population, to the advantage of estimates biased toward low-rank correlation structure (\emph{e.g.}\;$C_{\sf factor}$, $C_{\sf factor+lowrank}$).
 
 We found that estimator $C_{\sf sparse+latent}$ was more efficient than the other estimators (Fig.~\ref{fig:04}). The median relative CV-validation loss (Eq.~\ref{eq:rel-cv-loss}) of each of the estimates $C_{\sf 0}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ with respect to $C_{\sf sparse+latent}$ was significantly above zero ($p<0.001$, Wilcoxon signed rank test, for each).
 
-\subsection*{Relationship of correlation structure to circuit architecture}
+\begin{figure}[!ht]
+    \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=8.3cm}}]{figure}[\FBwidth]
+    {\caption{{\bf The sparse+latent estimator $C_{\sf sparse+latent}$ outperforms the other estimators on neural data.}
+    {\bf A--D.} Histograms of average cross-validation loss differences of the respective estimators $C_{\sf 0}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ from $C_{\sf sparse+latent}$. 
+    The histograms are based on 31 imaged sites in 24 mice. 
+    All medians (red dashed lines) were significantly greater than zero, indicating the dominance of $C_{\sf sparse+latent}$ over the other estimators. 
+    The green arrows indicate the results for the site shown in Fig.~\ref{fig:03} and Fig.~\ref{fig:05}
+    } \label{fig:04}}
+    {\includegraphics{./figures/Figure04.pdf}}
+\end{figure}
+
+\subsection*{Correlation structure and circuit architecture}
 Having demonstrated that $C_{\sf sparse+latent}$ dominated the other estimators, we examined the elements of the low-dimensional structure revealed by this estimator for individual imaged sites. By its design, the sparse+latent estimator finds the optimal balance between a sparse network of partial correlations and shared common latent units. If this estimate dominates all other estimators evaluated thus far, it seems reasonable to hypothesize that these interaction may reflect underlying physiological interactions more closely than the usual correlations. In particular, the sparse component of the partial correlation matrix suggests direct interactions between pairs of neurons, whereas the low-rank component suggest common fluctuations such as those caused by common inputs or other collective synchronized activity. 
 
 We examined the structure of the sparse+latent estimate in individual sites such as the example site first depicted in Fig.\;\ref{fig:03}. In this site, as in others, the regularized estimate of the correlation matrix appeared very similar to the unregularized sample correlation matrix (Fig.~\ref{fig:05}\,A and D). However, the corresponding partial correlation matrices differed dramatically (Fig.~\ref{fig:05}\,B and E). The partial correlation was decomposed into the sparse and low-rank components (Fig.\,\ref{fig:05}\,C). Although correlations were mostly positive, the sparse partial correlations (or `interactions'), although mostly positive, had a much larger proportion of negative values. The sparse component had 82.1\% sparsity (or 17.9\% connectivity), which corresponded to the average node degree (interactions per cell) of 52.5 (Fig.\;\ref{fig:05}\,G). The low-rank component was of rank 17.
+
+\begin{FPfigure}
+    \begin{center}
+        \includegraphics[width=17.35cm]{./figures/Figure05.pdf}
+    \end{center}
+    \caption{{\bf Example of low-dimensional correlation structure revealed by the sparse+low-rank estimator.}
+    {\bf A.} The regularized estimate of the correlation matrix (top-right) closely approximates the sample correlation matrix (bottom left). 
+    This close approximation is  also demonstrated by the scatter plot of the correlation coefficients produced by the two estimates ({\bf D}). 
+    However, the partial correlation matrices from the two estimate show more pronounced differences ({\bf B} and {\bf E}). 
+    {\bf C.} Furthermore, the partial correlation matrix of the regularized estimate is decomposed into a sparse component with 82.2\% off-diagonal zeros (bottom-left) and low-rank component of rank 15 (top-right).
+    {\bf F.} The sparse component of the regularized partial correlation matrix had little resemblance to the sample correlations. The gray interval indicates the range of correlations containing 82.2\% of cells pairs, equal to the fraction of zeros in the sparse partial correlation matrix. This interval contained 58.9\% of the partial correlations. 
+    {\bf G.} The graphical depiction of the positive (green) and negative (magenta) partial correlations as edges between observed neurons. The line density is proportional to the magnitude of the correlation.
+    {\bf H.} A subset of neurons from the center of the cluster shown in {\bf G} showing the regularized partial correlations.
+    {\bf I.} The same subset with sample correlations thresholded to match the sparsity of the regularized interactions.
+}
+\label{fig:05}
+\end{FPfigure}
 
 In previous studies of the structure of correlations, a sparse network was produced by thresholding the correlations coefficients  above some level deemed significant and examining the network of correlations above that threshold \cite{Golshani:2009,Malmersjo:2013}. There was fairly little overlap between the network of interactions revealed by this thresholding method and those revealed by the sparse+latent estimator (Fig.\;\ref{fig:05}\,F). When thresholded to the same sparsity (82.1\%), only 42\% of cell pairs connected in one network were connected in the other while the average magnitude of such correlations was much lower in the case of the regularized estimator (Fig.\;\ref{fig:05}\,F, H, and I). In particular, many low sample correlations translated into negative interactions in the regularized estimate. Indeed, the absence of a correlation between pairs of cells that both correlate similarly to several of their neighbors should be considered as significant as a high correlation coefficient. Regularized partial correlations reveal such phenomena whereas regular sample correlations cannot.
 
 The average partial correlations  revealed by the regularized estimator in all 31 sites were about 5 times lower than the sample correlations and  less variable across sites (Fig.\;\ref{fig:06}\,A). The average node degree of the sparse component of the partial correlations and the number of  inferred latent units varied widely between sites but generally increased with the recorded population size (Fig.\;\ref{fig:06}\,B and C). However, there was an inverse relationship between the number of latent units and the average node degree (Fig.\;\ref{fig:06}\,D). Several sites, even with relatively large population sizes, had fairly few pairwise interactions and were dominated by latent units.  These differences have multiple explanations, including differences in brain states and recording quality (neuropil contamination, motion). 
 
-We also examined the relationship of differences in orientation preference and physical distances (lateral and by depth) between pairs of cells  to the average sample correlations, average regularized partial correlations, and inferred connectivity between them (Fig.\;\ref{fig:07}). The average partial correlations fell more rapidly with with difference in preferred orientation (Fig.\;\ref{fig:07}\,A and D) and lateral displacements at equal depths ($\pm 25\mu$m) (Fig.\;\ref{fig:07}\,B and E), and differences in depth at small ($\pm 25\mu$m) lateral displacements (Fig.\;\ref{fig:07}\,B and E).
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics{./figures/Figure06.pdf}
+    \end{center}
+    \caption{{\bf Properties of sparse+low-rank regularized estimates from all imaged sites}
+    {\bf A.} The average sample correlations vs.~average partial correlations for each imaged site. In each plot, the red asterisk indicates the site shown in figures \ref{fig:03} and \ref{fig:05}.
+    {\bf B.} The average node degree for sparse partial correlations vs.~population size in each imaged site. 
+    {\bf C.} The number of inferred latent units vs.~population size in each imaged site.
+    {\bf D.} The number latent units vs.~average node degree for sparse partial correlations for each site.
+}
+\label{fig:06}
+\end{figure}
+
+We also examined the relationship of differences in orientation preference and physical distances (lateral and by depth) between pairs of cells  to the average sample correlations, average regularized partial correlations, and inferred connectivity between them (Fig.\;\ref{fig:07}). The average partial correlations fell more rapidly with with difference in preferred orientation (Fig.\;\ref{fig:07}\,A and D) and lateral displacements at equal depths ($\pm 25\;\mu$m) (Fig.\;\ref{fig:07}\,B and E), and differences in depth at small ($\pm 25\;\mu$m) lateral displacements (Fig.\;\ref{fig:07}\,B and E).
+
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics{./figures/Figure07.pdf}
+    \end{center}
+    \caption{{\bf Dependence of correlations and partial correlations on orientation tuning differences and physical distance between cell pairs.}
+    {\bf A--C.} Average partial correlations (red) estimated by $C_{\sf sparse+latent}$ and average sample correlations (black) averaged across multiple imaged sites. In each site, the correlations were normalized by the respective average correlation shown in Fig.\;\ref{fig:06}\,A.  The number $n$ of sites that qualified to be included in the analysis is indicated. Sites were included if they had at least 20 pairs of neurons in each of the intervals. The error bars indicate the standard error of the mean for based on $n$.
+    {\bf A.} Average correlations between pairs of neurons tuned to orientation with differences in preferred orientation in the intervals of 0--15$^\circ$, 15--45$^\circ$ and 45--90$^\circ$. 
+    {\bf B.} Average correlations between pairs of neurons located at the same depth ($\pm$25$\mu$m) separated by lateral distances in the intervals of 0--25 $\mu$m, 25--75 $\mu$m, 75--150 $\mu$m, and 150+ $\mu$m.
+    {\bf C.} Average correlations between pairs of neurons displaced laterally by less than 25 $\mu$m separated in depth by distances in the intervals of 0-25 $\mu$m, 25--60 $\mu$m, and 60+ $\mu$m.
+    {\bf D--F.} Normalized connectivity of positive (green) and negative (dark red) interactions from the sparse component obtained from $C_{\sf sparse+latent}$. Normalized connectivity was computed as the fraction of pairs connected by interactions of corresponding signs in each interval divided by the fraction of non-zero interactions across the entire site. Site were included in the analysis only if they had at least 20 cell pairs in each interval. The error bars indicate the standard error of the mean based on the number $n$ of sites included in the analysis.
+}
+\label{fig:07}
+\end{figure}
 
 The connectivity of partial correlations in the regularized estimate had different organization for positive and negative interactions. Positive interactions fell rapidly as a function of difference in preferred orientation (Fig.\;\ref{fig:07}\,G and J), lateral displacements (Fig.\;\ref{fig:07}\,H and K), and displacement in depth (Fig.\;\ref{fig:07}\,I and L). Negative interactions were much less selective (Fig.\;\ref{fig:07}\,G--L).
 
 
 \section*{Discussion}
-\subsection*{Neural correlations as indicators of functional connectivity}
-Neural correlations boast a rich history in systems neuroscience as indicators of \emph{functional connectivity}. When measured on temporal scales of a milliseconds, peaks in the cross-correlogram between pairs of neurons at latencies typical of synaptic transmission may be interpreted as evidence of monosynaptic connection between pairs of cells \cite{Moore:1970,Alonso:1998,Denman:2013}. Without targeted stimulation of specific cells or measurement of intracellular signals, such analysis remains the best test for probable monosynaptic connections in vivo. At longer temporal scales, neural correlations reflect activations involving large ensembles of neurons. Such correlations may have emergent structure with little  correspondence to synaptic connectivity, which  may better reflect computations performed by the circuit.  For this reason, firing rate correlations at scales of tens or hundreds milliseconds have been of interest for their implications on coding under the assumption of rate codes and linear downstream decoder \cite{Averbeck:2006}. The terms \emph{functional connectivity} is still often applied to slow correlations, similarly to its use in PET, fMRI, EEG, and MEG brain imaging studies, as an expression of task-related, stimulus-evoked, or spontaneous synchronization or correlation between brain regions, circuits, or cells without implying a mechanistic interpretation.   
+\subsection*{Functional and anatomical connectivity}
+Systems neuroscience is the quest to discover principles whereby anatomical organization of neural circuits gives rise to their function.  This line of inquiry requires descriptions of the activity of neural circuits that have the best chance of correspondence to the underlying anatomical organization. 
 
-Calcium imaging allows simultaneous measurements of the activity of large populations of cells, even of entire nervous systems \cite{Leung:2013,Ahrens:2013}, with cell-wise resolution, but its temporal bandwidth is limited to the scale of tens or hundreds milliseconds by the kinetics of calcium-sensitive dyes. This limits their use to the analysis of slower correlations.
+The term \emph{functional architecture} most commonly refers to stimulus response properties of neurons \cite{Reid:2012}. Over the past 50 years, tremendous progress has been made in relating the functional architecture to the anatomical, synaptic wiring of neuronal populations and individual neurons.  This line of inquiry is based on the view of the brain as a complex filter of external stimuli. 
 
-\subsection*{Correlation `structure'}
-The term `structure' refers to a succinct, simplified representation that captures the essential features. Many questions in systems neuroscience require deducing the structure of the neural correlation structure in order to relate it to the spatial organization of the circuit, track its changes due to learning and development, or to describe effects of brain states, etc.  Perhaps the least sophisticated approach for extracting the structure of a correlation matrix is to examine the network of its most significant or largest coefficients.  For example, \cite{Malmersjo:2013} analyzed the graph theoretical properties of networks of thresholded correlations in development.  Alternatively, the correlation structure is often expressed through low-rank approximations extracted by principal component analysis or factor analysis. These components show synchronous multineuronal activation patterns without revealing graphs of interactions between neurons.  Another reduced representation of correlation matrices is obtained by sparsifying its inverse, resulting in a graph of partial correlations. Under the assumption of a multivariate normal distribution or, more generally, an elliptical distribution, sparse partial correlations suggest a sparse network of dependencies, \emph{i.e.}\;a probabilistic graphical model. This property has led some investigators to propose that such approximations  must  serve as closer estimates of direct interactions between brain regions in imaging studies than correlations \cite{Varoquaux:2012,Ryali:2012}. However, since deviations from elliptical distribution disrupt the correspondence between partial correlations and linear dependencies \cite{Loh:2012}, it is not clear whether that would indeed be the case. Partial correlations are meaningful when most interacting variables are observed. Perhaps for this reason, until now, parptial correlations had not been considered in analysis of multineuronal recordings.
+Although there these concepts overlap, \emph{functional connectivity} commonly refers to the degree of correlation, synchronization, or other forms of statistical association between neuronal populations or individual neurons inferred from spontaneous activity or variability in stimulus responses,  not directly driven by external stimuli, and reflecting internal, recurrent connectivity in neural circuits. This line of inquiry ascribes greater significance to the brain's intrinsic activity (often dismissed as `noise') \cite{Yuste:2005}. Relatively little progress has been made in understanding the role of functional connectivity and its relationship to the anatomical connectivity. 
 
-We found that, for slow correlations (150 ms bins) in cortical microcircuits, networks of partial correlations were more statistically efficient than low-rank approximations of correlation matrices for cortical micr(Fig.\;S1 E), suggesting that they better reflected the correlation structure.  Furthermore, estimation was made even more efficient when low-rank components were allowed to be combined with partial correlations. The correlation structure depended more strongly on distance between cells and differences in their 
+Neural correlations boast a rich history as indicators of functional connectivity. When measured on temporal scales of milliseconds, sharp peaks or troughs in the cross-correlogram between pairs of neurons at latencies typical of synaptic transmission provide evidence of monosynaptic connection between pairs of cells \cite{Moore:1970,Alonso:1998,Denman:2013} (although other processes can also generate sharp peaks in the cross-correlogram while many synaptic connections may not produce such signatures). Without targeted stimulation of specific cells or measurement of intracellular signals, such analysis remains the best method for detecting probable monosynaptic connections in vivo. When measured at longer temporal scales, neural correlations reflect activations involving large ensembles of neurons and may reflect direct causal anatomical interactions, indirect causal interactions, or complex network-wide emergent properties with little correspondence to anatomical connectivity. These slower correlations correspond more closely to the computation performed by the circuit than to its anatomical organization. For this reason, firing rate correlations at scales of tens to hundreds milliseconds have been studied for their effect on coding under the assumption of rate codes and linear downstream decoder \cite{Averbeck:2006} with little interest in anatomy. 
+Calcium imaging allows simultaneous measurements of the activity of large populations of cells \emph{in vivo} \cite{Katona:2012,Cotton:2013} and even of entire nervous systems \cite{Leung:2013,Ahrens:2013}, but its temporal bandwidth is limited to the scale of tens or hundreds milliseconds by the kinetics of calcium-sensitive dyes, limiting its use to slower temporal scales at which correspondence between functional and anatomical connectivity is less direct.
 
-\subsection*{Inference of functional connectivity with probabilistic models}
-While synaptic connectivity constitutes a directed weighted graph, most meaningful representation of functional organization at longer temporal scales are less certain. A common approach has been to examine the low-rank structure of the joint population activity extracted through principal component analysis, factor analysis, independent component analysis, linear embedding, and others. Functional connectivity is then represented as the eigenvectors, principle components, or factor loadings corresponding to the extracted components of the joint activity. 
+Our study is part of the effort to find descriptions of functional connectivity with the greatest chance of correspondence to anatomical, causal organization of the circuit.
+
+\subsection*{Extraction of the correlation structure}
+The word `structure' implies a succinct, simplified representation that captures only the essential, significant features. Several forms of correlations structure can be extracted from the same data and used to describe functional connectivity in different ways.
+
+Perhaps the least sophisticated yet common approach for extracting the structure of correlations is to threshold above a selected level of significance. Part of the appeal of thresholded correlations is their representation in the form of graphs that can be related to graphs of synaptic connectivity and made amenable to network analysis \cite{Bullmore:2012}. For example, \cite{Malmersjo:2013} analyzed the graph theoretical properties of networks of thresholded correlations in development. 
+
+Alternatively, the correlation structure may be extracted in the form of low-rank approximations computed by principal component analysis, factor analysis, or activation maps conditioned on the activity of a single neuron. Low-rank components show synchronous multineuronal activation patterns without revealing graphs of interactions between neurons. They are often interpreted as emergent patterns of large circuits or brain state fluctuations \cite{Kenet:2003}.
+
+Another reduced representation of correlation matrices is obtained by sparsifying its inverse, resulting in a graph of partial correlations. Under the assumption of a multivariate normal distribution or, more generally, an elliptical distribution, sparse partial correlations suggest a sparse network of dependencies, \emph{i.e.}\;a probabilistic graphical model. This property has led some investigators to propose that sparse inverse approximation of correlations may serve as closer estimates of direct anatomical interactions between brain regions in imaging studies than correlations \cite{Varoquaux:2012,Ryali:2012}. However, since deviations from elliptical distribution disrupt the correspondence between partial correlations and linear dependencies \cite{Loh:2012}, it is not clear whether that would indeed be the case. Partial correlations are meaningful when most interacting variables are observed. Perhaps for this reason, until now, partial correlations had not been considered in analysis of multineuronal recordings.
+
+In this study, we sought to uncover the optimal low-dimensional approximation of the covariance matrix for efficient estimation of the true covariance matrices in cortical microcircuits on the temporal scale of 100--200 ms corresponding to the temporal resolution of spike rates from somatic calcium signals \cite{Cotton:2013}.  We found that networks of partial correlations were more statistically efficient than low-rank approximations of correlation matrices (Fig.\;S1 E). Furthermore, estimation became still more efficient when low-rank components were allowed to be combined with sparse partial correlations. We propose that correlation structures that are supported by the data  are more likely to reflect anatomical, causal interactions. The network of sparse partial correlations suggests interactions between specific pairs whereas the low-rank represents emergent activity patterns involving collective activations of larger circuits or global fluctuations. The revealed network of partial interactions was substantially different from thresholded correlations (Fig.~\ref{fig:05}\,C, F, H, I). In particular, it shows that many low correlations correspond to strong negative interactions (Fig.\;\ref{fig:05}\,F). Intuitively, this suggests that many low interactions are as surprising or significant considering the common correlations with other neurons. The analysis of sample correlations does not detect surprisingly low correlations.
 
 
-We sought to uncover the optimal low-dimensional approximation of the covariance matrix for efficient estimation of the true covariance matrices in cortical microcircuits on the temporal scale of 100--200 ms corresponding to the temporal resolution of spike rates from somatic calcium signals \cite{Cotton:2013}.  We considered sparse-inverse approximations, low-rank approximations, and mixtures of low-rank components with sparse partial correlations. We used cross-validation to determine which of such representations was closest to the true correlation matrix. As we illustrated by simulation, none of the estimators was intrinsically more efficient than the others and their relative performance was dependent on the structure of dependencies in the empirical data. We found that sparse inverse approximation performed better than low-rank approximations (Fig.\;S1\;E) and approximations by combinations of sparse and low-rank components consistently outperformed the other estimators. This finding is specific to the circuit we examined and may not generalize to other circuits or to less dense sampling of cells in electrophysiological recordings. 
-
-\subsection*{Probabilistic models and their interpretation}
-On the millisecond scale, most common analyses of the functional connectivity have relied on cross-correlation analysis in attempts to detect signatures of direct synaptic connectivity. 
-
-Increasingly, the functional organization of neural circuits is inferred by fitting probabilistic models such as various forms of multivariate Gaussian models, linear-nonlinear models, Generalized Linear Models \cite{Pillow:2008}, and maximum entropy models \cite{Schneidman:2006,Tkacik:2006,Tang:2008,Shlens:2009}. In probabilistic models, functional dependencies correspond to multiplicative terms involving pairs or larger groups of neurons. If two neurons do not both participate in any of the multiplicative terms in the model, they are conditionally independent: the activity of one can be predicted from other neurons just equally well with or without considering the second neuron, suggesting a lack of direct interaction between them. Additionally, various probabilistic models allow inferring latent variables to explain joint patterns of in large groups of cells.  The uncovered networks of dependencies from such statistical models may arise from mechanistic interactions such as direct monosynaptic connections or from complex emergent processes involving large ensembles of cells. Because statistical models of the joint activity of populations of neurons use the activity of the entire population to infer functional dependencies, they to produce more accurate and relevant representations of the functional organization of the data than available from equivalent numbers of paired recordings.  
-
-However, no empirical evidence yet exists to demonstrate that statistical models of population activity reveal networks of dependences more informative than the conventional correlations with respect to the structural architecture of specific neural circuits.
+\subsection*{Functional connectivity from probabilistic models}
+Increasingly, functional connectivity is inferred by fitting probabilistic models such as various forms of multivariate Gaussian models, linear-nonlinear models, Generalized Linear Models \cite{Pillow:2008}, and maximum entropy models \cite{Schneidman:2006,Tkacik:2006,Tang:2008,Shlens:2009}. In probabilistic models, functional dependencies are defined by multiplicative terms comprising the model. If the model can be decomposed as a product of terms so that a pair of variables can be segregated into separate terms, the two variables are conditionally independent: the activity of one neuron can be predicted from other neurons just as well with or without considering the second neuron, suggesting a lack of a direct causal interaction between them. Probabilistic models allow inferring latent variables to account for the activity of unobserved circuitry.  
 
 
-\subsection*{Model selection to uncover structure best supported by data}
-Model selection from various several probabilistic models  
+\subsection*{Model selection}
+Various estimation methods reveal radically different structures of functional connectivity? Which of the structures should be preferred? How does one determine which functional connectivity structure is best supported by the empirical data? Machine learning literature offers a rich toolbox of model selection criteria. Parametric criteria such as the \emph{Bayesian model selection criterion}, \emph{Akaike Information criterion}, and \emph{Bayes (or Schwartz) Information Criterion} are computationally efficient but rely on assumptions on generally unsupportable assumptions about the data generating process.  The most assumption-free yet more computationally intensive are procedures based on cross-validation \cite{Arlot:2010} and, when models have hyperparameters, nested cross-validation to selected the optimal values of the hyperparameters. It is commonly assumed that probabilistic models that demonstrate the highest average cross-validated log likelihood yield a better representation of the functional connectivity. For example, \cite{Ganmor:2011} show the fact that their proposed Reliable Network Model (a maximum-entropy model on the multivariate binary domain constrained by a sparse network of correlations of various orders) yielded higher cross-validated log-likelihoods than the full-pairwise Ising model. The authors use this fact to support the claim that the former model revealed a more anatomically relevant structure of functional connectivity than the pairwise model.
 
-\subsection*{Functional connectivity from big neural data}
+Under the loss function (Eq.~\ref{eq:loss}) employed in our study, the covariance matrix estimation methods are equivalent to fitting multivariate Gaussian models with various structure of dependencies between visible and inferred latent units and selecting between them on the basis of cross-validated log-likelihood. However, the ranking of models was preserved under other loss functions (Fig.~\ref{fig:S02}), indicating that model selection results were not strongly dependent on the assumption of gaussianity. 
+
+\subsection*{Big neural data}
 Transformational breakthroughs in systems neuroscience are anticipated to follow the ongoing technological advances that will allow simultaneous recordings of the spiking activity of much larger subsets of neurons in functioning neural circuits than have been possible thus far \cite{Alivisatos:2013}. It is far from certain whether massively multineuronal recordings will readily reveal new principles of neural function by application of current statistical techniques. 
 
 Such probabilistic models of population activity feature large numbers of parameters, growing quadratically or faster with population size. Estimation of large number of parameters is sensitive to sampling noise. To solve this problem, the recording durations must increase at least proportionally to the number of parameters or the model must be constrained by regularization. 
 
-\subsection*{Comparison with other uses of neural correlations}
-\subsection*{Meaning of interactions}
-\subsection*{Fitting and evaluation of probabilistic models (\emph{e.g.}\;GLMs) vs.\;covariance estimation.}
 \subsection*{Future directions}
 
 \section*{Methods}
@@ -338,114 +444,8 @@ Eftychios Pnevmatikakis
 \bibliography{references.bib}
 
 
-\section*{Figure Legends}
+%\section*{Figure Legends}
+\section*{Supplementary Figures}
 
-\begin{figure}[!ht]
-    \begin{center}
-        %\includegraphics[width=8.3cm]{./figures/Figure01.pdf}
-    \end{center}
-    \caption{{\bf Illustration of regularized estimation of partial correlations.}
-        {\bf A}. The sample correlation matrix of unprocessed somatic calcium signals from a population of cells in mouse visual cortex.
-        The outlined square fragment is magnified in {\bf B}.
-        {\bf C}. The same fragment of another estimate of the correlation matrix regularized to yield sparse partial correlations.
-        Corresponding fragments of partial correlations matrices of the unregularized and regularized estimated are shown in {\bf D} and {\bf E}, respectively.
-    }
-    \label{fig:01}
-\end{figure}
-
-\begin{figure}[!ht]
-    \begin{center}
-        %\includegraphics[width=17.35cm]{Figure02.pdf}
-    \end{center}
-    \caption{{\bf Estimators whose low-dimensional regularization targets can represent the structure of the true covariance matrix outperform other estimators.}
-        {\bf Row 1.} Graphical representations of four types of low-dimensional structures of interactions between observed neurons (green spheres) and latent units (light-shaded spheres).
-        In the `independent model' ({\bf A}), observed neurons exert no linear effects on one another neither directly nor through interactions with common latent units. 
-        In `latent factors' ({\bf B}), the correlated activity of observed cells is driven by several latent units. 
-        In `sparse interactions' ({\bf C}), the correlation matrix is defined by a set of linear interactions between observed neurons. 
-        In `sparse+latent' ({\bf D}), correlations arise through direct linear interactions between some pairs of observed neurons and through interactions with common latent units. 
-        {\bf Row 2.} Examples of $50\times 50$ correlation matrices corresponding to each type of low-dimensional structure. 
-        The factor model ({\bf B}) has three latent units. 
-        The partial correlation matrix of the sparse model ({\bf C}) is 73\% sparse.
-        The `sparse+latent' matrix has one latent unit and its direct interactions are 78\% sparse.
-        {\bf Row 3.} Examples of sample correlation matrices calculated from samples of 1000 observations taken from simulated random processes with corresponding correlation matrices from row 2.
-        {\bf Row 4.} Mean \emph{excess loss} (Eq.~\ref{eq:excess-loss}) attained by each of the five estimators as a function of sample size. The error bars indicate the standard error of the mean based on 30 samples.
-        {\bf Row 5.} Mean \emph{cross-validation loss} (Eq.~\ref{eq:rel-cv-loss}) of covariance estimators with respect to the matching estimator . The values are relative to the validation loss of the estimator that matches the low-dimensional structure of the true covariance matrix. The error bars indicate the standard error of the mean based on 30 samples.
-    }
-    \label{fig:02}
-\end{figure} 
-
-\begin{figure}[!ht]
-    \begin{center}
-        %\includegraphics[width=8.3cm]{figures/Figure03.pdf}
-    \end{center}
-    \caption{{\bf Acquisition of neural signals for the estimation of noise correlations.}
-    Visual stimuli comprising full-field drifting gratings interleaved with blank screens ({\bf A}) were presented to anesthetized mice while two-photon recordings of somatic calcium signals were collected using fast 3D random-access microscopy ({\bf B}). The visual stimulus included an initial period with 16 directions of motion for orientation tuning followed by a longer (15--20 min) period of stimulation with only 2 or 5 directions of motion for the computation of the noise correlation matrix. 
-    {\bf C.} Representative calcium signals from eight cells out of 298 cells downsampled to 20 Hz. The inferred firing rate binned in 150 ms intervals are indicated by red ticks below each trace.
-    {\bf D.} The raster plot of the inferred firing rates, binned in 150 ms intervals, from the entire population from the first (left) and last (right) minute of the entire recording.  The traces from {\bf C} are highlighted in red.
-    {\bf E.} The spatial arrangement and orientation tuning of the 298 cells from the imaged site.
-    {\bf F.} The noise correlation matrix of the activity of the neural population. 
-    {\bf G.} The histogram of the noise correlation coefficients with the mean indicated by the red line.
-}
-    \label{fig:03}
-\end{figure}
-
-\begin{figure}[!ht]
-    \begin{center}
-        %\includegraphics[width=8.3cm]{Figure04.pdf}
-    \end{center}
-    \caption{{\bf The sparse+latent estimator $C_{\sf sparse+latent}$ outperforms the other estimators on neural data.}
-    {\bf A--D.} Histograms of average cross-validation loss differences of the respective estimators $C_{\sf 0}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ from $C_{\sf sparse+latent}$. 
-    The histograms are based on 31 imaged sites in 24 mice. 
-    All medians (red dashed lines) were significantly greater than zero, indicating the dominance of $C_{\sf sparse+latent}$ over the other estimators. 
-    The green arrows indicate the results for the site shown in Fig.~\ref{fig:03} and Fig.~\ref{fig:05}
-    }
-    \label{fig:04}
-\end{figure}
-        
-\begin{figure}[!ht]
-    \begin{center}
-        %\includegraphics[width=17.35cm]{Figure05.pdf}
-    \end{center}
-    \caption{{\bf Example of low-dimensional correlation structure revealed by the sparse+low-rank estimator.}
-    {\bf A.} The regularized estimate of the correlation matrix (top-right) closely approximates the sample correlation matrix (bottom left). 
-    This close approximation is  also demonstrated by the scatter plot of the correlation coefficients produced by the two estimates ({\bf D}). 
-    However, the partial correlation matrices from the two estimate show more pronounced differences ({\bf B} and {\bf E}). 
-    {\bf C.} Furthermore, the partial correlation matrix of the regularized estimate is decomposed into a sparse component with 82.2\% off-diagonal zeros (bottom-left) and low-rank component of rank 15 (top-right).
-    {\bf F.} The sparse component of the regularized partial correlation matrix had little resemblance to the sample correlations. The gray interval indicates the range of correlations containing 82.2\% of cells pairs, equal to the fraction of zeros in the sparse partial correlation matrix. This interval contained 58.9\% of the partial correlations. 
-    {\bf G.} The graphical depiction of the positive (green) and negative (magenta) partial correlations as edges between observed neurons. The line density is proportional to the magnitude of the correlation.
-    {\bf H.} A subset of neurons from the center of the cluster shown in {\bf G} showing the regularized partial correlations.
-    {\bf I.} The same subset with sample correlations thresholded to match the sparsity of the regularized interactions.
-}
-\label{fig:05}
-\end{figure}
-
-\begin{figure}[!ht]
-    \begin{center}
-        %\includegraphics[width=17.35]{Figure06.pdf}
-    \end{center}
-    \caption{{\bf Properties of sparse+low-rank regularized estimates from all imaged sites}
-    {\bf A.} The average sample correlations vs.~average partial correlations for each imaged site. In each plot, the red asterisk indicates the site shown in figures \ref{fig:03} and \ref{fig:05}.
-    {\bf B.} The average node degree for sparse partial correlations vs.~population size in each imaged site. 
-    {\bf C.} The number of inferred latent units vs.~population size in each imaged site.
-    {\bf D.} The number latent units vs.~average node degree for sparse partial correlations for each site.
-}
-\label{fig:06}
-\end{figure}
-
-\begin{figure}[!ht]
-    \begin{center}
-        %\includegraphics[width=17.35]{Figure07.pdf}
-    \end{center}
-    \caption{{\bf Dependence of correlations and partial correlations on orientation tuning differences and physical distance between cell pairs.}
-    {\bf A--C.} Average sample correlations (black) and regularized partial correlations (red) between pairs of cells in the example site shown in previous figures. The correlations were normalized by the respective average correlations (\ref{fig:06}\,A).
-    {\bf A.} Average correlations between pairs of neurons tuned to orientation with differences in preferred orientation in the intervals of 0--15$^\circ$, 15--45$^\circ$ and 45--90$^\circ$. 
-    {\bf B.} Average correlations between pairs of neurons located at the same depth ($\pm$25$\mu$m) separated by lateral distances in the intervals of 0--25 $\mu$m, 25--75 $\mu$m, 75--150 $\mu$m, and 150+ $\mu$m.
-    {\bf C.} Average correlations between pairs of neurons displaced laterally by less than 25 $\mu$m separated in depth by distances in the intervals of 0-25 $\mu$m, 25--60 $\mu$m, and 60+ $\mu$m.
-    {\bf D--F.} Same measurements as {\bf A--D} averaged across multiple sites. Only sites that had at least 20 qualifying cell pairs in each of the intervals were included in the averages. The error bars indicate the standard error of the mean (often too small to be seen).
-    {\bf G--I.} Normalized connectivity of positive (green) and negative (dark red) interactions from the sparse component of the regularized partial correlations in the example site show in previous figures. Normalized connectivity was computed as the fraction of pairs connected by interactions of corresponding signs in each interval divided by fraction of non-zero interactions across the entire site. The intervals are identical to those in {\bf A--C}.
-    {\bf J--L.} Same measurements as in {\bf G--I} averaged across multiple sites. The error bars indicate the error of the mean. Only sites that had at least 20 qualifying pairs in each interval were included in the averages. 
-}
-\label{fig:07}
-\end{figure}
 
 \end{document}
