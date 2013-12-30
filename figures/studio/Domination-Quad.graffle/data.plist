@@ -731,7 +731,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{128.49692153930664, 204.0265679359436}, {84, 17}}</string>
+			<string>{{129.74692153930664, 204.0265679359436}, {84, 17}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -768,7 +768,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{8.8722941875457764, 202.67002105712891}, {83, 17}}</string>
+			<string>{{13.372294187545776, 203.42002105712891}, {83, 17}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -805,7 +805,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{132.07471990585327, 89.197580814361572}, {80, 17}}</string>
+			<string>{{131.57471990585327, 90.197580814361572}, {80, 17}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -842,7 +842,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{23.986468076705933, 89.14074182510376}, {71.999999999999986, 17}}</string>
+			<string>{{18.986468076705933, 90.14074182510376}, {71.999999999999986, 17}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FontInfo</key>
@@ -5948,7 +5948,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-12-27 15:52:18 +0000</string>
+	<string>2013-12-27 21:55:48 +0000</string>
 	<key>Modifier</key>
 	<string>Dimitri Yatsenko</string>
 	<key>NotesVisible</key>
