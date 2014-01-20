@@ -182,7 +182,7 @@ We considered four regularized estimators based on distinct families of reduced 
         In estimator $C_{\sf sparse}$, the covariance matrix is approximated as the inverse of a sparse matrix. This approximation describes a model wherein correlations arise due to linear effects exerted by the recorded cells onto one another other ({\bf  Row 1, C}).
         In estimator $C_{\sf sparse+latent}$, the covariance matrix is approximated as the inverse of a matrix constructed as the sum of a sparse and a low-rank component. This approximation describes a model wherein correlations arise due to linear affects exerted by the recorded cells onto one another and due to linear effects from several latent units ({\bf  Row 1, D}).
 \\
-{\bf Row 2:} Examples of $50\times 50$ correlation matrices corresponding to each structure: the diagonal correlation matrix ({\bf  A}), a factor model with three latent units ({\bf B}),  a correlation matrix with 73\%  off-diagonal zeros ({\bf  C}), and a correlation matrix whose inverse is the some a rank-1 (\ie one latent unit) component and a sparse component with 78\%[1] off-diagonal zeros. 
+{\bf Row 2:} Examples of $50\times 50$ correlation matrices corresponding to each structure: the diagonal correlation matrix ({\bf  A}), a factor model with two latent units ({\bf B}),  a correlation matrix with 85\%  off-diagonal zeros ({\bf  C}), and a correlation matrix whose inverse is the some a rank-1 (\ie one latent unit) component and a sparse component with 89\% off-diagonal zeros. 
 \\
 {\bf Row 3:} Sample correlation matrices calculated from samples of 1000 observations drawn from simulated random processes with respective correlation matrices from row 2.  The structure of the correlation matrix is much more difficult to discern by eye.
 \\
@@ -220,7 +220,7 @@ C_{\sf sparse+latent} = (S - L)^{-1},
 where, as above, $S$ is a sparse matrix and $L$ is a low rank matrix. The estimator has two hyperparameters: one to regulate the sparsity of $S$ and the other to regulate the rank of $L$. The structure imposed by $C_{\sf sparse+latent}$ favors conditions in which the activity of neurons is determined by linear effects between some observed pairs of neurons and linear effects from several latent units (\figref{02}{Row 1, D}) \cite{Chandrasekaran:2010,Ma:2013}.
 
 \paragraph{Simulation}
-To demonstrate how the selection between regularized estimators allows discerning the structure of correlation, we constructed four $50\times 50$ covariance matrices with the structures imposed by the four respective regularized estimators (\figref{02}{\,Row 2, A--D}).  See the Methods section for details of how these matrices were generated.  We used these covariance matrices as the ground truth in multivariate normal distributions with zero means and drew samples of various sizes. Even with relatively large sample sizes (\eg $n=1000$), the sample correlation matrices were contaminated by sampling noise and their underlying structure was difficult to discern (\figref{02}{\,Row 3}). 
+To demonstrate how the selection between regularized estimators allows discerning the structure of correlations, we constructed four $50\times 50$ covariance matrices with the structures imposed by the four respective regularized estimators (\figref{02}{\,Row 2, A--D}).  See the Methods section for details of how these matrices were generated.  We used these covariance matrices as the ground truth in multivariate normal distributions with zero means and drew samples of various sizes. Even with relatively large sample sizes (\eg $n=1000$), the sample correlation matrices were contaminated by sampling noise and their underlying structure was difficult to discern (\figref{02}{\,Row 3}). 
 
 An evaluation of a covariance matrix estimators requires a \emph{loss function} $\loss{C,\Sigma}$ to quantify the discrepancy between the estimate, $C$, and the truth, $\Sigma$.  The loss function must attain its minimum when $C=\Sigma$.
 
@@ -229,9 +229,9 @@ In this study, we adopted the \emph{normal loss} function defined as
     \loss{C,\Sigma} = \frac 1 p\left[\ln \det C + \Tr(C^{-1}\Sigma)\right]
 \end{equation}
 
-This loss function derives from the multivariate normal log-likelihood function $L(\Sigma|C_{\sf 0})$ through the following expression:
+This loss function derives from the multivariate normal log-likelihood function $L(\Sigma|C_{\sf 0})$ as:
 \begin{equation}
-     \loss{\Sigma,C_{\sf 0}} = -\ln(2\pi) - \frac 2 p L(\Sigma|C_{\sf 0})
+     \loss{X,Y} \equiv -\ln(2\pi) - \frac 2 p L(X|Y)
 \end{equation}
 The normalization by $p$ makes the values of the loss function comparable across different population sizes.
 
@@ -279,7 +279,7 @@ To examine how well the relative CV-losses reproduced the relationships between 
 This simulations study demonstrated that, with sufficiently large sample sizes, imposing the correct type of structure on the estimate, led to greater estimation improvement than imposing incorrect structures
 
 \paragraph{Covariance estimation in neural data}
-We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy during visual stimulation (\figref{03}{A--B}) \cite{Reddy:2005, Katona:2012, Cotton:2013}. This technique allowed fast sampling (100--150 Hz) from large numbers (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4 (\figref{03}{C}).  The firing rates of neurons were inferred using sparse nonnegative deconvolution \cite{Vogelstein:2010} to produce (\figref{03}{C and D}). Only cells that produced detectable calcium activity were included in the analysis (For details, see Methods).  First, full-field gratings moving in 16 directions were presented to determine the orientation tuning of the recorded cells (\figref{03}{E}). To estimate the noise correlation matrix, we presented 300[2] repetitions of full-field drifting gratings with two directions of motion in some experiments or 150[3] repetitions with five directions in other experiments.   Each grating lasted 1 second and was followed by a 1-second blank. The average stimulus response was subtracted from each trial; the traces were then binned into 150 ms intervals for the estimation of the covariance matrix.   The sample correlation coefficients were largely positive and low (0.01--0.03 in most images sites) (\figref{03}{F and G}).  
+We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of anesthetized mice using fast random-access 3D scanning two-photon microscopy during visual stimulation (\figref{03}{A--B}) \cite{Reddy:2005, Katona:2012, Cotton:2013}. This technique allowed fast sampling (100--150 Hz) from large numbers (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4 (\figref{03}{C}).  The firing rates of neurons were inferred using sparse nonnegative deconvolution \cite{Vogelstein:2010} to produce (\figref{03}{C and D}). Only cells that produced detectable calcium activity were included in the analysis (For details, see Methods).  First, full-field gratings moving in 16 directions were presented to determine the orientation tuning of the recorded cells (\figref{03}{E}). To estimate the noise correlation matrix, we presented between 100 and 300 repetitions of full-field drifting gratings at each direction of motion.   Each grating lasted 1 second and was followed by a 1-second blank.  The average stimulus response was subtracted from each trial; the traces were then binned into 150 ms intervals for the estimation of the covariance matrix.   The sample correlation coefficients were largely positive and low (0.01--0.03 in most images sites) (\figref{03}{F and G}).  
 
 \begin{figure}    \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=8.3cm}}]{figure}[\FBwidth]
     {\caption{{\bf Acquisition of neural signals for the estimation of noise correlations.}
@@ -300,7 +300,7 @@ To test this hypothesis, we estimated the relative CV loss (Eq.~\ref{eq:rel-cv-l
 \begin{figure}[!ht]    \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=8.3cm}}]{figure}[\FBwidth]
     {\caption{{\bf The sparse+latent estimator $C_{\sf sparse+latent}$ outperforms the other estimators on neural data.}
     {\bf A--D.} Histograms of average cross-validation loss differences of the respective estimators $C_{\sf 0}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ from $C_{\sf sparse+latent}$. 
-    The histograms are based on 31 imaged sites in 24 mice. 
+    The histograms are based on 31 imaged sites in 15 mice. 
     All medians (red dashed lines) were significantly greater than zero, indicating the dominance of $C_{\sf sparse+latent}$ over the other estimators. 
     The arrow heads indicate the results for the site shown in Fig.~\ref{fig:03} and Fig.~\ref{fig:05}.
 \\{\bf A.} $C_{\sf sparse+latent}$ outperforms $C_{\sf 0}$: median improvement 0.16 nats/neuron, $p=3.9\times 10^{-5}$.
@@ -322,7 +322,7 @@ produced the same relationship between the estimators as the normal loss (Fig.~S
 \paragraph{Correlation structure and circuit architecture}
 Because of its superior estimation performance, $C_{\sf sparse+latent}$ likely provides a more physiologically relevant representation of the functional connectivity than the other estimators.  The estimator segregates two sources of correlations: linear dependencies between pairs of neurons (sparse component) suggestive of direct interactions and common fluctuations across the entire population (low-rank) component suggestive of common inputs, cell assembly activation, network fluctuations or other forms of synchronized activations. 
 
-We examined the structure of the $C_{\sf sparse+latent}$ estimate in each imaged site. The regularized estimate of the correlation matrix appeared very similar to the sample correlation matrix (\figref{05}{A and D}) but the corresponding partial correlation matrices differed substantially. The partial correlation matrix (\figref{05}{B and E})  and a low-rank component (\figref{05}{C}).  While sample correlations were mostly positive, the sparse partial correlations had a high fraction of negative interactions.  In the example site (Fig.~\ref{fig:03} and Fig.~\ref{fig:05})),  the sparse component had 82.1\% [4]sparsity (or, conversely, 17.9\% [5]connectivity) with average node degree of 52.5[6] (\figref{05}{G}).  The low-rank component had rank 17.
+We examined the structure of the $C_{\sf sparse+latent}$ estimate in each imaged site. The regularized estimate of the correlation matrix appeared very similar to the sample correlation matrix (\figref{05}{A and D}) but the corresponding partial correlation matrices differed substantially. The partial correlation matrix (\figref{05}{B and E})  and a low-rank component (\figref{05}{C}).  While sample correlations were mostly positive, the sparse partial correlations had a high fraction of negative interactions.  In the example site (Fig.~\ref{fig:03} and Fig.~\ref{fig:05})),  the sparse component had 82.2\% sparsity (or, conversely, 17.8\% connectivity) with average node degree of 52.8 (\figref{05}{G}).  The estimate also inferred 15 latent units contributing to the low-rank component of the partial correlation matrix.
 
 \begin{FPfigure}
     \begin{center}
@@ -332,8 +332,8 @@ We examined the structure of the $C_{\sf sparse+latent}$ estimate in each imaged
     {\bf A.} The regularized estimate of the correlation matrix (top-right) closely approximates the sample correlation matrix (bottom left). 
     This close approximation is  also demonstrated by the scatter plot of the correlation coefficients produced by the two estimates ({\bf D}). 
     However, the partial correlation matrices from the two estimates show more pronounced differences ({\bf B} and {\bf E}). 
-    {\bf C.} The partial correlation matrix of the regularized estimate is decomposed into a sparse component with 82.1\%[7] off-diagonal zeros (bottom-left) and low-rank component of rank 17[8] (top-right).
-    {\bf F.} The sparse component of the regularized partial correlation matrix had little resemblance to the sample correlations. The gray interval indicates the range of correlations containing 82.1\%[9] of cells pairs, equal to the fraction of zeros in the sparse partial correlation matrix. This interval contained 58.9\%[10] of the partial correlations. 
+    {\bf C.} The partial correlation matrix of the regularized estimate is decomposed into a sparse component with 82.2\% off-diagonal zeros (bottom-left) and low-rank component of rank 15 (top-right).
+    {\bf F.} The sparse component of the regularized partial correlation matrix had little resemblance to the sample correlations. The gray interval indicates the range of correlations containing 82.2\% of cells pairs, equal to the fraction of zeros in the sparse partial correlation matrix. This interval contained 58.3\% of the partial correlations. 
     {\bf G.} A graphical depiction of the positive (green) and negative (magenta) partial correlations as edges between observed neurons. The line density is proportional to the magnitude of the correlation.
     {\bf H.} A subset of neurons from the center of the cluster shown in {\bf G} showing the regularized partial correlations.
     {\bf I.} The same subset with sample correlations thresholded to match the sparsity of the regularized interactions.
@@ -341,7 +341,7 @@ We examined the structure of the $C_{\sf sparse+latent}$ estimate in each imaged
 \label{fig:05}
 \end{FPfigure}
 
-We compared the graphs of partial correlations revealed by $C_{\sf sparse+latent}$ to the graph obtained by thresholding the sample correlations.   Thresholded correlations have been used in several studies as to isolate the likely pairwise interactions with subsequent graph theoretical analysis \cite{ Malmersjo:2013}.  We set the threshold to match the connectivity of the $C_{\sf sparse+latent}$ graph.  The networks revealed by the two methods differed substantially. In the example site with 17.9\%[11] connectivity, only 42\%[12] of cell pairs connected in the $C_{\sf sparse+latent}$ graph were also connected in the thresholded correlation graph (\figref{05}{F, H, and I}).   In particular, the thresholded sample correlations were predominantly positive whereas 38\%[13] of the interactions in $C_{sparse+latent}$ were negative.  Most of the negative interactions corresponded to low sample correlations (\figref{05}{F}).  Thus the $C_{\sf sparse+latent}$ estimates reveal negative interactions that account for low correlations where high correlations are predicted from all the other interactions. 
+We compared the graphs of partial correlations revealed by $C_{\sf sparse+latent}$ to the graph obtained by thresholding the sample correlations.   Thresholded correlations have been used in several studies as to isolate the likely pairwise interactions with subsequent graph theoretical analysis \cite{ Malmersjo:2013}.  We set the threshold to match the connectivity of the $C_{\sf sparse+latent}$ graph.  The networks revealed by the two methods differed substantially. In the example site with 17.8\% connectivity, only 41.7\% of cell pairs connected in the $C_{\sf sparse+latent}$ graph were also connected in the thresholded correlation graph (\figref{05}{F, H, and I}).   In particular, the thresholded sample correlations were predominantly positive whereas 43.3\% of the interactions in $C_{\sf sparse+latent}$ were negative.  Most of the negative interactions corresponded to low sample correlations (\figref{05}{F}).  Thus the $C_{\sf sparse+latent}$ estimates reveal negative interactions that account for low correlations where high correlations are predicted from all the other interactions. 
 
 The average partial correlations revealed by $C_{\sf sparse+latent}$ estimates in all 31 sites were about 5 times lower than the sample correlations and less variable across sites (\figref{06}{A}): the coefficient of variation of the average sample correlations across all sites was 0.41 whereas that of the average partial correlations was only 0.35.  The average node degree of the sparse component of the partial correlations and the number of inferred latent units varied widely between sites but generally increased with recorded population size (\figref{06}{B and C}). However, there was an inverse relationship between the number of latent units and the average node degree (\figref{06}{D}). Several sites, even with relatively large population sizes, had fairly few pairwise interactions and were dominated by latent units.  These differences have multiple explanations, including differences in brain states and recording quality (neuropil contamination, motion). 
 
@@ -438,11 +438,11 @@ Full-field drifting gratings with 90\% contrast, luminance of 10 cd/m$^2$, spati
 \paragraph{Data processing}
 All data were processed in MATLAB using the DataJoint data processing chain toolbox ({\tt datajoint.github.com}) first developed in our lab. 
 
-The collected fluorescent traces were deconvolved to reconstruct the firing rates for each neuron. First, the first principal component was subtracted from the traces, which reduced common mode noise related to small movement and cardiovascular artifacts. The resulting traces were low-pass filtered below 0.1 Hz and downsampled to 20 Hz. Firing rates were estimated using a fast non-negative deconvolution algorithm \cite{Vogelstein:2010}.
+The collected fluorescent traces were deconvolved to reconstruct the firing rates for each neuron. First, the first principal component was subtracted from the traces, which reduced common mode noise related to small movement and cardiovascular artifacts \cite{Cotton:2013}. The resulting traces were low-pass filtered below 0.1 Hz and downsampled to 20 Hz. Firing rates were estimated using a fast non-negative deconvolution algorithm \cite{Vogelstein:2010}.
 
 Orientation tuning was computed by fitting the mean firing rates in response to gratings of directions $\phi$ with two-peaked von Mises tuning functions of the form $f(\phi)=a + b\exp\left[\frac 1 w(\cos(\phi-\theta)-1) \right] + c\exp\left[\frac 1 w(\cos(\phi-\theta+\pi)-1) \right]$ where $b\ge c$ are amplitudes of the two respective peaks, $w$ is the tuning width, and  $\theta$ is the preferred direction. The significance of the fit was determined by the permutation test: the labels of the direction were randomly permuted 10,000 times.  The $p$-value of the fit was computed as the fraction of permuted datasets for which the $R^2$ value of the tuning function fit exceeded that of the real data.  Cells were considered tuned for $p$-values not exceeding $0.05$.
 
-For covariance estimation, the analysis was limited to the period with 2 or 5 stimulus conditions and lasted between 12 and 20 minutes[14].  Only spikes trains whose variance was greater than 1\%[15] of the median across all the traces in the recording were included in the analysis. 
+For covariance estimation, the analysis was limited to the period with 2 or 5 stimulus conditions and lasted between 14 and 27 minutes (mean 22 minutes).  Only spikes trains whose variance was greater than 1\% of the median of the variances of all the traces in each recording were included in the analysis. 
 \paragraph{Cross-validation}
 To compare the performance of the estimator against each other, we used conventional 10-fold cross validation to measure cross-validation loss (Eq.~\ref{eq:cv-loss}). Briefly, each recording was split into 30 blocks of equal duration.  The 30 blocks were then grouped randomly into 10 datasets with 3 blocks in each.  This procedure ensured sufficient independence between the 10 datasets while still ensuring that each dataset included data from different parts of the recording.   Then, each dataset was used as the testing dataset with the rest of the data used for estimating the covariance matrix.  
 
@@ -548,18 +548,3 @@ We thank Genevera Allen for a helpful discussion.  We thank Eftychios Pnevmatika
 
 \end{document}
 
-[1]verify
-[2]verify
-[3]verify
-[4]Verify
-[5]Verify
-[6]Verify
-[7]Verify
-[8]Verify
-[9]Verify
-[10]Verify
-[11]Verify
-[12]Verify
-[13]Verify
-[14]Verify
-[15]Verify
