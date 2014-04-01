@@ -22,6 +22,7 @@
 %\usepackage{setspace} 
 %\doublespacing
 
+\usepackage{soul}
 
 % Text layout
 \topmargin 0.0cm
@@ -203,7 +204,7 @@ C_{\sf diag} = (1-\lambda) C_{\sf 0} + \lambda D
 \end{equation}
 The structure imposed by $C_{\sf diag}$ favors (performs better  on) populations   with no linear associations between the neurons (\figref{02}{Row 1, A}).  If sample correlations arise from spurious effects, $C_{\sf diag}$ is expected to be more efficient than other estimators. 
 
-The target of estimator $C_{\sf factor}$ is the factor model $L + \Psi$, where $L$ is the $p\times p$ positive definite matrix with low rank and $\Psi$ is the diagonal matrix of independent variances.  The estimator, 
+The target of estimator $C_{\sf factor}$ is the factor model $L + \Psi$, where $L$ is the $p\times p$ positive \hl{semidefinite} matrix with low rank and $\Psi$ is the diagonal matrix of independent variances.  The estimator, 
 \begin{equation}\label{eq:c-factor}
 C_{\sf factor} = (1-\lambda) C_{\sf 0} + \lambda (L + \Psi),
 \end{equation}
@@ -222,7 +223,7 @@ C_{\sf sparse+latent} = (S - L)^{-1},
 \end{equation}
 where, as above, $S$ is a sparse matrix and $L$ is a low rank matrix. The estimator has two hyperparameters: one to regulate the sparsity of $S$ and the other to regulate the rank of $L$. The structure imposed by $C_{\sf sparse+latent}$ favors conditions in which the activity of neurons is determined by linear effects between some observed pairs of neurons and linear effects from several latent units (\figref{02}{Row 1, D}) \cite{Chandrasekaran:2010,Ma:2013}.
 
-We refer to the sparse partial correlations in estimators $C_{\sf sparse}$ and $C_{\sf sparse+latent}$ as as \sq{interactions}.
+We refer to the sparse partial correlations in estimators $C_{\sf sparse}$ and $C_{\sf sparse+latent}$ as \sq{interactions}.
 
 \paragraph{Simulation}
 We next demonstrate how the most efficient among different regularized estimators can reveal the structure of correlations.
@@ -286,7 +287,7 @@ To examine how well the relative CV-losses reproduced the relationships between 
 This simulation study demonstrated that, with sufficiently large sample sizes, imposing the correct type of structure on the estimate leads to greater estimation improvement than imposing other structures.
 
 \paragraph{The $C_{\sf sparse+latent}$ estimator is most efficient in neural data}
-We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of fentanyl-anesthetized mice using fast random-access 3D scanning two-photon microscopy during visual stimulation (\figref{03}{A--B}) \cite{Reddy:2005, Katona:2012, Cotton:2013}. This technique allowed fast sampling (100--150 Hz) from large numbers (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4 (\figref{03}{C}).  The firing rates were inferred using sparse nonnegative deconvolution \cite{Vogelstein:2010} (\figref{03}{C and D}). Only cells that produced detectable calcium activity were included in the analysis (For details, see Methods).  First, 30 repetitions of full-field drifting gratings of 16 directions were presented in random order.  Each grating was presented for 500 ms, without intervening blanks.  This stimulus was used to compute the orientation tuning of the recorded cells (\figref{03}{E}). To estimate the noise correlation matrix, we presented only 2 distinct directions in some experiments or 5 directions in others with between 100 and 300 repetitions of each direction. In this stimulus, each grating lasted 1 second and was followed by a 1-second blank.  The average stimulus response was subtracted from each trial. The traces were then binned into 150 ms intervals for the estimation of the covariance matrix.   The sample correlation coefficients were largely positive and low (average across sites of 0.02 and under 0.04 in any site) (\figref{03}{G} and \figref{06}{D}).  
+We recorded the calcium activity of dense populations of neurons in the supragranular layers in primary visual cortex of fentanyl-anesthetized mice using fast random-access 3D scanning two-photon microscopy during visual stimulation (\figref{03}{A--B}) \cite{Reddy:2005, Katona:2012, Cotton:2013}. This technique allowed fast sampling (100--150 Hz) from large numbers (150--350) of cells in a small volume of cortical tissue ($200\times200\times100$ $\mu$m$^3$) in layers 2/3 and 4 (\figref{03}{C}).  The firing rates were inferred using sparse nonnegative deconvolution \cite{Vogelstein:2010} (\figref{03}{C and D}). Only cells that produced detectable calcium activity were included in the analysis (For details, see Methods).  First, 30 repetitions of full-field drifting gratings of 16 directions were presented in random order.  Each grating was presented for 500 ms, without intervening blanks.  This stimulus was used to compute the orientation tuning of the recorded cells (\figref{03}{E}). To estimate the noise correlation matrix, we presented only 2 distinct directions in some experiments or 5 directions in others with between 100 and 300 repetitions of each direction. In this stimulus, each grating lasted 1 second and was followed by a 1-second blank.  The average stimulus response was subtracted from each trial. The traces were then binned into 150 ms intervals for the estimation of the covariance matrix.   The sample correlation coefficients were largely positive and low (average across sites of 0.02 and \hl{under 0.04 in all sites}) (\figref{03}{G} and \figref{06}{D}).  
 
 \begin{figure}    \floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=8.3cm}}]{figure}[\FBwidth]
     {\caption{{\bf Acquisition of neural signals for the estimation of noise correlations.}
@@ -331,9 +332,9 @@ The estimator $C_{\sf sparse+latent}$ separates two sources of correlations: a n
 
 We examined the composition of the $C_{\sf sparse+latent}$ estimates at each imaged site (Fig.~\ref{fig:05} and Fig.~\ref{fig:06}). Although the regularized estimates were similar to the sample correlation matrix (\figref{05}{A and D}), the corresponding partial correlation matrices differed substantially (\figref{05}{B and E}). The partial correlation matrix of the regularized estimate was the sum of a sparse component and a low-rank component (\figref{05}{C}).  
 
-In the example site (Fig.~\ref{fig:05}), the sparse component had 82.2\% sparsity (or conversely, 17.8\% connectivity: $connectivity=1-sparsity$) with average node degree of 52.9 (\figref{05}{G}). The averge node degree, \ie the average number of interactions linking each neuron, is related to connectivity as $degree = connectivity\cdot(p-1)$, where $p$ is the number of neurons. The low-rank component had rank 15, denoting 15 inferred latent units. The number of latent units and the average node degrees generally increased with population size, although these values varied widely between the datasets (\figref{06}{A and B}). There was an inverse relationship between the number of latent units and the average node degree (\figref{06}{C}): Several sites, despite their large population sizes, were driven by latent units and had few pairwise interactions. This variability may be explained by differences in brain states and recording quality and needs further investigation.
+In the example site (Fig.~\ref{fig:05}), the sparse component had 82.2\% sparsity (or conversely, 17.8\% connectivity: $connectivity=1-sparsity$) with average node degree of 52.9 (\figref{05}{G}). The average node degree, \ie the average number of interactions linking each neuron, is related to connectivity as $degree = connectivity\cdot(p-1)$, where $p$ is the number of neurons. The low-rank component had rank 15, denoting 15 inferred latent units. The number of latent units and the average node degrees generally increased with population size, although these values varied widely between the datasets (\figref{06}{A and B}). There was an inverse relationship between the number of latent units and the average node degree (\figref{06}{C}): Several sites, despite their large population sizes, were driven by latent units and had few pairwise interactions. This variability may be explained by differences in brain states and recording quality and needs further investigation.
 
-The average partial correlations calculated from these estimates according to Eq.~\ref{eq:partial} at all 31 sites were about 5 times lower than the average sample correlations (\figref{06}{D}). This suggests that correlations between neurons build up from large numbers of small interactions with other neurons. Furthermore, the avearge partial correlations were less variable: the coefficient of variation of the average sample correlations across sites was 0.41 whereas that of the average partial correlations was 0.35. 
+The average partial correlations calculated from these estimates according to Eq.~\ref{eq:partial} at all 31 sites were about 5 times lower than the average sample correlations (\figref{06}{D}). This suggests that correlations between neurons build up from large numbers of small interactions with other neurons. Furthermore, the average partial correlations were less variable: the coefficient of variation of the average sample correlations across sites was 0.41 whereas that of the average partial correlations was 0.35. 
 
 While the sample correlations were mostly positive, the sparse component of the partial correlations (\sq{interactions}) had a high fraction (43.3\% in the example site) of negative values (\figref{05}{F}). This fraction was consistent across multiple sites but the fraction of negative interactions increased with the inferred connectivity \figref{06}{F}.  This increase suggests that negative interactions are inferred only after a sufficient density of positive interactions has been uncovered.
 
@@ -495,7 +496,7 @@ S = \argmin\limits_{\tilde S \in Z^\sharp} \loss{\tilde S,C_{\sf 0}},
 \end{equation}
 where $Z^\sharp$ denotes the set of positive-definite matrices with the same zero structure as $Z$.  This step was also solved by ADMM.  Then the final estimate is the inverse of $S$ (Eq.~\ref{eq:c-sparse}). Unlike $C_{\sf diag}$ and $C_{\sf factor}$, this estimator does not include linear shrinkage: the selection of the sparsity level provides sufficient flexibility to fine tune the regularization level.
 
-Estimator $C_{\sf sparse+latent}$ has two hyperparameters: the number of latent units $d$ and the sparsity level $\lambda$. $C_{\sf sparse+latent}$ estimates a larger sparse precision matrix $S^\ast$ of the joint distribution of the $p$ observed neurons and $d$ latent units.  
+Estimator $C_{\sf sparse+latent}$ has two hyperparameters: the number of latent units $d$ and \hl{hyperparameter $\lambda$ regulating the sparsity level}. $C_{\sf sparse+latent}$ estimates a larger sparse precision matrix $S^\ast$ of the joint distribution of the $p$ observed neurons and $d$ latent units.  
 \begin{equation}
 S^\ast=
 \begin{pmatrix}
