@@ -168,50 +168,16 @@ Given an arbitrary covariance matrix estimate $C$, the corresponding correlation
     R = \left(I\circ C\right)^{-\frac 1 2} C \left(I\circ C\right)^{-\frac 1 2},
 \end{equation}
 where $\circ$ denotes the entrywise matrix product (Hadamard product) and $I$ is the $p\times p$ identity matrix. 
-Similarly, the matrix of partial correlations $P$ is computed by normalizing the \emph{precision matrix} $C^{-1}$:
+Similarly, the matrix of partial correlations $P$ is computed by normalizing the \emph{precision matrix} $C^{-1}$ \cite{Whittaker:2009}:
 \begin{equation}\label{eq:partial}
     P = -\left(I\circ C^{-1}\right)^{-\frac 1 2} C^{-1} \left(I\circ C^{-1}\right)^{-\frac 1 2}
 \end{equation}
-
-
-To see that this is the case, partition the covariance matrix 
-\begin{equation}
-C = \begin{pmatrix}
-C_{11} & C_{12} \\
-C_{12}^\T & C_{22}
-\end{pmatrix}
-\end{equation}
-so that $C_{11}$ is the $2\times 2$ covariance matrix of two cells of interest. Such partitioning can be done for any pair of cells by changing their order. 
-Then the covariance matrix of the conditional distribution of these two cells is \cite{Anderson:2003}:
-\begin{equation}
-\hat C_{11} = C_{11}-C_{12}C^{-1}C_{12}^\T 
-\end{equation}
-The inverse of the conditional covariance matrix can be found in the corresponding partition of the precision matrix $C^{-1}$:
-\begin{equation}
-C^{-1}=\begin{pmatrix}
-\hat C_{11}^{-1} &   -\hat C_{11}^{-1}C_{12}C_{22}^{-1} \\
--C_{22}^{-1}C_{12}^\T\hat C_{11}^{-1}  &  C_{22}^{-1}+C_{22}^{-1}C_{12}^\T\hat C_{11}^{-1}C_{12}C_{22}^{-1}
-\end{pmatrix}
-\end{equation}
-The inverse of a $2\times 2$ correlation matrix reverses the sign of its off-diagonal elements:
-\begin{equation}
-\begin{pmatrix}
-1 & \rho \\
-\rho & 1
-\end{pmatrix}^{-1}
-\propto 
-\begin{pmatrix}
--1 & \rho \\
-\rho & -1 
-\end{pmatrix}
-\end{equation}
-Therefore, scaling $C^{-1}$ to have 1s on the diagonal yields the partial correlation in each of its $2\times 2$ partitions, resulting in a matrix of partial pairwise correlations.
 
 We considered four regularized estimators based on distinct families of reduced target estimates: $C_{\sf diag}$, $C_{\sf factor}$, $C_{\sf sparse}$, and $C_{\sf sparse+latent}$. In probabilistic models with exclusively linear dependencies, the target estimates of these estimators correspond to distinct families of graphical models (\figref{1}{\,Row 1}).  
 
 \begin{FPfigure}
     \begin{center}
-        \includegraphics{./figures/Figure02.pdf}
+        \includegraphics{./figures/Figure01.pdf}
     \end{center}
     \caption{{\bf Regularized estimators whose structure matches the true structure in the data are more efficient.}
     {\bf Row 1.} Graphical representations of the target estimates of the four respective regularized covariance matrix estimators.  Recorded neurons are represented by green spheres and latent units by light-shaded spheres.  Edges represent non-zero partial correlations, \ie \sq{interactions}.
@@ -323,12 +289,12 @@ We recorded the calcium activity of dense populations of neurons in the supragra
     {\bf F.} The sample noise correlation matrix of the activity of the neural population. 
     {\bf G.} Histogram of noise correlation coefficients. The red line indicates the mean.
 } \label{fig:2}}
-    {\includegraphics[width=8.3cm]{figures/Figure03.pdf}}
+    {\includegraphics[width=8.3cm]{figures/Figure02.pdf}}
 \end{figure}
 
 In these dense populations, direct interactions between cells are likely to influence the patterns of population activity.  We therefore hypothesized that covariance matrix estimators that explicitly modeled the partial correlations between pairs of neurons ($C_{\sf sparse}$ and $C_{\sf sparse+latent}$) would have a performance advantage.  However, the observed neurons must also be strongly influenced by global activity fluctuations and by unobserved common inputs, to the advantage of estimators that explicitly model common fluctuations of the entire population: $C_{\sf factor}$ and $C_{\sf sparse+latent}$.  If both types of effects are significant, then $C_{\sf sparse+latent}$ should outperform the other estimators.
 
-To test this hypothesis, we computed the relative cross-validation loss of estimators  $C_{\sf sample}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ with respect to $C_{\sf sparse+latent}$ in $n=27$ imaged sites in 14 mice.  The hyperparameters of each estimator were optimized by nested cross-validation (See Methods for details). Indeed, the sparse+latent estimator outperformed the other estimators (Fig.~\ref{fig:3}). The respective median differences of the cross-validation loss were 0.018, 0.0025, 0.0029, and 0.0017 nats/cell/bin, significantly greater than zero ($p<10^{-5}$ in each comparison, Wilcoxon signed rank test).  
+To test this hypothesis, we computed the relative cross-validation loss of estimators  $C_{\sf sample}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ with respect to $C_{\sf sparse+latent}$ in $n=27$ imaged sites in 14 mice.  The hyperparameters of each estimator were optimized by nested cross-validation (See Methods for details). Indeed, the sparse+latent estimator outperformed the other estimators (Fig.~\ref{fig:3}). The respective median differences of the cross-validation loss were 0.019, 0.0027, 0.0031, and 0.0022 nats/cell/bin, significantly greater than zero ($p<10^{-4}$ in each comparison, Wilcoxon signed rank test).  
 
 \begin{figure}[!ht]
     \begin{center}
@@ -390,7 +356,7 @@ Thresholded sample correlations have been used in several studies to infer pairw
     {\bf F.} The percentage of negative interactions vs.~connectivity in the $C_{\sf sparse+latent}$ estimates.
 }
 \label{fig:5}}
-{\includegraphics{./figures/Figure06.pdf}}
+{\includegraphics{./figures/Figure05.pdf}}
 \end{figure}
 
 \paragraph{Relationship of $C_{\sf sparse+latent}$ to orientation tuning and physical distances}
@@ -399,7 +365,7 @@ We also examined the relationship of the correlation structure to the difference
 
 \begin{figure}[!ht]
     \begin{center}
-        \includegraphics{./figures/Figure07.pdf}
+        \includegraphics{./figures/Figure06.pdf}
     \end{center}
     \caption{{\bf Dependence of sample correlations and regularized partial correlations on orientation tuning and physical distance.}
     {\bf A--C.} Average partial correlations (red) estimated by $C_{\sf sparse+latent}$ and average sample correlations (black) averaged across multiple imaged sites. At each site the correlations were normalized by the respective average correlation shown in \figref{5}{D}.  The number of sites, $n$, that qualified to be included in the analysis is indicated in each panel. Sites were included if they had at least 20 pairs of neurons in each of the intervals. The error bars indicate the standard error of the mean based on on the number of sites $n$.
@@ -564,39 +530,21 @@ We thank Genevera Allen for a helpful discussion, and Eftychios Pnevmatikakis fo
 \setcounter{figure}{0}
 \renewcommand{\figurename}{Figure S}
 
-
-\begin{FPfigure}
+\begin{figure}[!ht]
 \begin{center}
-\includegraphics{./figures/Figure-Supp01.pdf}
+\includegraphics{./figures/src/Supp1.eps}
 \end{center}
-\caption{{\bf All-to-all performance comparisons of the sample covariance matrix and the four regularized estimators with respect to multivariate normal cross-validation loss.}
-\\{\bf A--D.} These panels are identical to those in \figref{3}{A--D}.
-\\{\bf E.} $C_{\sf sparse}$ outperforms $C_{\sf sample}$: median improvement 0.15 nats/neuron, $p=3.9\times 10^{-5}$.
-\\{\bf F.} $C_{\sf sparse}$ performs similarly to $C_{\sf diag}$: median improvement $1.0\times10^{-3}$ nats/neuron, $p=0.13$.
-\\{\bf G.} $C_{\sf sparse}$ outperforms $C_{\sf factor}$: median improvement $0.15$ nats/neuron, $p=1.2\times10^{-4}$.
-\\{\bf H.} $C_{\sf factor}$ outperforms $C_{\sf sample}$: median improvement $0.029$ nats/neuron, $p=2.7\times10^{-4}$.
-\\{\bf I.} $C_{\sf factor}$ performs worse than $C_{\sf diag}$: median improvement $-0.16$ nats/neuron, $p=1.6\times10^{-4}$.
-\\{\bf J.} $C_{\sf diag}$ outperforms $C_{\sf sample}$: median improvement $0.14$ nats/neuron, $p=2.7\times10^{-5}$.
-}
+\caption{Comparison of the $C_{\sf sparse}$ estimator to the other estimators with respect to the normal loss function.}
 \label{supp:01}
-\end{FPfigure}
+\end{figure}
 
 
 \begin{figure}[!ht]
-\floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,center},capbesidewidth=8.3cm}}]{figure}[\FBwidth]
-{\caption{{\bf The sparse+latent estimator outperforms the other estimators under the quadratic loss (Eq.~\ref{eq:quadratic}) just as it did under the normal loss (Eq.~\ref{eq:loss}) used in Fig.~\ref{fig:3}.}
-    Histograms of the cross-validation loss of estimators $C_{\sf sample}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ with respect to $C_{\sf sparse+latent}$ using the quadratic loss function.
-    The histograms were obtained from 31 imaged sites in 15 mice. 
-    All medians (red dashed lines) were significantly greater than zero, indicating the dominance of $C_{\sf sparse+latent}$ over the other estimators. 
-    The arrow heads indicate the results for the site shown in Fig.~\ref{fig:2} and Fig.~\ref{fig:4}.
-    The $p$-values are for the two-sided Wilcoxon's signed rank test.
-    \\{\bf A.} $C_{\sf sparse+latent}$ outperforms $C_{\sf sample}$: median $\Delta\ell_{C_{\sf sample},C_{\sf sparse+latent}}$ = 0.35, $p=1.7\times 10^{-6}$.
-    \\{\bf B.} $C_{\sf sparse+latent}$ outperforms $C_{\sf diag}$: median $\Delta\ell_{C_{\sf diag},C_{\sf sparse+latent}}$ = $2.5\times 10^{-3}$, $p=1.0\times 10^{-4}$.
-    \\{\bf C.} $C_{\sf sparse+latent}$ outperforms $C_{\sf factor}$: median $\Delta\ell_{C_{\sf factor},C_{\sf sparse+latent}}$ = 0.27, $p=1.2\times 10^{-6}$.
-    \\{\bf D.} $C_{\sf sparse+latent}$ outperforms $C_{\sf sparse}$: median $\Delta\ell_{C_{\sf sparse},C_{\sf sparse+latent}}$ = $3.7\times 10^{-4}$, $p=2.2\times 10^{-3}$.
-}
-\label{supp:02}}
-{\includegraphics{./figures/Figure-Supp02.pdf}}
+\begin{center}
+\includegraphics{./figures/src/Supp2.eps}
+\end{center}
+\caption{Comparison of the $C_{\sf sparse+latent}$ estimator to the other estimators with respect to the quadratic loss.}
+\label{supp:02}
 \end{figure}
 
 
