@@ -525,9 +525,9 @@ We thank Genevera Allen for a helpful discussion, and Eftychios Pnevmatikakis fo
 \newpage
 \section*{Supporting Information}
 \subsection*{Appendix: Estimation of variance}
-One decision that was made in this paper was to model a constant covariance matrix across different conditions. In other words, the variances was modeled as a constant across conditions. In contrast, it is more common to estimate correlations separately in different conditions and average the correlations coefficients from different conditions. In this appendix we justify this decision.
+One decision that was made in this paper was to model a constant covariance matrix across different conditions. In other words, a single variance was estimated for each neuron across all stimulus conditions. A more commonplace practice, however, is to estimate the correlations separately in each condition and only then to average the correlations coefficients across all the conditions. In this appendix we justify this decision.
 
-Let's consider two random variables $x_1$ and $x_2$ with zero means and respective variances $v_1^2$ and $v_2^2$ in one condition and $a^2v_1^2$ and $b^2v_2^2$ in the second condition. Assume that the correlation coefficient $\rho$ is the same in both conditions. 
+Let $x_1$ and $x_2$ be random variables with zero means and let their respective variances be $v_1^2$ and $v_2^2$ in condition 1 and $a^2v_1^2$ and $b^2v_2^2$ in condition 2. Assume that the correlation coefficient $\rho$ is constant across the two conditions. 
 
 Let $\langle \cdot \rangle_i$ denote the expectation in condition $i$. Then
 \begin{align*}
@@ -535,19 +535,26 @@ Let $\langle \cdot \rangle_i$ denote the expectation in condition $i$. Then
 \langle x_1^2 \rangle_2 = a^2v_1^2 && \langle x_2^2 \rangle_2 = b^2v_2^2  && \rho = \frac{\langle x_1 x_2 \rangle_2}{ab\,v_1v_2} 
 \end{align*}
 
-If we ignore the differences between the variances in the two conditions, assuming equal numbers of trials in each condition, the respective  variances for the two variables will be 
+What is the effect of assuming constant variances across the conditions on estimating the correlation coefficient? Let $0<w<1$ be the fraction of trials in condition 1 and $1-w$ be the fraction of trials in condition 2. The respective variances for the two variables across both conditions will be 
 \begin{align*}
-\tilde v_1^2 = \frac 1 2 \left( v_1^2 + a^2v_1^2 \right) = \frac{1+a^2}{2} v_1^2
-&&
-\tilde v_2^2 = \frac 1 2 \left( v_2^2 + b^2v_2^2 \right) = \frac{1+b^2}{2} v_2^2
+\tilde v_1^2 & = w\langle x_1^2 \rangle_1 + (1-w) \langle x_1^2 \rangle_2 = \left[w+(1-w)a^2\right] v_1^2
+\\
+\tilde v_2^2 & = w\langle x_2^2 \rangle_1 + (1-w) \langle x_2^2 \rangle_2 = \left[w+(1-w)b^2\right] v_2^2
 \end{align*}
 The resulting correlation coefficient will be
 \begin{equation*}
-\tilde \rho = \frac{\langle x_1 x_2 \rangle_1 + \langle x_1 x_2 \rangle_2} {2 \tilde v_1 \tilde v_2}
-= \rho \frac{1 + ab}{\sqrt{1+a^2}\sqrt{1+b^2}}
-= \rho \sqrt{\frac{1+2ab+a^2b^2}{1+a^2+b^2+a^2b^2} }
+\begin{split}
+\tilde \rho & = \frac{w\langle x_1 x_2 \rangle_1 + (1-w)\langle x_1 x_2 \rangle_2} { \tilde v_1 \tilde v_2}
+= \frac{w\rho + (1-w)ab\rho}{\sqrt{w+(1-w)a^2}\sqrt{w+(1-w)b^2}}
+\\
+& = \rho \sqrt{\frac{w^2+2w(1-w)ab+(1-w)^2a^2b^2}{w^2+w(1-w)(a^2+b^2)+(1-w)^2a^2b^2} }
+\end{split}
 \end{equation*}
-Note that $\tilde \rho = \rho$ iff $a=b$ and $\tilde \rho<\rho$ when $a\ne b$.  In other words, when stimulus conditions modulate the variances by different amounts, the assumption of constant variance leads to the underestimation of the correlation between differently tuned pairs of cells. This effect may lead to the overestimation of the effect of common tuning on correlations (`limited-range correlations'). 
+Since $2ab=a^2+b^2$ when $a=b$ and $2ab < a^2 + b^2$ when $a\ne b$, then $\tilde \rho= \rho$ when $a=b$ and $\tilde \rho < \rho$ when $a\ne b$.
+
+In other words, the assumption of constant variance across stimulus condition results in underestimation of their correlation for cells whose variances have different stimulus tunings but not if they have they are tuned similarly. This effect may lead to overestimating of the effect of common tuning on correlations (`limited-range correlations'). 
+
+However, there are arguments for assuming a constant variance as well.
 
 
 

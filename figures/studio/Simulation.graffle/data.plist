@@ -7,7 +7,7 @@
 	<key>ApplicationVersion</key>
 	<array>
 		<string>com.omnigroup.OmniGraffle6</string>
-		<string>156.5.0.200749</string>
+		<string>156.11.0.206384</string>
 	</array>
 	<key>AutoAdjust</key>
 	<false/>
@@ -55,6 +55,50 @@
 	<integer>11</integer>
 	<key>GraphicsList</key>
 	<array>
+		<dict>
+			<key>Bounds</key>
+			<string>{{287.42741012573242, 360.08008029921109}, {99, 157}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>FontInfo</key>
+			<dict>
+				<key>Color</key>
+				<dict>
+					<key>w</key>
+					<string>0</string>
+				</dict>
+				<key>Font</key>
+				<string>Helvetica</string>
+				<key>Size</key>
+				<real>12</real>
+			</dict>
+			<key>ID</key>
+			<integer>424</integer>
+			<key>ImageID</key>
+			<integer>160</integer>
+			<key>Layer</key>
+			<integer>1</integer>
+			<key>Shape</key>
+			<string>Rectangle</string>
+			<key>Style</key>
+			<dict>
+				<key>fill</key>
+				<dict>
+					<key>Draws</key>
+					<string>NO</string>
+				</dict>
+				<key>shadow</key>
+				<dict>
+					<key>Draws</key>
+					<string>NO</string>
+				</dict>
+				<key>stroke</key>
+				<dict>
+					<key>Draws</key>
+					<string>NO</string>
+				</dict>
+			</dict>
+		</dict>
 		<dict>
 			<key>Bounds</key>
 			<string>{{392.81670379638672, 504.99035651718629}, {99, 157}}</string>
@@ -345,7 +389,7 @@
 			<key>ID</key>
 			<integer>479</integer>
 			<key>ImageID</key>
-			<integer>196</integer>
+			<integer>210</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Scaling</key>
@@ -404,7 +448,7 @@
 			<key>ID</key>
 			<integer>478</integer>
 			<key>ImageID</key>
-			<integer>195</integer>
+			<integer>209</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Scaling</key>
@@ -463,7 +507,7 @@
 			<key>ID</key>
 			<integer>477</integer>
 			<key>ImageID</key>
-			<integer>194</integer>
+			<integer>208</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Scaling</key>
@@ -522,7 +566,7 @@
 			<key>ID</key>
 			<integer>476</integer>
 			<key>ImageID</key>
-			<integer>186</integer>
+			<integer>200</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Scaling</key>
@@ -581,7 +625,7 @@
 			<key>ID</key>
 			<integer>475</integer>
 			<key>ImageID</key>
-			<integer>193</integer>
+			<integer>207</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Scaling</key>
@@ -640,7 +684,7 @@
 			<key>ID</key>
 			<integer>474</integer>
 			<key>ImageID</key>
-			<integer>192</integer>
+			<integer>206</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Scaling</key>
@@ -699,7 +743,7 @@
 			<key>ID</key>
 			<integer>473</integer>
 			<key>ImageID</key>
-			<integer>191</integer>
+			<integer>205</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Scaling</key>
@@ -758,7 +802,7 @@
 			<key>ID</key>
 			<integer>472</integer>
 			<key>ImageID</key>
-			<integer>190</integer>
+			<integer>204</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Scaling</key>
@@ -817,7 +861,7 @@
 			<key>ID</key>
 			<integer>471</integer>
 			<key>ImageID</key>
-			<integer>189</integer>
+			<integer>203</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -874,7 +918,7 @@
 			<key>ID</key>
 			<integer>470</integer>
 			<key>ImageID</key>
-			<integer>188</integer>
+			<integer>202</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -931,7 +975,7 @@
 			<key>ID</key>
 			<integer>469</integer>
 			<key>ImageID</key>
-			<integer>187</integer>
+			<integer>201</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -988,7 +1032,7 @@
 			<key>ID</key>
 			<integer>468</integer>
 			<key>ImageID</key>
-			<integer>186</integer>
+			<integer>200</integer>
 			<key>Layer</key>
 			<integer>1</integer>
 			<key>Shape</key>
@@ -7002,50 +7046,6 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{287.42741012573242, 360.08008029921109}, {99, 157}}</string>
-			<key>Class</key>
-			<string>ShapedGraphic</string>
-			<key>FontInfo</key>
-			<dict>
-				<key>Color</key>
-				<dict>
-					<key>w</key>
-					<string>0</string>
-				</dict>
-				<key>Font</key>
-				<string>Helvetica</string>
-				<key>Size</key>
-				<real>12</real>
-			</dict>
-			<key>ID</key>
-			<integer>424</integer>
-			<key>ImageID</key>
-			<integer>160</integer>
-			<key>Layer</key>
-			<integer>1</integer>
-			<key>Shape</key>
-			<string>Rectangle</string>
-			<key>Style</key>
-			<dict>
-				<key>fill</key>
-				<dict>
-					<key>Draws</key>
-					<string>NO</string>
-				</dict>
-				<key>shadow</key>
-				<dict>
-					<key>Draws</key>
-					<string>NO</string>
-				</dict>
-				<key>stroke</key>
-				<dict>
-					<key>Draws</key>
-					<string>NO</string>
-				</dict>
-			</dict>
-		</dict>
-		<dict>
-			<key>Bounds</key>
 			<string>{{182.03811645507812, 360.08008029921109}, {99, 157}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
@@ -7202,7 +7202,7 @@
 		<real>504.99035651718629</real>
 	</array>
 	<key>ImageCounter</key>
-	<integer>200</integer>
+	<integer>211</integer>
 	<key>ImageLinkBack</key>
 	<array>
 		<dict/>
@@ -7229,27 +7229,27 @@
 	</array>
 	<key>ImageList</key>
 	<array>
-		<string>image199.eps</string>
+		<string>image210.png</string>
+		<string>image209.png</string>
+		<string>image208.png</string>
+		<string>image207.png</string>
+		<string>image206.png</string>
+		<string>image205.png</string>
+		<string>image204.png</string>
+		<string>image203.png</string>
+		<string>image202.png</string>
+		<string>image201.png</string>
+		<string>image200.png</string>
+		<string>image199.pdf</string>
 		<string>image197.pdf</string>
-		<string>image196.png</string>
-		<string>image195.png</string>
-		<string>image194.png</string>
-		<string>image193.png</string>
-		<string>image192.png</string>
-		<string>image191.png</string>
-		<string>image190.png</string>
-		<string>image189.png</string>
-		<string>image188.png</string>
-		<string>image187.png</string>
-		<string>image186.png</string>
-		<string>image170.eps</string>
-		<string>image169.eps</string>
-		<string>image168.eps</string>
-		<string>image161.eps</string>
-		<string>image160.eps</string>
-		<string>image159.eps</string>
-		<string>image158.eps</string>
-		<string>image14.eps</string>
+		<string>image170.pdf</string>
+		<string>image169.pdf</string>
+		<string>image168.pdf</string>
+		<string>image161.pdf</string>
+		<string>image160.pdf</string>
+		<string>image159.pdf</string>
+		<string>image158.pdf</string>
+		<string>image14.pdf</string>
 	</array>
 	<key>KeepToScale</key>
 	<false/>
@@ -7300,7 +7300,11 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
+<<<<<<< HEAD
 	<string>2014-03-02 23:12:19 +0000</string>
+=======
+	<string>2014-05-09 22:07:39 +0000</string>
+>>>>>>> 30cd45e856ab60d9416ed1461e3590e9edc38500
 	<key>Modifier</key>
 	<string>Dimitri Yatsenko</string>
 	<key>NotesVisible</key>
@@ -7397,7 +7401,11 @@
 		<key>SidebarWidth</key>
 		<integer>230</integer>
 		<key>VisibleRegion</key>
+<<<<<<< HEAD
 		<string>{{23, 0}, {446.5, 332}}</string>
+=======
+		<string>{{-6, 113}, {540, 430.5}}</string>
+>>>>>>> 30cd45e856ab60d9416ed1461e3590e9edc38500
 		<key>Zoom</key>
 		<real>2</real>
 		<key>ZoomValues</key>
