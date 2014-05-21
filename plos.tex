@@ -158,9 +158,9 @@ The covariance matrix is defined as
 \end{equation}
 where $\E{\cdot}$ denotes expectation; the $p\times 1$ vector $x$ is a single observation of the firing rates of $p$ neurons over time $\Delta t$; and $\mu$ is the vector of expected firing rates.  The usual estimate of the covariance matrix is the \emph{sample covariance matrix} $C_{\sf sample}$ of the empirical sample of observations $x(t),\; t=1,\ldots,n$ as
 \begin{equation}\label{eq:sample}
-    C_{\sf sample} = \frac 1 \nu \sum\limits_{t=1}^n (x(t)-\bar x)(x(t)-\bar x)^\T,\quad \bar x= \frac 1 n \sum\limits_{t=1}^n x(t)
+	C_{\sf sample} = \frac 1 {\nu-1} \sum\limits_{t=1}^n (x(t)-\bar x)(x(t)-\bar x)^\T,\quad \bar x= \frac 1 n \sum\limits_{t=1}^n x(t)
 \end{equation}
-where $\nu$ denotes degrees of freedom in one neuron's activity within the sample ($\nu=n-1$ if observations are independent). For noise correlations, the true mean $\mu$ and the sample mean $\bar x$ are conditioned on the stimulus. In this study, we estimate the true mean, $\mu$, using the sample mean, $\bar x$, but seek a better estimate of the covariance matrix than the sample correlation matrix, $C_{\sf sample}$.  
+where $\nu$ denotes degrees of freedom in one neuron's activity within the sample ($\nu=n$ when observations are independent). In this study, we estimate the true mean, $\mu$, using the sample mean, $\bar x$, but seek a better estimate of the covariance matrix than the sample correlation matrix, $C_{\sf sample}$.  
 
 Given an covariance matrix estimate, the correlation matrix $R$ is calculated by normalizing the rows and columns of $C$ by the square roots of its diagonal elements to produce unit entries on the diagonal:
 \begin{equation}\label{eq:precision}
@@ -192,7 +192,7 @@ We considered four regularized estimators based on distinct families of reduced 
         {\bf  Row 1, D}.  For estimator $C_{\sf sparse+latent}$, the covariance matrix is approximated as the inverse of the sum of a sparse matrix and a low-rank matrix. This approximation describes a model wherein correlations arise due to sparse associations between the recorded cells \emph{and} with several latent units. \\
 {\bf Row 2:} Examples of $50\times 50$ correlation matrices corresponding to each structure: {\bf A.} the diagonal correlation matrix, {\bf B.} a factor model with two latent units, {\bf C.}  a correlation matrix with 85\%  off-diagonal zeros in its inverse, and {\bf  D.} a correlation matrix whose inverse is the sum of a rank-1 (\ie one latent unit) matrix and a sparse matrix with 89\% off-diagonal zeros. 
 \\
-{\bf Row 3:} Sample correlation matrices calculated from samples of size $n=1000$ drawn from simulated random processes with respective correlation matrices shown in Row 2.  The structure of the sample correlation matrix is difficult to discern.
+{\bf Row 3:} Sample correlation matrices calculated from samples of size $n=500$ drawn from simulated random processes with respective correlation matrices shown in Row 2.  The structure of the sample correlation matrix is difficult to discern.
 \\
 {\bf Row 4:} Correlation matrix estimates computed by estimators with matching structure from the same data as the sample correlation matrices in Row 3. The regularized estimates are closer to the truth than the sample correlation matrices.
 \\
@@ -232,7 +232,7 @@ We refer to the sparse partial correlations in estimators $C_{\sf sparse}$ and $
 
 \paragraph{Simulation}
 We next demonstrate how the most efficient among different regularized estimators can reveal the structure of correlations.
-We constructed four $50\times 50$ covariance matrices, each with structure that matched one of the four regularized estimators (\figref{1}{\,Row 2, A--D}, see Methods for details about how these matrices were generated).  We used these covariance matrices as the ground truth in multivariate normal distributions with zero means and drew samples of various sizes. Even with relatively large sample sizes (\eg $n=1000$), the sample correlation matrices were contaminated by sampling noise and their underlying structures were difficult to discern (\figref{1}{\,Row 3}). 
+We constructed four $50\times 50$ covariance matrices, each with structure that matched one of the four regularized estimators (\figref{1}{\,Row 2, A--D}, see Methods for details about how these matrices were generated).  We used these covariance matrices as the ground truth in multivariate normal distributions with zero means and drew samples of various sizes. Even with relatively large sample sizes (\eg $n=500$), the sample correlation matrices were contaminated by sampling noise and their underlying structures were difficult to discern (\figref{1}{\,Row 3}). 
 
 The evaluation of any covariance matrix estimator, $C$, is performed with respect to a \emph{loss function} $\loss{C,\Sigma}$ to quantify its discrepancy from truth, $\Sigma$.  The loss function must attain its minimum when $C=\Sigma$.
 
@@ -265,9 +265,9 @@ With empirical data, the ground truth, $\Sigma$, is not accessible and excess lo
 compute the \emph{validation loss} $\loss{C,C_{\sf sample}^\prime}$, which approximates the loss  $\loss{C,\Sigma}$.
 
 The normal loss (Eq.~\ref{eq:loss}) is particularly convenient because it is additive in its second argument, \ie
- \begin{equation*}\label{eq:additivity}
- \loss{C,z_1} + \loss{C,z_2} \equiv \loss{C,z_1+z_2}
- \end{equation*}
+\begin{equation*}\label{eq:additivity}
+    \loss{C,z_1} + \loss{C,z_2} \equiv \loss{C,z_1+z_2}
+\end{equation*}
 With this property of additivity, the validation loss is an unbiased estimate of the loss function:
 \begin{equation*}
     \E[C_{\sf sample}^\prime]{\loss{C,C_{\sf sample}^\prime}}=\loss{C,\E[C_{\sf sample}^\prime]{C_{\sf sample}^\prime}}=\loss{C,\Sigma}.
@@ -455,9 +455,9 @@ Orientation tuning was computed by fitting the mean firing rates in response to 
 For covariance estimation, the analysis was limited to the period with 2 or 5 stimulus conditions and lasted between 14 and 27 minutes (mean 22 minutes).  Cells that did not have substantial spiking activity (those whose variance was less than 1\% of the median across the site) or whose activity was unstable (those whose variance in the least active quarter of the recording did not exceed 1\% of the variance in the most active quarter) were excluded from the analysis.
 
 \paragraph{Cross-validation}
-To compare the performance of the estimators against each other, we used conventional 10-fold cross validation. Briefly, each recording was split into 30 blocks of equal duration.  The 30 blocks were then grouped randomly into 10 datasets with 3 blocks in each.  This splitting of the data was chosen to achieve a high degree of independence between the 10 datasets for cross-validaton purposes. Splitting the data into smaller blocks could increase dependencies between them due to temporal correlations thereby violating the assumptions of cross-validation. Then, each dataset was used as the testing dataset with the rest of the data used for estimating the covariance matrix.  
+To compare the performance of the estimators, we used conventional 10-fold cross validation: Trials were randomly divided into 10 subsets with approximately equal numbers of trials of each condition in each subset. Each subset was then used as the testing dataset with the rest of the data used for estimating the covariance matrix. The resulting validation losses were averaged to produce the \emph{cross-validation loss} reported throughout the paper.
 
-Since each of the regularized estimators had one or two hyperparameters, we used \emph{nested cross-validation}:  The outer loop evaluated the performance of the estimators with the optimal hyperparameter values estimated within the inner loop.  Hyperparameters were optimized by a two-phase search algorithm: random search to find a good starting point followed by pattern search to find the global minimum.  The inner cross-validation loop subdivided the training dataset from the outer loop to perform 10-fold cross-validation in order to evaluate each choice of the hyperparameter values.  Thus the size of the training dataset within the inner loop comprised 81\% of the entire recording.
+Since each of the regularized estimators had one or two hyperparameters, we used \emph{nested cross-validation}:  The outer loop evaluated the performance of the estimators with the optimal hyperparameter values estimated within the inner loop.  Hyperparameters were optimized by a two-phase search algorithm: random search to find a good starting point for the subsequent pattern search to find the global minimum.  The inner cross-validation loop subdivided the training dataset from the outer loop to perform 10-fold cross-validation in order to evaluate each choice of the hyperparameter values.  Thus the size of the training dataset within the inner loop comprised 81\% of the entire recording.
 
 When the cross-validation loss was not required, only the inner loop of cross-validation was used, applied to the entire dataset.  This approach was used to compute the covariance matrix estimates and their excess-loss in the simulation study (\figref{1}{\,Rows 4 and 5}) and to analyze the partial correlation structure of the sparse+latent estimator (Fig.~\ref{fig:4}--\ref{fig:6}).
 \paragraph{Covariance estimation}
@@ -520,8 +520,55 @@ We thank Genevera Allen for a helpful discussion, and Eftychios Pnevmatikakis fo
 %\section*{Figure Legends}
 \newpage
 \section*{Supporting Information}
-\subsection*{Appendix: Estimation of variance}
-One decision that was made in this paper was to model a constant covariance matrix across different conditions. In other words, a single variance was estimated for each neuron across all stimulus conditions. A more commonplace practice, however, is to estimate the correlations separately in each condition and only then to average the correlations coefficients across all the conditions. In this appendix we justify this decision.
+\section*{Appendix: Working with multiple stimulus conditions}
+The definitions provided in the main text describe the case when all observations are made in the same condition with the same mean and variances across all observations.  In this appendix, we extend these definitions to the case when a common correlation matrix needs to be estimated from measurements collected under several stimulus conditions with potentially different means and variances. 
+
+Let $T_c$ be a set of indices of measurements $x(t), t\in T_c$ collected in condition $c$. 
+Then the mean population activity in condition $c$ is the vector
+\begin{equation}
+	\bar x_c = \frac 1 {\sharp T_c} \sum\limits_{t\in T_c} x(t)
+\end{equation}
+Here $\sharp T_c$ denotes the cardinality (number of elements) of set $T_c$.
+
+Similar to Eq.~\ref{eq:sample}, the sample covariance matrix for condition $c$ is 
+\begin{equation}
+	C_c=\frac {\nu_c} {\nu_c - 1}\cdot \frac 1 {\sharp T_c} \sum\limits_{t\in T_c}\left(x(t)-\bar x_c\right)\left(x(t)-\bar x_c\right)^\T,
+\end{equation}
+where $\nu_c$ is the number of degrees of freedom in the signal per neuron. When observations are independent $\nu_c=\sharp T_c$.
+
+The diagonal matrix 
+\begin{equation}
+   V_c = C_c \circ I
+\end{equation}
+contains the sample variances on diagonal.
+
+Then the sample correlation matrix in condition $c$ is 
+\begin{equation}
+	R_c = V_c^{-\frac 1 2}C_cV_c^{-\frac 1 2}
+\end{equation}
+
+Let $u_c$ denote the fraction of measurements in condition $c$:
+\begin{equation}
+	u_c = \frac{\sharp T_c}{\sum\limits_c \sharp T_c}
+\end{equation}
+
+Then the common correlation matrix $\bar R$ is estimated by averaging the condition-specific correlations:
+\begin{equation}
+	\bar R = \sum\limits_c u_c R_c
+\end{equation}
+
+Then the condition-specific covariance matrices are reconstituted with the common correlation matrix:
+\begin{equation}
+	\hat C_c = V_c^{\frac 1 2} \bar R V_c^{\frac 1 2}
+\end{equation}
+
+For evaluation, independent datasets $T_c^\prime$ are used to estimate the testing covariance matrices:
+\begin{equation}
+	C_c^\prime = \frac 1{\sharp T_c^\prime}\sum\limits_{t\in T_c}\left(x(t)-\bar x_c\right)\left(x(t)-\bar x_c\right)^\T
+\end{equation}
+Note that the means $\bar x_c$ are carried over from the training dataset and not re-estimated from the testing data.
+
+%The regularization methods applied in this study were originally designed for the estimation of a single covariance matrix with the assumption of constant variances across stimulus conditions.  In contrast, the variance of the spiking activity of cortical neurons is known to depend on the firing rate and on the stimulus condition \cite{Vogels:1989,Ponce:2013}.  For simplicity, we assumed constant variances across all conditions and estimated a single covariance matrix.  This assumption allowed direct application of existing covariance estimation techniques.  In this appendix, we evaluate the effect of this assumption on the estimate of correlations and propose methods for estimating correlations with variable variances.  First, we evaluated the effect of assuming a constant variance on the validation loss in the same way that Second, the assumption of constant variance confers a downward bias on estimates of correlations between cells with different stimulus responses but not between cells with similar stimulus responses:
 
 Let $x_1$ and $x_2$ be random variables with zero means and let their respective variances be $v_1^2$ and $v_2^2$ in condition 1 and $a^2v_1^2$ and $b^2v_2^2$ in condition 2. Assume that the correlation coefficient $\rho$ is constant across the two conditions. 
 
@@ -550,17 +597,30 @@ Since $2ab=a^2+b^2$ when $a=b$ and $2ab < a^2 + b^2$ when $a\ne b$, then $\tilde
 
 In other words, the assumption of constant variance across stimulus condition results in underestimation of their correlation for cells whose variances have different stimulus tunings but not if they have they are tuned similarly. This effect may lead to overestimating of the effect of common tuning on correlations (`limited-range correlations'). 
 
-However, there are arguments for assuming a constant variance as well.
-
-
-
 \subsection*{Supplementary Figures}
 \setcounter{figure}{0}
 \renewcommand{\figurename}{Figure S}
 
 \begin{figure}[!ht]
 \begin{center}
-\includegraphics{./figures/src/Supp1.eps}
+\includegraphics{./figures/Supp01.pdf}
+\end{center}
+\caption{{\bf Estimation of variances}
+	}
+\end{figure}
+
+\begin{figure}[!ht]
+\begin{center}
+\includegraphics{./figures/Supp02.pdf}
+\end{center}
+\caption{
+{\bf Optimization of hyperparameters of the $C_{\sf sparse+latent}$ estimator.}
+}
+\end{figure}
+
+\begin{figure}[!ht]
+\begin{center}
+\includegraphics{./figures/src/Supp03.eps}
 \end{center}
 \caption{
 {\bf Performance of estimator $C_{\sf sparse}$ with respect to normal loss (Eq.~\ref{eq:loss}) relative to the other estimators: $C_{\sf sample}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$}. 
@@ -570,7 +630,7 @@ Estimator $C_{\sf sparse}$ outperformed $C_{\sf sample}$ ($p=5\cdot 10^{-6}$) an
 
 \begin{figure}[!ht]
 \begin{center}
-\includegraphics{./figures/src/Supp2.eps}
+\includegraphics{./figures/src/Supp04.eps}
 \end{center}
 \caption{
 {\bf Performance of estimator $C_{\sf sparse+latent}$ with respect to \emph{quadratic loss} (Eq.~\ref{eq:quad}) relative to the other estimators: $C_{\sf sample}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$.} 
