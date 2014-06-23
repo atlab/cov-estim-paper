@@ -781,7 +781,7 @@
 			<key>ID</key>
 			<integer>101</integer>
 			<key>ImageID</key>
-			<integer>120</integer>
+			<integer>139</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -823,7 +823,7 @@
 			<key>ID</key>
 			<integer>104</integer>
 			<key>ImageID</key>
-			<integer>123</integer>
+			<integer>138</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -865,7 +865,7 @@
 			<key>ID</key>
 			<integer>108</integer>
 			<key>ImageID</key>
-			<integer>121</integer>
+			<integer>134</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -907,7 +907,7 @@
 			<key>ID</key>
 			<integer>110</integer>
 			<key>ImageID</key>
-			<integer>124</integer>
+			<integer>140</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -984,7 +984,7 @@
 			<key>ID</key>
 			<integer>109</integer>
 			<key>ImageID</key>
-			<integer>122</integer>
+			<integer>135</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -1026,7 +1026,7 @@
 			<key>ID</key>
 			<integer>111</integer>
 			<key>ImageID</key>
-			<integer>125</integer>
+			<integer>141</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -1076,7 +1076,7 @@
 		<real>396.85040283203125</real>
 	</array>
 	<key>ImageCounter</key>
-	<integer>126</integer>
+	<integer>142</integer>
 	<key>ImageLinkBack</key>
 	<array>
 		<dict/>
@@ -1090,12 +1090,12 @@
 	</array>
 	<key>ImageList</key>
 	<array>
-		<string>image125.pdf</string>
-		<string>image124.pdf</string>
-		<string>image123.pdf</string>
-		<string>image122.pdf</string>
-		<string>image121.pdf</string>
-		<string>image120.pdf</string>
+		<string>image141.pdf</string>
+		<string>image140.pdf</string>
+		<string>image139.pdf</string>
+		<string>image138.pdf</string>
+		<string>image135.pdf</string>
+		<string>image134.pdf</string>
 		<string>image97.pdf</string>
 		<string>image96.pdf</string>
 	</array>
@@ -1138,7 +1138,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2014-06-04 14:13:14 +0000</string>
+	<string>2014-06-23 17:22:00 +0000</string>
 	<key>Modifier</key>
 	<string>Dimitri Yatsenko</string>
 	<key>NotesVisible</key>
@@ -1169,7 +1169,7 @@
 		<key>NSPaperSize</key>
 		<array>
 			<string>size</string>
-			<string>{611.99999904632568, 792}</string>
+			<string>{612, 792}</string>
 		</array>
 		<key>NSPrintReverseOrientation</key>
 		<array>
@@ -1211,7 +1211,7 @@
 	<array>
 		<real>90.708663940429688</real>
 		<real>238.11024284362793</real>
-		<real>377.00787353515625</real>
+		<real>377.00788450241089</real>
 	</array>
 	<key>WindowInfo</key>
 	<dict>
