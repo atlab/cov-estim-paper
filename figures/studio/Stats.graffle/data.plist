@@ -275,7 +275,7 @@
 			<key>ID</key>
 			<integer>112</integer>
 			<key>ImageID</key>
-			<integer>145</integer>
+			<integer>146</integer>
 			<key>Shape</key>
 			<string>Rectangle</string>
 			<key>Style</key>
@@ -411,7 +411,7 @@
 		<real>396.85040473937988</real>
 	</array>
 	<key>ImageCounter</key>
-	<integer>146</integer>
+	<integer>147</integer>
 	<key>ImageLinkBack</key>
 	<array>
 		<dict/>
@@ -421,7 +421,7 @@
 	</array>
 	<key>ImageList</key>
 	<array>
-		<string>image145.pdf</string>
+		<string>image146.pdf</string>
 		<string>image144.pdf</string>
 		<string>image142.pdf</string>
 		<string>image141.pdf</string>
@@ -465,7 +465,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2014-06-23 18:04:25 +0000</string>
+	<string>2014-06-24 19:00:25 +0000</string>
 	<key>Modifier</key>
 	<string>Dimitri Yatsenko</string>
 	<key>NotesVisible</key>
@@ -559,7 +559,7 @@
 		<key>SidebarWidth</key>
 		<integer>230</integer>
 		<key>VisibleRegion</key>
-		<string>{{-1, -26}, {264.5, 333}}</string>
+		<string>{{-0.5, -26}, {264.5, 333}}</string>
 		<key>Zoom</key>
 		<real>2</real>
 		<key>ZoomValues</key>
