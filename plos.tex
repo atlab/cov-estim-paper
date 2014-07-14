@@ -17,8 +17,8 @@
 \usepackage{cite}
 
 \usepackage{color} 
-\usepackage[CaptionAfterwards]{fltpage}
-\usepackage{floatrow}
+%\usepackage[CaptionAfterwards]{fltpage}
+%\usepackage{floatrow}
 % Use doublespacing - comment out for single spacing
 %\usepackage{setspace} 
 %\doublespacing
@@ -55,23 +55,15 @@
 %% ** EDIT HERE **
 %% PLEASE INCLUDE ALL MACROS BELOW
 
-\newcommand{\Kcomment}[1]{{\color{blue}{[KJ: #1]}}}
-\newcommand{\Acomment}[1]{{\color{red}{[AE: #1]}}}
-
 \DeclareMathOperator{\Tr}{tr}
 \newcommand{\sq}[1]{\lq#1\rq}
-\newcommand{\mcond}{\,\middle\vert\,}
-\newcommand{\cond}{\,\vert\,}
 \newcommand{\figref}[2]{Fig.\;\ref{fig:#1}\,#2}
 \newcommand{\loss}[1]{\mathcal L\left(#1\right)} 
-\newcommand{\eloss}[1]{\mathcal L_0\left(#1\right)}
 \newcommand{\T}{{\sf T}}
 \newcommand{\E}[2][]{\mathbb E_{#1}\left[ #2\right]}    % expected value
 \newcommand{\ie}{\emph{i.e.}\;}
 \newcommand{\eg}{\emph{e.g.}\;}
-
 \DeclareMathOperator*{\argmin}{arg\,min}
-\DeclareMathOperator{\rank}{rank}
 
 %% END MACROS SECTION
 
@@ -156,7 +148,6 @@ The covariance matrix is defined as
     \Sigma = \E{(x-\mu)(x-\mu)^\T},\quad \mu = \E{x}
 \end{equation}
 where $\E{\cdot}$ denotes expectation; the $p\times 1$ vector $x$ is a single observation of the firing rates of $p$ neurons in a time bin of some duration; and $\mu$ is the vector of expected firing rates. 
-
 Given a set of observations $\{x(t): t\in T$\} of population activity, where $x(t)$ is a $p\times 1$ vector of firing rates in time bin $t$, and an independent unbiased estimate $\bar x$ of the mean activity, the \emph{sample covariance matrix},
 \begin{equation}\label{eq:sample}
 	C_{\sf sample} = \frac 1 n \sum\limits_{t\in T} (x(t)-\bar x)(x(t)-\bar x)^\T,
