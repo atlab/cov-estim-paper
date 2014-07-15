@@ -1,5 +1,5 @@
-pdflatex plos.tex
-bibtex plos
-pdflatex plos.tex
-pdflatex plos.tex
-open plos.pdf
+pdflatex manuscript.tex
+bibtex manuscript
+pdflatex manuscript.tex
+pdflatex manuscript.tex
+open manuscript.pdf
