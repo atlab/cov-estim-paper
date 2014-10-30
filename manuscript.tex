@@ -290,21 +290,15 @@ Acquiring a separate testing sample is not practical. Instead, $K$-fold cross-va
 
 Cross-validation loss accurately reproduced the ranking of estimators (Fig.~\ref{fig:1} Row 6), confirming that cross-validation can evaluate the true loss of the estimators. 
 
-To demonstrate that estimator rankings did not depend on the assumption of gaussianity, we repeated the cross-validated evaluation with a non-Gaussian data generating model, non-Gaussian loss function, or both:
-
-First, we replaced the data-generating model with the pairwise Ising model \cite{Hertz:2011}, which has equivalent mathematical form to the MVN model,
+To demonstrate that estimator rankings did not depend on the assumption of gaussianity, we repeated the cross-validated evaluation with a non-Gaussian data-generating model, the pairwise Ising model (Fig.~S1).   The Ising model \cite{Hertz:2011} has equivalent mathematical form to the MVN model,
 \begin{equation}
     x\sim \frac 1 {Z(S,h)} \exp\left(-\frac 1 2 x^\T S x + h^\T x \right),
 \end{equation}
-but defined on the binary domain $x\in\{-1,+1\}^p$ rather than the continuous domain of the MVN model. The partition function $Z(S,h)$ normalizes the distribution on the models' respective domains. 
-For the MVN, the matrix $S$ is the precision matrix or the inverse of the covariance matrix; and the mean values are $\mu=-S^{-1}h$.  In the Ising model, $-S$ is the matrix of pairwise interactions and $h$ is the vector of intrinsic activity drives of individual cells but $S$ and $h$ do not have a closed-form relationship to the mean activity and the covariance matrix of the distribution. 
-However, both distributions have the same structure of pairwise conditional dependencies: zeros in the matrix $S$ indicate conditional independence between the corresponding pair of neurons.
-
-First, replacing the normal loss function with the quadratic loss function, 
-\begin{equation}\label{eq:quad}
-\loss{C,C_{\sf sample}^\prime}=\frac 1 {p^2}\Tr(C^{-1}C_{\sf sample}^\prime-I)^2
-\end{equation}
-did not affect estimator rankings (Fig.~S1 A--D). 
+but is defined on the multivariate binary domain $x\in\{-1,+1\}^p$ rather than the continuous domain of the MVN model. 
+The partition function $Z(S,h)$ normalizes the distribution on the models' respective domains. 
+In the MVN model, the matrix $S$ is the precision matrix or the inverse of the covariance matrix; and the mean values are $\mu=-S^{-1}h$.  
+For the Ising model, $-S$ is the matrix of pairwise interactions and $h$ is the vector of the cells' individual activity drives. In contrast to the MVN model,  $S$ and $h$ do not have a closed-form relationship to the mean firing rates or their covariance matrix. 
+Both distributions have the same structure of pairwise conditional dependencies: zeros in the matrix $S$ indicate conditional independence between the corresponding pair of neurons.
 
 This simulation study demonstrated that, with sufficiently large sample sizes, imposing the correct type of structure on the estimate leads to greater estimation improvement than imposing other structures.
 
@@ -314,11 +308,6 @@ We recorded the calcium activity of densely sampled populations of neurons in th
 In these densely sampled populations, direct interactions between cells are likely to influence the patterns of population activity.  We therefore hypothesized that covariance matrix estimators that explicitly modeled the partial correlations between pairs of neurons ($C_{\sf sparse}$ and $C_{\sf sparse+latent}$) would have a performance advantage.  However, the observed neurons must also be strongly influenced by global activity fluctuations and by unobserved common inputs to the advantage of estimators that explicitly model common fluctuations of the entire population: $C_{\sf factor}$ and $C_{\sf sparse+latent}$.  If both types of effects are significant, then $C_{\sf sparse+latent}$ should outperform the other estimators.
 
 To test this hypothesis, we computed the relative cross-validation loss of estimators  $C_{\sf sample}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$ with respect to $C_{\sf sparse+latent}$ in $n=27$ imaged sites in 14 mice.  The hyperparameters of each estimator were optimized by nested cross-validation (See Fig.~S2 and  Methods). Indeed, the sparse+latent estimator outperformed the other estimators (Fig.~\ref{fig:3}). The respective median differences of the cross-validation loss were 0.039, 0.0016, 0.0029, and 0.0059 nats/cell/bin, significantly greater than zero ($p<0.01$ in each comparison, $n=27$ sites in 14 mice, Wilcoxon signed rank test).
-
-The same evaluation based on the quadratic loss function,
-instead of the normal loss function reproduced the same relationship between the estimators (Fig.~S3). 
-
-This suggests that the results of this study are robust to the choice of the loss function and do not depend on the assumption of gaussianity.
 
 \subsection*{Structure of $C_{\sf sparse+latent}$ estimates}
 We examined the composition of the $C_{\sf sparse+latent}$ estimates at each imaged site (Fig.~\ref{fig:4} and Fig.~\ref{fig:5}). Although the regularized estimates were similar to the sample correlation matrix (Fig.~\ref{fig:4} A and B), the corresponding partial correlation matrices differed substantially (Fig.~\ref{fig:4} C and D). The estimates separated two sources of correlations: a network of linear interactions expressed by the sparse component of the inverse and latent units expressed by the low-rank components of the inverse (Fig.~\ref{fig:4} E). The sparse partial correlations revealed a network that differed substantially from the network composed of the greatest coefficients in the sample correlation matrix (Fig.~\ref{fig:4} F, G, H, and I).
@@ -378,7 +367,7 @@ In our study, regularizations were accomplished by dimensionality reduction (fea
 \subsection*{Model selection}
 Various model selection criteria have been devised to select between families of models and the optimal subsets of variables in a given model family based on observed data. Despite its computational requirements, cross-validation is among the most popular model selection methods due to its minimal assumptions about the data generating process \cite{Arlot:2010}.
 
-We evaluated the covariance matrix estimators a loss function based on multivariate normal log likelihood.  However, this does not limit the applicability of its conclusions to normal distributions. Indeed our major findings could be reproduced using other loss functions (compare Fig.~\ref{fig:3} and Fig.~S3).  Other probabilistic models, fitted to the same data, could also serve as estimators of the covariance matrix.  If a different model yields better estimation of the covariance matrix than the estimator proposed here, we believe that its structure should deserve consideration as the better representation of the functional connectivity.
+We evaluated the covariance matrix estimators a loss function based on multivariate normal log likelihood.  However, this does not limit the applicability of its conclusions to normal distributions. Other probabilistic models, fitted to the same data, could also serve as estimators of the covariance matrix.  If a different model yields better estimation of the covariance matrix than the estimator proposed here, we believe that its structure should deserve consideration as the better representation of the functional connectivity.
 
 The results of model selection must be interpreted with caution.  As we demonstrated by simulation, even models with incorrect forms of dependencies can substantially improve estimates (Fig.~\ref{fig:1}). Therefore, showing that a more constrained model has better cross-validated performance than a more complex model does not necessarily support the conclusion that it reveals a better representation of dependencies in the data.  This caveat is related to \emph{Stein's Paradox} \cite{Efron:1977}: The biasing of an estimate toward an arbitrary low-dimensional target can consistently outperform a less constrained estimate.
 
@@ -653,15 +642,13 @@ Here ``connectivity'' refers to the fraction of the non-zero elements in the spa
 %\item{\bf Figure SX. Enter mandatory title here.} Enter optional descriptive information here.
 % 
 \begin{description}
+\item {\bf Figure S1. Performance of covariance estimators when the ground truth is the  Ising model.} 
+{\bf A.} With the ground truth having a diagonal matrix of dependencies (no pairwise dependencies), 
+
 \item {\bf Figure S2. Optimization of hyperparameters of the $C_{\sf sparse+latent}$ estimator.} {\bf A.} Validation loss (Eq.~\ref{eq:full-loss}) for the example site in Fig.~\ref{fig:2} and \ref{fig:4} as a function of the hyperparameters $\alpha$ and $\beta$ of the $C_{\sf sparse+latent}$ estimator (Eq.~\ref{eq:c-sl} and Eq.~\ref{eq:ma}). In all panels, the red cross marks the optimal value found by the pattern search algorithm described in Methods.
 {\bf B.} The connectivity ($1-\mbox{sparsity}$) of the sparse component $S$ as a function of $\alpha$ and $\beta$ for the example site.
 {\bf C.} The number of latent units, \emph{i.e.}~the rank of the low-rank component $L$, as a function of hyperparameters $\alpha$ and $\beta$.
 {\bf D.} The loss function as a function of the connectivity and the number of latent units.
-
-\item {\bf Figure S3. Performance of estimator $C_{\sf sparse+latent}$ with respect to \emph{quadratic loss} (Eq.~\ref{eq:quad}) relative to the other estimators: $C_{\sf sample}$, $C_{\sf diag}$, $C_{\sf factor}$, and $C_{\sf sparse}$.} All comparisons showed significant advantage of estimator $C_{\sf sparse+latent}$ ($p<10^{-3}$ in each comparison, Wilcoxon signed rank test, $n=27$ sites in 14 mice). 
 \end{description}
-
-
-
 \end{document}
 
