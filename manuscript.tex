@@ -246,7 +246,7 @@ We refer to the sparse partial correlations in estimators $C_{\sf sparse}$ and $
 
 \subsection*{Simulation}
 We next demonstrate how the most efficient among different regularized estimators can reveal the structure of correlations.
-We constructed four families of $50\times 50$ covariance matrices, each with structure that matched one of the four regularized estimators (Fig.~\ref{fig:1} Row 2, A--D and Methods).  We used these covariance matrices as the ground truth in multivariate normal (MVN) distributions with zero means and drew samples of various sizes. 
+We constructed four families of $50\times 50$ covariance matrices, each with structure that matched one of the four regularized estimators (Fig.~\ref{fig:1} Row 2, A--D and Methods).  We used these covariance matrices as the ground truth in multivariate Gaussian distributions with zero means and drew samples of various sizes. 
 The sample correlation matrices from finite samples (\emph{e.g.}\ $n=500$ in Fig.~\ref{fig:1} Row 3) were contaminated with sampling noise and their underlying structures were difficult to discern.
 
 The evaluation of any covariance matrix estimator, $C$, is performed with respect to a \emph{loss function} $\loss{C,\Sigma}$ to quantify its discrepancy from truth, $\Sigma$.  The loss function must attain its minimum when $C=\Sigma$.
@@ -288,17 +288,21 @@ The loss function above assumes a single covariance matrix across all conditions
 
 Acquiring a separate testing sample is not practical. Instead, $K$-fold cross-validation can be used: The sample is divided into $K$ subsets of approximately equal size ($K=10$ in this study).  Then each subset is used as the testing sample with the other $K-1$ subsets serving as the training sample. The validation losses from all such `folds' are averaged to produce the \emph{cross-validation loss}.
 
-Cross-validation loss accurately reproduced the ranking of estimators (Fig.~\ref{fig:1} Row 6), confirming that cross-validation can evaluate the true loss of the estimators. 
+Cross-validation accurately reproduced relative values of the loss and the rankings of estimators without access to the ground truth (Fig.~\ref{fig:1} Row 6). 
 
-To demonstrate that estimator rankings did not depend on the assumption of gaussianity, we repeated the cross-validated evaluation with a non-Gaussian data-generating model, the pairwise Ising model (Fig.~S1).   The Ising model \cite{Hertz:2011} has equivalent mathematical form to the MVN model,
-\begin{equation}
-    x\sim \frac 1 {Z(S,h)} \exp\left(-\frac 1 2 x^\T S x + h^\T x \right),
+To demonstrate that estimator rankings did not strongly depend on the gaussianity of the data-generating process, we repeated the cross-validated evaluation after replacing the Gaussian data-generating models with pairwise Ising models. 
+Ising models have been used to infer functional connectivity from neuronal spike trains \cite{Hertz:2011}. 
+Conveniently, the Ising model has equivalent mathematical form to the Gaussian distribution,
+\begin{equation}\label{eq:ising}
+    x\sim \frac 1 {Z(S,h)} \exp\left(-\frac 1 2 x^\T S x + h^\T x \right)
 \end{equation}
-but is defined on the multivariate binary domain $x\in\{-1,+1\}^p$ rather than the continuous domain of the MVN model. 
+but the Ising model is defined on the multivariate binary domain $x\in\{-1,+1\}^p$ rather than the continuous domain of the Gaussian  model. 
+Both models are maximum-entropy models constrained by the mean firing rates and the covariance matrix \cite{Jaynes:1957}.
 The partition function $Z(S,h)$ normalizes the distribution on the models' respective domains. 
-In the MVN model, the matrix $S$ is the precision matrix or the inverse of the covariance matrix; and the mean values are $\mu=-S^{-1}h$.  
-For the Ising model, $-S$ is the matrix of pairwise interactions and $h$ is the vector of the cells' individual activity drives. In contrast to the MVN model,  $S$ and $h$ do not have a closed-form relationship to the mean firing rates or their covariance matrix. 
-Both distributions have the same structure of pairwise conditional dependencies: zeros in the matrix $S$ indicate conditional independence between the corresponding pair of neurons.
+In the Gaussian model, the matrix $S$ is the precision matrix or the inverse of the covariance matrix; and the mean values are $\mu=-S^{-1}h$.  
+For the Ising model, $-S$ is the matrix of pairwise interactions and $h$ is the vector of the cells' individual activity drives but they do not have a simple relationship to the means and the covariance matrix. 
+Both distributions have the same structure of pairwise conditional dependencies: zeros in the matrix $S$ indicate conditional independence between the corresponding pair of neurons. 
+Despite the departure from strictly linear dependencies between the variables characteristic of the Gaussian distribution, the Ising model yielded the same rankings of estimators as the Gaussian model in cross-validation (Fig.~S1).
 
 This simulation study demonstrated that, with sufficiently large sample sizes, imposing the correct type of structure on the estimate leads to greater estimation improvement than imposing other structures.
 
@@ -324,7 +328,7 @@ Thresholded sample correlations have been used in several studies to infer pairw
 
 We examined how the structure of the $C_{\sf sparse+latent}$ estimates related to the differences in orientation preference and to the physical distances separating pairs of cells (Fig.\;\ref{fig:6}).  Five sites with highest pairwise connectivities were included in the analysis. Partial correlations were computed using Eq.~\ref{eq:partial} based on the regularized estimate, including both the sparse and the latent component. Connectivity was computed as the fraction of pairs of cells connected by non-zero elements (interactions) in the sparse component of the estimate, distinguishing between the positive and negative connectivities.
 
-First, we analyzed how correlations and connectivity depended on the difference in preferred orientations ($\Delta ori$) of pairs of significantly ($\alpha=0.05$) tuned cells. The partial correlations decayed more rapidly with $\Delta ori$ than did sample correlations ($p<10^{-9}$ in each of the five sites, two-sample $t$-test of the difference of the linear regression coefficients). Positive connectivity decreased with $\Delta ori$ ($p<0.005$ in each of the five sites, $t$-test on the logistic regression coefficient) whereas negative connectivity did not decrease (Fig.~\ref{fig:6} D): The slope in the logistic model of connectivity with respect to $\Delta ori$ was significantly higher for positive than for negative interactions ($p<0.04$ in each of the five sites, two-sample $t$-test of the difference of the logistic regression coefficient).
+First, we analyzed how correlations and connectivity depended on the difference in preferred orientations ($\Delta \mbox{ori}$) of pairs of significantly ($\alpha=0.05$) tuned cells. The partial correlations decayed more rapidly with $\Delta\mbox{ori}$ than did sample correlations ($p<10^{-9}$ in each of the five sites, two-sample $t$-test of the difference of the linear regression coefficients). Positive connectivity decreased with $\Delta\mbox{ori}$ ($p<0.005$ in each of the five sites, $t$-test on the logistic regression coefficient) whereas negative connectivity did not decrease (Fig.~\ref{fig:6} D): The slope in the logistic model of connectivity with respect to $\Delta\mbox{ori}$ was significantly higher for positive than for negative interactions ($p<0.04$ in each of the five sites, two-sample $t$-test of the difference of the logistic regression coefficient).
 
 Second, we compared how correlations and connectivity depended on the physical distance separating pairs of cells. We distinguished between lateral distance, $\Delta x$, in the plane parallel to the pia, and vertical distance, $\Delta z$, orthogonal to the pia.  When considering the dependence on $\Delta x$, the analysis was limited to cell pairs located at the same depth with $\Delta z < 30\,\mu\mbox{m}$; conversely, when considering the dependence on $\Delta z$, only vertically aligned cell pairs with $\Delta x < 30\,\mu\mbox{m}$ were included. Again, the partial correlations decayed more rapidly both laterally and vertically than sample correlations ($p<10^{-6}$ in each of the five sites, for both lateral and vertical distances, two-sample $t$-test of the difference of the linear regression coefficients).
 Positive connectivity decayed with distance ($p<10^{-6}$ in each of the five sites for positive interactions and $p<0.05$ for negative interactions, $t$-test on the logistic regression coefficient) (Fig.~\ref{fig:6} E), so that cells separated laterally by less than 25 $\mu\mbox{m}$ were 3.2 times more likely to be connected than cells separated laterally by more than 150 $\mu\mbox{m}$. Although the positive connectivity appeared to decay faster with vertical than with lateral distance, the differences in slopes of the respective logistic regression models were not significant with available data. The negative connectivity decayed slower with distance (Fig.~\ref{fig:6} E and F): The slope in the respective logistic models with respect to the lateral distance was significantly higher for positive than for negative connectivities ($p<0.05$ in each of the five sites, two-sample $t$-test of the difference of the logistic regression coefficients).
@@ -448,10 +452,11 @@ Then the covariance matrix of the observed population is
 \begin{equation}
 C_{\sf sparse+latent} = \left(S-S_{12}S_{22}^{-1}S_{12}^\T\right)^{-1}
 \end{equation}
-The rank of the $p\times p$  matrix $L=S_{12}S_{22}^{-1}S_{12}^\T$ matches the number of the latent units in the joint distribution. Rather than finding $S_{12}$ and $S_{22}$ separately, $L$ can be estimated as a low-rank matrix. We adapted the ADMM algorithm to minimize the loss function with $L_1$ penalty on $S$ to regulate its sparseness and nuclear norm penalty on $L$ to regulate its rank \cite{Chandrasekaran:2010,Ma:2013}:
+The rank of the $p\times p$  matrix $L=S_{12}S_{22}^{-1}S_{12}^\T$ matches the number of the latent units in the joint distribution. Rather than finding $S_{12}$ and $S_{22}$ separately, $L$ can be estimated as a low-rank positive semidefinite matrix. To simultaneously optimize the sparse component $S$ and the low-rank component $L$, we adapted the loss function with $L_1$ penalty on $S$ combined with a penalty on the trace of $L$ \cite{Chandrasekaran:2010,Ma:2013}:
 \begin{equation}\label{eq:ma}
 (S,L) = \argmin\limits_{\hat S,\hat L} \loss{\hat S-\hat L, C_{\sf sample}} + \alpha\|\hat S\|_1 + \beta\Tr(\hat L)
 \end{equation}
+The trace of a symmetric semidefinite matrix equals the sum of the absolute values of its eigenvalues, \emph{i.e.} its \emph{nuclear norm}; penalty on $\Tr(L)$ favors solutions with few non-zero eigenvalues or, equivalently, low-rank solutions while keeping the convexity of the overall optimization problem \cite{Fazel:2002,Recht:2010}. This allows using convex optimization algorithm such as ADMM to be applied with great computational efficiency \cite{Ma:2013}.
 
 The partial correlation matrix (Eq.~\ref{eq:partial}) computed from $C_{\sf sparse+latent}$ includes interactions between the visible and latent units and was used in Fig.~\ref{fig:4} C and D and Fig.~\ref{fig:5} C, and Fig.~\ref{fig:6} A--C).  The partial correlation matrix computed from $S$ alone expresses strengths of pairwise interactions
 \begin{equation}
@@ -605,15 +610,18 @@ Each point represents an imaged site with its color indicating the population si
 
 
 \begin{figure}
-\caption{{\bf Dependence of sample correlations, regularized partial correlations, and connectivity inferred by $C_{\sf sparse+latent}$ on the differences in preferred orientations, $\Delta ori$, and physical distances, $\Delta x$ and $\Delta z$.} The error bars mark the standard errors of the means. Five sites with highest connectivity (see Fig.~\ref{fig:5} B) were selected for this analysis.
-{\bf A--C.} Normalized mean sample correlations (black) and normalized mean partial correlations (red) estimated by $C_{\sf sparse+latent}$ across $n=5$ imaged sites. The values in each bin are normalized by the means across the entire site, shown in Fig.~\ref{fig:5} C, to make the effects more comparable across the sites.
-{\bf A.} Mean partial correlations in $C_{\sf sparse+latent}$ depend on $\Delta ori$ more strongly than mean sample correlations.
-{\bf B.} Mean partial correlations in $C_{\sf sparse+latent}$ depend on $\Delta x$ more strongly than mean sample correlations. Only horizontally aligned cell pairs with $\Delta z<30\,\mu m$ were considered.
-{\bf C.} Mean partial correlations in $C_{\sf sparse+latent}$ depend on $\Delta z$ more strongly than mean sample correlations. Only vertically aligned cell pairs with $\Delta x<30\,\mu m$ were considered.    {\bf D--F.} Normalized positive connectivity (green) and normalized negative connectivity (dark red) inferred by the $C_{\sf sparse+latent}$ estimator in $n=5$ imaged sites.
-Here ``connectivity'' refers to the fraction of the non-zero elements in the sparse component $S$ of the $C_{\sf sparse+latent}$ estimator, which describes inferred direct interactions between specific pairs of the recorded neurons. Positive and negative connectivities refer to the fractions of the positive and negative partial correlations computed from  $S$, respectively.  ``Normalized positive connectivity'' is the ratio of the positive connectivity for pairs meeting a given condition, \emph{e.g.}~similar tuning with $\Delta ori <15^{\circ}$, to the average connectivity over the entire site.  Normalized negative connectivity is computed similarly for the negative connectivity.  The average connectivity across sites is shown in Fig.~\ref{fig:5} B with only the five most connected sites included in the analysis.  The normalization made the effects of tuning and distance more comparable across sites.
-{\bf D.} Positive connectivity decreases with $\Delta ori$ whereas negative connectivity does not.
-{\bf E.} Positive connectivity decays with $\Delta x$ whereas negative connectivity does not, within the examined range.
-{\bf F.} Positive connectivity decays with $\Delta z$. Negative connectivity does not decay for small values of $\Delta z$.
+\caption{
+{\bf Dependence of sample correlations, regularized partial correlations, and connectivity inferred by $C_{\sf sparse+latent}$ on the differences in preferred orientations, $\Delta \mbox{ori}$, and physical distances: horizontal $\Delta x$ and depth $\Delta z$.} 
+Five sites with highest connectivity (see Fig.~\ref{fig:5} B) were selected for this analysis.
+\\
+{\bf A--C.} Mean sample correlations in relation to $\Delta\mbox{ori}$,  $\Delta x$ and $\Delta z$, respectively. For $\Delta x$ averages, only horizontally aligned cell pairs with $\Delta z<30\,\mu m$ were considered. Similarly, for $\Delta z$ averages, only vertically aligned cell pairs with $\Delta x<30\,\mu m$ were considered.
+\\
+{\bf D--F.} Mean partial correlations regularized by the $C_{\sf sparse+latent}$ estimator binned the same way as the sample correlations above. The partial correlations exhibit stronger dependence on $\Delta\mbox{ori}$, $\Delta x$, and $\Delta z$ than sample correlations. 
+\\
+{\bf G--I.} Positive connectivity (green) and negative connectivity (red) inferred by the $C_{\sf sparse+latent}$ estimator. 
+Positive and negative connectivities refer to the fractions of the positive and negative partial correlations computed from the sparse component $S$ of $C_{\sf sparse+latent}$.  
+Positive connectivity decreases with $\Delta \mbox{ori}$, $\Delta x$, and $\Delta z$. 
+Negative connectivity does not decrease with $\Delta \mbox{ori}$, $\Delta x$ within the examined range, and with $\Delta z$ for small values of $\Delta z<60\,\mu m$.
 }
 \label{fig:6}
 \end{figure}
@@ -642,8 +650,8 @@ Here ``connectivity'' refers to the fraction of the non-zero elements in the spa
 %\item{\bf Figure SX. Enter mandatory title here.} Enter optional descriptive information here.
 % 
 \begin{description}
-\item {\bf Figure S1. Performance of covariance estimators when the ground truth is the  Ising model.} 
-{\bf A.} With the ground truth having a diagonal matrix of dependencies (no pairwise dependencies), 
+\item {\bf Figure S1. Performance of covariance estimators on samples drawn from Ising models.} 
+{\bf A--D} Validation losses of covariance matrix estimators relative to the estimator whose structure matches the ground truth. The calculation is performed identically to Fig.~\ref{fig:1} Row 6 except Ising models are used in place of Gaussian models for generating data. 
 
 \item {\bf Figure S2. Optimization of hyperparameters of the $C_{\sf sparse+latent}$ estimator.} {\bf A.} Validation loss (Eq.~\ref{eq:full-loss}) for the example site in Fig.~\ref{fig:2} and \ref{fig:4} as a function of the hyperparameters $\alpha$ and $\beta$ of the $C_{\sf sparse+latent}$ estimator (Eq.~\ref{eq:c-sl} and Eq.~\ref{eq:ma}). In all panels, the red cross marks the optimal value found by the pattern search algorithm described in Methods.
 {\bf B.} The connectivity ($1-\mbox{sparsity}$) of the sparse component $S$ as a function of $\alpha$ and $\beta$ for the example site.
