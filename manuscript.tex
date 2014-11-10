@@ -450,7 +450,7 @@ C_{\sf sparse+latent} = \left(S-S_{12}S_{22}^{-1}S_{12}^\T\right)^{-1}
 \end{equation}
 The rank of the $p\times p$  matrix $L=S_{12}S_{22}^{-1}S_{12}^\T$ matches the number of the latent units in the joint distribution. Rather than finding $S_{12}$ and $S_{22}$ separately, $L$ can be estimated as a low-rank matrix. We adapted the ADMM algorithm to minimize the loss function with $L_1$ penalty on $S$ to regulate its sparseness and nuclear norm penalty on $L$ to regulate its rank \cite{Chandrasekaran:2010,Ma:2013}:
 \begin{equation}\label{eq:ma}
-(S,L) = \argmin\limits_{\hat S,\hat L} \loss{\hat S-\hat L, C_{\sf sample}} + \alpha\|\hat S\|_1 + \beta\Tr(\hat L)
+	(S,L) = \argmin\limits_{\hat S,\hat L} \loss{(\hat S-\hat L)^{-1}, C_{\sf sample}} + \alpha\|\hat S\|_1 + \beta\Tr(\hat L)
 \end{equation}
 
 The partial correlation matrix (Eq.~\ref{eq:partial}) computed from $C_{\sf sparse+latent}$ includes interactions between the visible and latent units and was used in Fig.~\ref{fig:4} C and D and Fig.~\ref{fig:5} C, and Fig.~\ref{fig:6} A--C).  The partial correlation matrix computed from $S$ alone expresses strengths of pairwise interactions
